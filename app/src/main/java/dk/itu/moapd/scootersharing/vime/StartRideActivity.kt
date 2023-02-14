@@ -20,7 +20,6 @@
  */
 package dk.itu.moapd.scootersharing.vime
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -28,14 +27,14 @@ import android.widget.EditText
 import androidx.core.view.WindowCompat
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
 import com.google.android.material.snackbar.Snackbar
-import dk.itu.moapd.scootersharing.vime.databinding.ActivityMainBinding
+import dk.itu.moapd.scootersharing.vime.databinding.ActivityStartRideBinding
 
 /**
  * An activity class with methods to manage the main activity of Getting Started application.
  */
-class MainActivity : AppCompatActivity() {
+class StartRideActivity : AppCompatActivity() {
     companion object {
-        private val TAG = MainActivity::class.qualifiedName
+        private val TAG = StartRideActivity::class.qualifiedName
     }
     /*
     * These are viewbindings that allows easy read
@@ -43,26 +42,38 @@ class MainActivity : AppCompatActivity() {
     // GUI variables.
     private lateinit var scooterName: EditText
     private lateinit var location: EditText
-    private lateinit var mainBinding: ActivityMainBinding
+    private lateinit var mainBinding: ActivityStartRideBinding
 
     private val scooter: Scooter = Scooter("", "")
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
-        mainBinding = ActivityMainBinding.inflate(layoutInflater)
+        mainBinding = ActivityStartRideBinding.inflate(layoutInflater)
 
         with(mainBinding) {
 
             // Buttons.
             startride.setOnClickListener {
-                startActivity(Intent(baseContext, StartRideActivity::class.java))
-            }
+                if (scooterName.text.toString().isNotEmpty() && location.text.toString().isNotEmpty()) {
+                    // Update the object attributes.
+                    val name = scooterName.text.toString().trim()
+                    scooter.name = name
 
-            updateride.setOnClickListener {
-                startActivity(Intent(baseContext, UpdateRideActivity::class.java))
+                    val location = location.text.toString().trim()
+                    scooter.location = location
+
+                    // Reset the text fields and update the UI
+                    showMessage()
+                }
             }
-            val view = mainBinding.root
-            setContentView(view)
         }
+        setContentView(mainBinding.root)
+    }
+
+    private fun showMessage () {
+        // Print a message in the ‘Logcat‘ system.
+        Log.d(TAG, scooter.toString())
+        val mySnackbar = Snackbar.make(mainBinding.root, scooter.toString(), LENGTH_SHORT)
+        mySnackbar.show()
     }
 }

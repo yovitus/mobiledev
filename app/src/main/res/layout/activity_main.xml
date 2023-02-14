@@ -8,69 +8,32 @@
     android:gravity="center"
     android:orientation="vertical">
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingLeft="20dp"
-    android:paddingRight="20dp"
-    >
-    <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+    <TextView
+        android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Scooter name">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/scooterName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:drawableStart="@drawable/baseline_electric_scooter_24"
-            android:drawableTint="@color/purple_700"
-            android:drawablePadding="10dp"/>
+        android:gravity="center"
+        android:textSize="24dp"
+        android:textColor="@color/black"
+        android:text="Scooter Sharing"
+        android:layout_marginBottom="10dp"/>
 
 
-    </com.google.android.material.textfield.TextInputLayout>
-</LinearLayout>
 
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:paddingTop="10dp"
-        >
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Enter location">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/location"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawableStart="@drawable/baseline_location_on_24"
-                android:drawableTint="@color/purple_700"
-                android:drawablePadding="10dp"/>
-
-
-        </com.google.android.material.textfield.TextInputLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:paddingTop="10dp">
         <Button
             android:id="@+id/startride"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:text="@string/start_ride_button"/>
-    </LinearLayout>
+            android:text="@string/start_ride_button"
+            />
+
+        <Button
+            android:id="@+id/updateride"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="@string/update_ride_button"/>
 
 
 </LinearLayout>
