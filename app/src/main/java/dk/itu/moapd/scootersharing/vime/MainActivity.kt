@@ -24,18 +24,21 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.EditText
 import androidx.core.view.WindowCompat
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
 import com.google.android.material.snackbar.Snackbar
 import dk.itu.moapd.scootersharing.vime.databinding.ActivityMainBinding
+import java.util.function.Predicate.not
 
 /**
  * An activity class with methods to manage the main activity of Getting Started application.
  */
 class MainActivity : AppCompatActivity() {
     companion object {
-        private val TAG = MainActivity::class.qualifiedName
+        lateinit var ridesDB: RidesDB
+        private lateinit var adapter: CustomArrayAdapter
     }
     /*
     * These are viewbindings that allows easy read
@@ -49,9 +52,16 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
+    
+        ridesDB = RidesDB.get(this)
+        
+
+        adapter = CustomArrayAdapter(this, R.layout.list_rides, ridesDB.getRidesList())
         mainBinding = ActivityMainBinding.inflate(layoutInflater)
 
+
         with(mainBinding) {
+            mainBinding.listView.adapter = adapter
 
             // Buttons.
             startride.setOnClickListener {
@@ -61,8 +71,21 @@ class MainActivity : AppCompatActivity() {
             updateride.setOnClickListener {
                 startActivity(Intent(baseContext, UpdateRideActivity::class.java))
             }
+
+            showridelist.setOnClickListener {
+                if (listView.visibility == View.VISIBLE) {
+                    listView.visibility = View.INVISIBLE
+                } else
+                    listView.visibility = View.VISIBLE
+            }
+
             val view = mainBinding.root
             setContentView(view)
         }
     }
+
+        override fun onRestart() {
+            super.onRestart()
+            adapter.notifyDataSetChanged()
+        }
 }

@@ -27,6 +27,7 @@ import android.widget.EditText
 import androidx.core.view.WindowCompat
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputEditText
 import dk.itu.moapd.scootersharing.vime.databinding.ActivityMainBinding
 import dk.itu.moapd.scootersharing.vime.databinding.ActivityUpdateRideBinding
 
@@ -35,7 +36,7 @@ import dk.itu.moapd.scootersharing.vime.databinding.ActivityUpdateRideBinding
  */
 class UpdateRideActivity : AppCompatActivity() {
     companion object {
-        private val TAG = UpdateRideActivity::class.qualifiedName
+        lateinit var ridesDB: RidesDB
     }
     /*
     * These are viewbindings that allows easy read
@@ -49,28 +50,39 @@ class UpdateRideActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
+
+        ridesDB = RidesDB.get(this)
+
         mainBinding = ActivityUpdateRideBinding.inflate(layoutInflater)
+        setContentView(mainBinding.root)
+
 
         with(mainBinding) {
+
+            scooterName.setText(ridesDB.getCurrentScooter()?.name)
 
             // Buttons.
             updateride.setOnClickListener {
                 if (location.text.toString().isNotEmpty()) {
                     // Update the object attributes.
                     val location = location.text.toString().trim()
-                    scooter.location = location
-
+                    ridesDB.updateCurrentScooter(location)
                     // Reset the text fields and update the UI
                     showMessage()
                 }
             }
         }
-        setContentView(mainBinding.root)
+    }
+
+    private fun updateCurrentRide() {
+        var name = ridesDB.getCurrentScooter()?.name
+        val rideName: TextInputEditText = findViewById(R.id.scooterName)
+        rideName.setText("NavnTest")
     }
 
     private fun showMessage () {
         // Print a message in the ‘Logcat‘ system.
-        Log.d(TAG, scooter.toString())
+        Log.v("", "")
         val mySnackbar = Snackbar.make(mainBinding.root, scooter.toString(), LENGTH_SHORT)
         mySnackbar.show()
     }

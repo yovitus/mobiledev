@@ -34,7 +34,7 @@ import dk.itu.moapd.scootersharing.vime.databinding.ActivityStartRideBinding
  */
 class StartRideActivity : AppCompatActivity() {
     companion object {
-        private val TAG = StartRideActivity::class.qualifiedName
+        lateinit var ridesDB: RidesDB
     }
     /*
     * These are viewbindings that allows easy read
@@ -44,10 +44,12 @@ class StartRideActivity : AppCompatActivity() {
     private lateinit var location: EditText
     private lateinit var mainBinding: ActivityStartRideBinding
 
-    private val scooter: Scooter = Scooter("", "")
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
+
+        ridesDB = RidesDB.get(this)
+
         mainBinding = ActivityStartRideBinding.inflate(layoutInflater)
 
         with(mainBinding) {
@@ -57,10 +59,10 @@ class StartRideActivity : AppCompatActivity() {
                 if (scooterName.text.toString().isNotEmpty() && location.text.toString().isNotEmpty()) {
                     // Update the object attributes.
                     val name = scooterName.text.toString().trim()
-                    scooter.name = name
-
                     val location = location.text.toString().trim()
-                    scooter.location = location
+
+                    ridesDB.addScooter(name, location)
+
 
                     // Reset the text fields and update the UI
                     showMessage()
@@ -72,8 +74,8 @@ class StartRideActivity : AppCompatActivity() {
 
     private fun showMessage () {
         // Print a message in the ‘Logcat‘ system.
-        Log.d(TAG, scooter.toString())
-        val mySnackbar = Snackbar.make(mainBinding.root, scooter.toString(), LENGTH_SHORT)
+        Log.v("", "")
+        val mySnackbar = Snackbar.make(mainBinding.root, "Aight, done", LENGTH_SHORT)
         mySnackbar.show()
     }
 }
