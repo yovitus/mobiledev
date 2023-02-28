@@ -20,22 +20,23 @@
  */
 package dk.itu.moapd.scootersharing.vime
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
-import androidx.core.view.WindowCompat
-import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
-import com.google.android.material.snackbar.Snackbar
+import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
-import dk.itu.moapd.scootersharing.vime.databinding.ActivityUpdateRideBinding
+import dk.itu.moapd.scootersharing.vime.databinding.FragmentUpdateRideBinding
 
 /**
  * An activity class with methods to manage the main activity of Getting Started application.
  */
-class UpdateRideActivity : AppCompatActivity() {
+class UpdateRideFragment : Fragment() {
     companion object {
         lateinit var ridesDB: RidesDB
+        private lateinit var adapter: CustomArrayAdapter
+
     }
     /*
     * These are viewbindings that allows easy read
@@ -43,36 +44,48 @@ class UpdateRideActivity : AppCompatActivity() {
     // GUI variables.
     private lateinit var scooterName: EditText
     private lateinit var location: EditText
-    private lateinit var mainBinding: ActivityUpdateRideBinding
+
+    private var _binding: FragmentUpdateRideBinding? = null
+    private val binding
+        get() = checkNotNull(_binding) {
+            "Cannot access binding because it is null. Is the view visible?"
+        }
 
     private val scooter: Scooter = Scooter("", "")
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
+        adapter = CustomArrayAdapter(requireContext(), R.layout.list_rides, MainActivity.ridesDB.getRidesList())
+    }
 
-        ridesDB = RidesDB.get(this)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding =
+            FragmentUpdateRideBinding.inflate(inflater, container, false)
 
-        mainBinding = ActivityUpdateRideBinding.inflate(layoutInflater)
-        setContentView(mainBinding.root)
+        return binding.root
+    }
 
-
-        with(mainBinding) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.apply {
+            ridesDB = RidesDB.get(requireContext())
 
             scooterName.setText(ridesDB.getCurrentScooter()?.name)
 
+            // Buttons.
+            updateride.setOnClickListener {
+                if (location.text.toString().isNotEmpty()) {
+                    // Update the object attributes.
+                    val location = location.text.toString().trim()
+                    ridesDB.updateCurrentScooter(location)
+
+                }
+            }
         }
     }
-
-    private fun updateCurrentRide() {
-        var name = ridesDB.getCurrentScooter()?.name
-        val rideName: TextInputEditText = findViewById(R.id.scooterName)
-        rideName.setText("NavnTest")
-    }
-
-    private fun showMessage () {
-        // Print a message in the ‘Logcat‘ system.
-        Log.v("", "")
-        val mySnackbar = Snackbar.make(mainBinding.root, scooter.toString(), LENGTH_SHORT)
-        mySnackbar.show()
-    }
 }
+
