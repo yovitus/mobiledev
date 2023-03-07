@@ -17,7 +17,6 @@
         android:layout_height="match_parent"
         tools:context=".StartRideActivity"
         tools:layout="@layout/fragment_start_ride" />
-
 </LinearLayout>
 
 

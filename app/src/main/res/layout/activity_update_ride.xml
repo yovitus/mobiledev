@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".UpdateRideActivity"
-        tools:layout="@layout/fragment_update_ride" />
+        tools:layout="@layout/fragment_update_ride"/>
 
 </LinearLayout>
 

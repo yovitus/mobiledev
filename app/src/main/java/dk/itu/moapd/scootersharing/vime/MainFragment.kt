@@ -55,10 +55,11 @@ class MainFragment : Fragment() {
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        WindowCompat.setDecorFitsSystemWindows(requireActivity().window, false)
         super.onCreate(savedInstanceState)
-        adapter = CustomArrayAdapter(requireContext(), R.layout.list_rides, MainActivity.ridesDB.getRidesList())
+        ridesDB = RidesDB.get(requireContext())
+        adapter = CustomArrayAdapter(requireContext(), R.layout.list_rides, ridesDB.getRidesList())
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -66,7 +67,7 @@ class MainFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding =
-            FragmentMainBinding.inflate(inflater, container, false)
+            FragmentMainBinding.inflate(layoutInflater, container, false)
 
         return binding.root
     }
@@ -78,21 +79,17 @@ class MainFragment : Fragment() {
 
             // Buttons.
             startride.setOnClickListener {
-                startActivity(
-                    Intent(
-                        it.context,
-                        dk.itu.moapd.scootersharing.vime.StartRideActivity::class.java
-                    )
-                )
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, StartRideFragment())
+                    .addToBackStack(null)
+                    .commit()
             }
 
             updateride.setOnClickListener {
-                startActivity(
-                    Intent(
-                        it.context,
-                        dk.itu.moapd.scootersharing.vime.UpdateRideActivity::class.java
-                    )
-                )
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, UpdateRideFragment())
+                    .addToBackStack(null)
+                    .commit()
             }
 
             showridelist.setOnClickListener {

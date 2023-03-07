@@ -24,45 +24,27 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.EditText
 import androidx.core.view.WindowCompat
+import androidx.fragment.app.Fragment
 import dk.itu.moapd.scootersharing.vime.databinding.ActivityMainBinding
 
 /**
  * An activity class with methods to manage the main activity of Getting Started application.
  */
 class MainActivity : AppCompatActivity() {
-    companion object {
-        lateinit var ridesDB: RidesDB
-        private lateinit var adapter: CustomArrayAdapter
-    }
+    private lateinit var binding : ActivityMainBinding
     /*
     * These are viewbindings that allows easy read
      */
-    // GUI variables.
-    private lateinit var scooterName: EditText
-    private lateinit var location: EditText
-    private lateinit var mainBinding: ActivityMainBinding
-
-    private val scooter: Scooter = Scooter("", "")
     override fun onCreate(savedInstanceState: Bundle?) {
-        WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
-
-        ridesDB = RidesDB.get(this)
-
-
-        adapter = CustomArrayAdapter(this, R.layout.list_rides, ridesDB.getRidesList())
-        mainBinding = ActivityMainBinding.inflate(layoutInflater)
-
-        val fragment = MainFragment()
-        supportFragmentManager
-            .beginTransaction()
-            .add(R.id.fragment_container, fragment)
-            .commit()
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        val view = binding.root
+                setContentView(view)
 
     }
 
-        override fun onRestart() {
-            super.onRestart()
-            adapter.notifyDataSetChanged()
-        }
+        //override fun onRestart() {
+        //    super.onRestart()
+        //    adapter.notifyDataSetChanged()
+        //}
 }

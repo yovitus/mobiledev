@@ -25,6 +25,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
 import dk.itu.moapd.scootersharing.vime.databinding.FragmentUpdateRideBinding
@@ -55,14 +56,15 @@ class UpdateRideFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        adapter = CustomArrayAdapter(requireContext(), R.layout.list_rides, MainActivity.ridesDB.getRidesList())
+        ridesDB = RidesDB.get(requireContext())
+        adapter = CustomArrayAdapter(requireContext(), R.layout.list_rides, ridesDB.getRidesList())
     }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding =
             FragmentUpdateRideBinding.inflate(inflater, container, false)
 
@@ -70,9 +72,9 @@ class UpdateRideFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        WindowCompat.setDecorFitsSystemWindows(requireActivity().window, false)
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
-            ridesDB = RidesDB.get(requireContext())
 
             scooterName.setText(ridesDB.getCurrentScooter()?.name)
 

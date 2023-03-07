@@ -25,6 +25,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.EditText
 import androidx.core.view.WindowCompat
+import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
 import com.google.android.material.snackbar.Snackbar
 import dk.itu.moapd.scootersharing.vime.databinding.ActivityStartRideBinding
@@ -39,43 +40,16 @@ class StartRideActivity : AppCompatActivity() {
     /*
     * These are viewbindings that allows easy read
      */
-    // GUI variables.
-    private lateinit var scooterName: EditText
-    private lateinit var location: EditText
     private lateinit var mainBinding: ActivityStartRideBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
 
         ridesDB = RidesDB.get(this)
 
         mainBinding = ActivityStartRideBinding.inflate(layoutInflater)
 
-        with(mainBinding) {
-
-            // Buttons.
-            startride.setOnClickListener {
-                if (scooterName.text.toString().isNotEmpty() && location.text.toString().isNotEmpty()) {
-                    // Update the object attributes.
-                    val name = scooterName.text.toString().trim()
-                    val location = location.text.toString().trim()
-
-                    ridesDB.addScooter(name, location)
-
-
-                    // Reset the text fields and update the UI
-                    showMessage()
-                }
-            }
-        }
         setContentView(mainBinding.root)
-    }
 
-    private fun showMessage () {
-        // Print a message in the ‘Logcat‘ system.
-        Log.v("", "")
-        val mySnackbar = Snackbar.make(mainBinding.root, "Aight, done", LENGTH_SHORT)
-        mySnackbar.show()
     }
 }

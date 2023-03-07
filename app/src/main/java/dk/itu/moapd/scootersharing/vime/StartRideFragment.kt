@@ -25,6 +25,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import dk.itu.moapd.scootersharing.vime.databinding.FragmentStartRideBinding
 
@@ -54,7 +55,7 @@ class StartRideFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding =
             FragmentStartRideBinding.inflate(inflater, container, false)
 
@@ -62,6 +63,7 @@ class StartRideFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        WindowCompat.setDecorFitsSystemWindows(requireActivity().window, false)
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
             ridesDB = RidesDB.get(requireContext())

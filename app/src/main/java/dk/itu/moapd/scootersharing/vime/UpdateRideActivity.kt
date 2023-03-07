@@ -37,17 +37,10 @@ class UpdateRideActivity : AppCompatActivity() {
     companion object {
         lateinit var ridesDB: RidesDB
     }
-    /*
-    * These are viewbindings that allows easy read
-     */
-    // GUI variables.
-    private lateinit var scooterName: EditText
-    private lateinit var location: EditText
+
     private lateinit var mainBinding: ActivityUpdateRideBinding
 
-    private val scooter: Scooter = Scooter("", "")
     override fun onCreate(savedInstanceState: Bundle?) {
-        WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
 
         ridesDB = RidesDB.get(this)
@@ -56,23 +49,6 @@ class UpdateRideActivity : AppCompatActivity() {
         setContentView(mainBinding.root)
 
 
-        with(mainBinding) {
-
-            scooterName.setText(ridesDB.getCurrentScooter()?.name)
-
-        }
     }
 
-    private fun updateCurrentRide() {
-        var name = ridesDB.getCurrentScooter()?.name
-        val rideName: TextInputEditText = findViewById(R.id.scooterName)
-        rideName.setText("NavnTest")
-    }
-
-    private fun showMessage () {
-        // Print a message in the ‘Logcat‘ system.
-        Log.v("", "")
-        val mySnackbar = Snackbar.make(mainBinding.root, scooter.toString(), LENGTH_SHORT)
-        mySnackbar.show()
-    }
 }
