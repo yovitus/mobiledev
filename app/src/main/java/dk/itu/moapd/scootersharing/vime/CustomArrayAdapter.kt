@@ -30,7 +30,7 @@ class CustomArrayAdapter(context: Context, private var resource: Int, data: List
         val scooter = getItem(position)
         viewHolder.title.text = scooter?.name
         viewHolder.secondaryText.text = scooter?.location
-        viewHolder.supportingText.text = scooter?.timestamp.toString()
+        viewHolder.supportingText.text = scooter?.getDate()
         view?.tag = viewHolder
         return view!!
     }

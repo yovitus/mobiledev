@@ -21,13 +21,13 @@
 package dk.itu.moapd.scootersharing.vime
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
-import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.snackbar.Snackbar
 import dk.itu.moapd.scootersharing.vime.databinding.FragmentUpdateRideBinding
 
 /**
@@ -35,6 +35,7 @@ import dk.itu.moapd.scootersharing.vime.databinding.FragmentUpdateRideBinding
  */
 class UpdateRideFragment : Fragment() {
     companion object {
+        private val TAG = UpdateRideFragment::class.qualifiedName
         lateinit var ridesDB: RidesDB
         private lateinit var adapter: CustomArrayAdapter
 
@@ -42,17 +43,12 @@ class UpdateRideFragment : Fragment() {
     /*
     * These are viewbindings that allows easy read
      */
-    // GUI variables.
-    private lateinit var scooterName: EditText
-    private lateinit var location: EditText
 
     private var _binding: FragmentUpdateRideBinding? = null
     private val binding
         get() = checkNotNull(_binding) {
             "Cannot access binding because it is null. Is the view visible?"
         }
-
-    private val scooter: Scooter = Scooter("", "")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,18 +72,35 @@ class UpdateRideFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
 
-            scooterName.setText(ridesDB.getCurrentScooter()?.name)
+            editTextName.setText(ridesDB.getCurrentScooter().name)
+            editTextLocation.setText(ridesDB.getCurrentScooter().location)
 
             // Buttons.
-            updateride.setOnClickListener {
-                if (location.text.toString().isNotEmpty()) {
+            updateRideButton.setOnClickListener {
+                if (editTextLocation.text.toString().isNotEmpty()) {
                     // Update the object attributes.
-                    val location = location.text.toString().trim()
+                    val location = editTextLocation.text.toString().trim()
                     ridesDB.updateCurrentScooter(location)
+                    editTextLocation.text?.clear()
 
+                    showMessage()
                 }
             }
         }
+    }
+
+    /**
+     * Shows a message containing information about the scooter.
+     */
+    private fun showMessage() {
+        // Print a message in the 'Logcat' system
+        Log.d(TAG, ridesDB.getCurrentScooterInfo())
+        // And print at the bottom of phone
+        Snackbar.make(
+            binding.root,
+            ridesDB.getCurrentScooterInfo(),
+            Snackbar.LENGTH_SHORT
+        ).show()
     }
 }
 

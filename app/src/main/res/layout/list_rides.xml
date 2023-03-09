@@ -8,19 +8,19 @@
         android:id="@+id/list_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="name"/>
+        android:hint="@string/name"/>
 
     <TextView
         android:id="@+id/list_location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="location"/>
+        android:hint="@string/location"/>
 
     <TextView
         android:id="@+id/list_timestamp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="timestamp"/>
+        android:hint="@string/timestamp"/>
 
 
 </LinearLayout>

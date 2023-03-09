@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".UpdateRideActivity"
+    tools:context=".UpdateRideFragment"
     android:gravity="center"
     android:orientation="vertical">
 
@@ -19,12 +18,12 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Scooter name"
+            android:hint="@string/scooter_name"
             android:enabled="false">
 
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/scooterName"
+                android:id="@+id/edit_text_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableStart="@drawable/baseline_electric_scooter_24"
@@ -47,10 +46,10 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter new location">
+            android:hint="@string/enter_new_location">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/location"
+                android:id="@+id/edit_text_location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableStart="@drawable/baseline_location_on_24"
@@ -62,10 +61,9 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/updateride"
+        android:id="@+id/update_ride_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
         android:text="@string/update_ride_button" />
 
 

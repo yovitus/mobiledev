@@ -39,8 +39,7 @@ class RidesDB private constructor(context: Context) {
     }
 
     fun getCurrentScooterInfo(): String {
-        var timestampAsString = rides.last().timestamp.toString()
-        return rides.last().toString() + " " + timestampAsString
+        return rides.last().toString()
     }
 
     /**

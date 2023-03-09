@@ -21,12 +21,13 @@
 package dk.itu.moapd.scootersharing.vime
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
+import com.google.android.material.snackbar.Snackbar
 import dk.itu.moapd.scootersharing.vime.databinding.FragmentStartRideBinding
 
 /**
@@ -34,6 +35,7 @@ import dk.itu.moapd.scootersharing.vime.databinding.FragmentStartRideBinding
  */
 class StartRideFragment : Fragment() {
     companion object {
+        private val TAG = StartRideFragment::class.qualifiedName
         lateinit var ridesDB: RidesDB
     }
 
@@ -49,6 +51,7 @@ class StartRideFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        ridesDB = RidesDB.get(requireContext())
     }
 
     override fun onCreateView(
@@ -66,18 +69,23 @@ class StartRideFragment : Fragment() {
         WindowCompat.setDecorFitsSystemWindows(requireActivity().window, false)
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
-            ridesDB = RidesDB.get(requireContext())
 
             // Buttons.
-            startride.setOnClickListener {
-                if (scooterName.text.toString().isNotEmpty() && location.text.toString()
+            startRideButton.setOnClickListener {
+                if (editTextName.text.toString().isNotEmpty() && editTextLocation.text.toString()
                         .isNotEmpty()
                 ) {
                     // Update the object attributes.
-                    val name = scooterName.text.toString().trim()
-                    val location = location.text.toString().trim()
+                    val name = editTextName.text.toString().trim()
+                    val location = editTextLocation.text.toString().trim()
 
                     ridesDB.addScooter(name, location)
+
+                    // Reset the text fields and update the UI
+                    editTextName.text?.clear()
+                    editTextLocation.text?.clear()
+
+                    showMessage()
                 }
             }
         }
@@ -86,5 +94,19 @@ class StartRideFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
             _binding = null
-        }
+    }
+
+    /**
+     * Shows a message containing information about the scooter.
+     */
+    private fun showMessage() {
+        // Print a message in the 'Logcat' system
+        Log.d(TAG, ridesDB.getCurrentScooterInfo())
+        // And print at the bottom of phone
+        Snackbar.make(
+            binding.root,
+            ridesDB.getCurrentScooterInfo(),
+            Snackbar.LENGTH_SHORT
+        ).show()
+    }
 }

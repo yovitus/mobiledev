@@ -14,9 +14,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:textSize="24dp"
-        android:textColor="@color/black"
-        android:text="Scooter Sharing"
+        android:textSize="24sp"
+        android:text="@string/scooter_sharing"
         android:layout_marginBottom="10dp"/>
 
 
@@ -27,32 +26,28 @@
     android:gravity="center">
 
     <Button
-        android:id="@+id/startride"
+        android:id="@+id/start_ride_button"
         android:layout_width="170dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
         app:icon="@drawable/baseline_play_arrow_24"
         android:text="@string/start_ride_button"
         />
 
     <Button
-        android:id="@+id/updateride"
+        android:id="@+id/update_ride_button"
         android:layout_width="170dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginHorizontal="40dp
-"
+        android:layout_marginHorizontal="40dp"
         app:icon="@drawable/baseline_edit_24"
         android:text="@string/update_ride_button"/>
 
     <Button
-        android:id="@+id/showridelist"
+        android:id="@+id/show_ridelist_button"
         android:layout_width="170dp"
         android:layout_height="wrap_content"
         android:drawableStart="@drawable/baseline_format_list_bulleted_24"
-        android:layout_alignParentRight="true"
         app:icon="@drawable/baseline_format_list_bulleted_24"
-        android:text="Ride list"/>
+        android:text="@string/ride_list"/>
 
 </LinearLayout>
 

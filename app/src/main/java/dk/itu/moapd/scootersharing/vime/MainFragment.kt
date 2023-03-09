@@ -20,21 +20,14 @@
  */
 package dk.itu.moapd.scootersharing.vime
 
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
-import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
-import com.google.android.material.snackbar.Snackbar
-import dk.itu.moapd.scootersharing.vime.databinding.ActivityMainBinding
+import androidx.navigation.fragment.findNavController
 import dk.itu.moapd.scootersharing.vime.databinding.FragmentMainBinding
-import java.util.function.Predicate.not
 
 /**
  * An activity class with methods to manage the main activity of Getting Started application.
@@ -47,7 +40,6 @@ class MainFragment : Fragment() {
     /*
     * These are viewbindings that allows easy read
      */
-    // GUI variables.
     private var _binding: FragmentMainBinding? = null
     private val binding
         get() = checkNotNull(_binding) {
@@ -55,8 +47,8 @@ class MainFragment : Fragment() {
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        WindowCompat.setDecorFitsSystemWindows(requireActivity().window, false)
         super.onCreate(savedInstanceState)
+
         ridesDB = RidesDB.get(requireContext())
         adapter = CustomArrayAdapter(requireContext(), R.layout.list_rides, ridesDB.getRidesList())
     }
@@ -65,7 +57,7 @@ class MainFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding =
             FragmentMainBinding.inflate(layoutInflater, container, false)
 
@@ -75,28 +67,26 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
-            binding.listView.adapter = adapter
+            listView.adapter = adapter
 
             // Buttons.
-            startride.setOnClickListener {
-                requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, StartRideFragment())
-                    .addToBackStack(null)
-                    .commit()
+            startRideButton.setOnClickListener {
+                findNavController().navigate(
+                    R.id.show_startRideFragment
+                )
             }
 
-            updateride.setOnClickListener {
-                requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, UpdateRideFragment())
-                    .addToBackStack(null)
-                    .commit()
+            updateRideButton.setOnClickListener {
+                findNavController().navigate(
+                    R.id.show_updateRideFragment
+                )
             }
 
-            showridelist.setOnClickListener {
-                if (listView.visibility == android.view.View.VISIBLE) {
-                    listView.visibility = android.view.View.INVISIBLE
+            showRidelistButton.setOnClickListener {
+                if (listView.visibility == View.VISIBLE) {
+                    listView.visibility = View.INVISIBLE
                 } else
-                    listView.visibility = android.view.View.VISIBLE
+                    listView.visibility = View.VISIBLE
             }
         }
     }
