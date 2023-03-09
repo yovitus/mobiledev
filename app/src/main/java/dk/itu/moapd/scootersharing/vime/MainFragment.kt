@@ -20,6 +20,7 @@
  */
 package dk.itu.moapd.scootersharing.vime
 
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -73,6 +74,9 @@ class MainFragment : Fragment() {
         binding.apply {
             recyclerView.layoutManager = LinearLayoutManager(context)
             recyclerView.adapter = adapter
+
+            // For 'Reporting the Device’s Android Version' challenge
+            textViewAndroidversion?.text = resources.getString(R.string.android_version_text, Build.VERSION.SDK_INT)
 
             // Buttons.
             startRideButton.setOnClickListener {

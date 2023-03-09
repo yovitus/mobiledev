@@ -11,5 +11,6 @@
     <string name="timestamp">timestamp</string>
     <string name="name">name</string>
     <string name="locationAndTime">Location - Time</string>
+    <string name="android_version_text">API Level %1$d</string>
 
 </resources>
