@@ -5,7 +5,7 @@ import android.widget.LinearLayout
 import com.google.android.material.snackbar.Snackbar
 import java.util.*
 
-class RidesDB private constructor(context: Context) {
+data class RidesDB private constructor(var context: Context) {
     private val rides = ArrayList<Scooter>()
 
     companion object : RidesDBHolder<RidesDB, Context>(::RidesDB)
