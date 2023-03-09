@@ -6,7 +6,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import dk.itu.moapd.scootersharing.vime.databinding.ListRideBinding
 
-class CustomAdapter(private val data: List<Scooter>) :
+class CustomAdapter(
+    private val data: List<Scooter>,
+    private val onItemClicked: (Scooter) -> Unit) :
     RecyclerView.Adapter<CustomAdapter.ViewHolder>() {
 
     companion object {
@@ -30,6 +32,7 @@ class CustomAdapter(private val data: List<Scooter>) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val scooter = data[position]
         holder.bind(scooter)
+        holder.itemView.setOnClickListener { onItemClicked(scooter) }
     }
 
     override fun getItemCount(): Int = data.size

@@ -1,5 +1,8 @@
 package dk.itu.moapd.scootersharing.vime
 import android.content.Context
+import android.util.Log
+import android.widget.LinearLayout
+import com.google.android.material.snackbar.Snackbar
 import java.util.*
 
 class RidesDB private constructor(context: Context) {
@@ -49,6 +52,20 @@ class RidesDB private constructor(context: Context) {
         val now = System.currentTimeMillis()
         val year = random.nextDouble() * 1000 * 60 * 60 * 24 * 365
         return (now - year).toLong()
+    }
+
+    /**
+     * Shows a message containing information about the scooter.
+     */
+    fun showMessage(root: LinearLayout, scooterInfo: String, TAG: String?) {
+        // Print a message in the 'Logcat' system
+        Log.d(TAG, scooterInfo)
+        // And print at the bottom of phone
+        Snackbar.make(
+            root,
+            scooterInfo,
+            Snackbar.LENGTH_SHORT
+        ).show()
     }
 }
 

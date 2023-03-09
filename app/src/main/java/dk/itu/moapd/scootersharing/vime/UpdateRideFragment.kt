@@ -81,24 +81,10 @@ class UpdateRideFragment : Fragment() {
                     ridesDB.updateCurrentScooter(location)
                     editTextLocation.text?.clear()
 
-                    showMessage()
+                    ridesDB.showMessage(binding.root, ridesDB.getCurrentScooterInfo(), TAG)
                 }
             }
         }
-    }
-
-    /**
-     * Shows a message containing information about the scooter.
-     */
-    private fun showMessage() {
-        // Print a message in the 'Logcat' system
-        Log.d(TAG, ridesDB.getCurrentScooterInfo())
-        // And print at the bottom of phone
-        Snackbar.make(
-            binding.root,
-            ridesDB.getCurrentScooterInfo(),
-            Snackbar.LENGTH_SHORT
-        ).show()
     }
 }
 

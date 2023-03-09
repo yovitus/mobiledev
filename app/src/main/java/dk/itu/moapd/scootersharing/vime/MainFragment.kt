@@ -21,6 +21,7 @@
 package dk.itu.moapd.scootersharing.vime
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,6 +35,7 @@ import dk.itu.moapd.scootersharing.vime.databinding.FragmentMainBinding
  */
 class MainFragment : Fragment() {
     companion object {
+        private val TAG = MainFragment::class.qualifiedName
         lateinit var ridesDB: RidesDB
         private lateinit var adapter: CustomAdapter
     }
@@ -50,7 +52,9 @@ class MainFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         ridesDB = RidesDB.get(requireContext())
-        adapter = CustomAdapter(ridesDB.getRidesList())
+        adapter = CustomAdapter(ridesDB.getRidesList(), (fun (scooter: Scooter) {
+            ridesDB.showMessage(binding.root, scooter.toString(), TAG)
+        }))
     }
 
     override fun onCreateView(
