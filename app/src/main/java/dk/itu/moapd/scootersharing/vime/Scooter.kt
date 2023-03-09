@@ -13,8 +13,10 @@ import java.util.*
  * @property timestamp The timestamp of the scooter being rented
  */
 
-data class Scooter (val name: String, val location: String, val timestamp: Long = System.currentTimeMillis()) {
-
+class Scooter (name: String, location: String, timestamp: Long = System.currentTimeMillis()) {
+    var name = name
+    var location = location
+    var timestamp = timestamp
     /**+
      * Overriding method to display a different toString().
      */
