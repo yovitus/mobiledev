@@ -20,7 +20,6 @@ class RidesDB private constructor(context: Context) {
         rides.add(
             Scooter("CPH003", "Lufthavn", randomDate())
         )
-        // TODO: You can add more ‘Scooter‘ objects if you want to.
     }
 
     fun getRidesList(): List<Scooter> {
