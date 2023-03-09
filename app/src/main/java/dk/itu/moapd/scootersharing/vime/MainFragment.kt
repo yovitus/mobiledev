@@ -24,9 +24,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import dk.itu.moapd.scootersharing.vime.databinding.FragmentMainBinding
 
 /**
@@ -35,7 +35,7 @@ import dk.itu.moapd.scootersharing.vime.databinding.FragmentMainBinding
 class MainFragment : Fragment() {
     companion object {
         lateinit var ridesDB: RidesDB
-        private lateinit var adapter: CustomArrayAdapter
+        private lateinit var adapter: CustomAdapter
     }
     /*
     * These are viewbindings that allows easy read
@@ -50,7 +50,7 @@ class MainFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         ridesDB = RidesDB.get(requireContext())
-        adapter = CustomArrayAdapter(requireContext(), R.layout.list_rides, ridesDB.getRidesList())
+        adapter = CustomAdapter(ridesDB.getRidesList())
     }
 
     override fun onCreateView(
@@ -67,7 +67,8 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
-            listView.adapter = adapter
+            recyclerView.layoutManager = LinearLayoutManager(context)
+            recyclerView.adapter = adapter
 
             // Buttons.
             startRideButton.setOnClickListener {
@@ -83,10 +84,10 @@ class MainFragment : Fragment() {
             }
 
             showRidelistButton.setOnClickListener {
-                if (listView.visibility == View.VISIBLE) {
-                    listView.visibility = View.INVISIBLE
+                if (recyclerView.visibility == View.VISIBLE) {
+                    recyclerView.visibility = View.INVISIBLE
                 } else
-                    listView.visibility = View.VISIBLE
+                    recyclerView.visibility = View.VISIBLE
             }
         }
     }

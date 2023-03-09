@@ -1,11 +1,9 @@
 package dk.itu.moapd.scootersharing.vime
 import android.content.Context
-import java.util.Random
-import kotlin.collections.ArrayList
+import java.util.*
 
 class RidesDB private constructor(context: Context) {
     private val rides = ArrayList<Scooter>()
-
 
     companion object : RidesDBHolder<RidesDB, Context>(::RidesDB)
 

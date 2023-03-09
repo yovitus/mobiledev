@@ -1,9 +1,7 @@
 package dk.itu.moapd.scootersharing.vime
 
 import android.os.Build
-import androidx.annotation.RequiresApi
 import java.time.Instant
-import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
 

@@ -37,7 +37,6 @@ class UpdateRideFragment : Fragment() {
     companion object {
         private val TAG = UpdateRideFragment::class.qualifiedName
         lateinit var ridesDB: RidesDB
-        private lateinit var adapter: CustomArrayAdapter
 
     }
     /*
@@ -53,7 +52,6 @@ class UpdateRideFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ridesDB = RidesDB.get(requireContext())
-        adapter = CustomArrayAdapter(requireContext(), R.layout.list_rides, ridesDB.getRidesList())
     }
 
     override fun onCreateView(

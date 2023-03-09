@@ -11,16 +11,10 @@
         android:hint="@string/name"/>
 
     <TextView
-        android:id="@+id/list_location"
+        android:id="@+id/list_location_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="@string/location"/>
-
-    <TextView
-        android:id="@+id/list_timestamp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="@string/timestamp"/>
+        android:hint="@string/locationAndTime"/>
 
 
 </LinearLayout>

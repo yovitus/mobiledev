@@ -10,5 +10,6 @@
     <string name="location">location</string>
     <string name="timestamp">timestamp</string>
     <string name="name">name</string>
+    <string name="locationAndTime">Location - Time</string>
 
 </resources>

@@ -20,17 +20,18 @@
  */
 package dk.itu.moapd.scootersharing.vime
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.EditText
-import androidx.core.view.WindowCompat
-import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AppCompatActivity
 import dk.itu.moapd.scootersharing.vime.databinding.ActivityMainBinding
 
 /**
  * An activity class with methods to manage the main activity of Getting Started application.
  */
 class MainActivity : AppCompatActivity() {
+    companion object {
+        private val TAG = MainActivity::class.qualifiedName
+    }
+
     private lateinit var binding : ActivityMainBinding
     /*
     * These are viewbindings that allows easy read
