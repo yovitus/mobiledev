@@ -11,12 +11,9 @@ import java.util.*
  * @property name The name of the specific scooter
  * @property location The current location of the scooter
  * @property timestamp The timestamp of the scooter being rented
- * @property date Private property to manipulate date
  */
 
-class Scooter (val name: String, _location: String, _timestamp: Long = System.currentTimeMillis()) {
-    var location: String = _location
-    var timestamp: Long = _timestamp
+data class Scooter (val name: String, val location: String, val timestamp: Long = System.currentTimeMillis()) {
 
     /**+
      * Overriding method to display a different toString().

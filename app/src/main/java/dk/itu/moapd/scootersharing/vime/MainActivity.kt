@@ -32,8 +32,18 @@ class MainActivity : AppCompatActivity() {
         private val TAG = MainActivity::class.qualifiedName
     }
 
+    /**
+     * View binding allows easy written code to interact with views.
+     */
     private lateinit var binding : ActivityMainBinding
 
+    /**
+     * onCreate is called when the activity starts. Initialization such as `setContentView(view)`
+     * is called here.
+     *
+     * @param savedInstanceState If activity is re-initialized, then the bundle contains the most
+     * recent data from `onSaveInstanceState()`.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)

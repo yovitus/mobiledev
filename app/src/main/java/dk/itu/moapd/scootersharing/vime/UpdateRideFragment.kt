@@ -37,7 +37,6 @@ class UpdateRideFragment : Fragment() {
     companion object {
         private val TAG = UpdateRideFragment::class.qualifiedName
         lateinit var ridesDB: RidesDB
-
     }
     /*
     * These are viewbindings that allows easy read
