@@ -20,7 +20,6 @@
  */
 package dk.itu.moapd.scootersharing.vime
 
-import android.app.AlertDialog
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -57,9 +56,16 @@ class MainFragment : Fragment() {
         adapter = CustomAdapter(ridesDB.getRidesList(),
             (fun (scooter) { ridesDB.showMessage(binding.root, scooter.toString(), TAG) }),
             (fun (scooter) {
-                val index = ridesDB.getRidesList().indexOf(scooter)
-                ridesDB.deleteScooter(scooter)
-                adapter.notifyItemRemoved(index)
+                createDialog(
+                    requireContext(),
+                    "Delete Ride",
+                    "Are you sure you want to delete ride ${scooter.name}?",
+                    (fun () {
+                        val index = ridesDB.getRidesList().indexOf(scooter)
+                        ridesDB.deleteScooter(scooter)
+                        adapter.notifyItemRemoved(index)
+                    })
+                )
             })
         )
     }
@@ -94,7 +100,7 @@ class MainFragment : Fragment() {
             updateRideButton.setOnClickListener {
                 if (ridesDB.getRidesList().isEmpty()) {
                     Snackbar.make(
-                        binding.root,
+                        root,
                         "Rides list is empty, start a ride before updating.",
                         Snackbar.LENGTH_SHORT
                     ).show()

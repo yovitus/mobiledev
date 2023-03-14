@@ -20,15 +20,10 @@
  */
 package dk.itu.moapd.scootersharing.vime
 
-import android.app.Activity
-import android.app.AlertDialog
-import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -57,34 +52,7 @@ class UpdateRideFragment : Fragment() {
         super.onCreate(savedInstanceState)
         ridesDB = RidesDB.get(requireContext())
     }
-    fun Context.hideKeyboard(view: View) {
-        val imm = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(view.windowToken, 0)
-    }
-    fun createDialog(Title: String, Message: String) {
-        val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle(Title)
-            .setCancelable(false)
-            .setMessage(Message)
-            .setPositiveButton("OK") { dialog, _ ->
-                if (binding.editTextLocation.text.toString().isNotEmpty()) {
-                    // Update the object attributes.
-                    val location = binding.editTextLocation.text.toString().trim()
-                    ridesDB.updateCurrentScooter(location)
-                    binding.editTextLocation.text?.clear()
-                    ridesDB.showMessage(binding.root, ridesDB.getCurrentScooterInfo(), TAG)
-                }
-                findNavController().navigate(
-                    R.id.show_mainFragment3
-                )
-                requireContext().hideKeyboard(binding.root)
-                dialog.dismiss()
-            }
-            .setNegativeButton("Cancel") { dialog, _ ->
-                dialog.dismiss()
-            }
-        builder.create().show()
-    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -107,12 +75,33 @@ class UpdateRideFragment : Fragment() {
 
             // Buttons.
             updateRideButton.setOnClickListener {
-                createDialog(
-                    "Update Ride",
-                    "Are you sure you want to update the ride?"
-                )
+                if (binding.editTextLocation.text.toString().isEmpty()) {
+                    Snackbar.make(
+                        root,
+                        "Please fill out location",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                } else {
+                    createDialog(
+                        requireContext(),
+                        "Update Ride",
+                        "Are you sure you want to update ride?",
+                        (fun() {
+                            if (binding.editTextLocation.text.toString().isNotEmpty()) {
+                                // Update the object attributes.
+                                val location = binding.editTextLocation.text.toString().trim()
+                                ridesDB.updateCurrentScooter(location)
+                                binding.editTextLocation.text?.clear()
+                                ridesDB.showMessage(binding.root, ridesDB.getCurrentScooterInfo(), TAG)
+                            }
+                            findNavController().navigate(
+                                R.id.show_mainFragment3
+                            )
+                            requireContext().hideKeyboard(binding.root)
+                        })
+                    )
+                }
             }
         }
     }
 }
-
