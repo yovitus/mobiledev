@@ -1,4 +1,4 @@
-package dk.itu.moapd.scootersharing.vime
+package dk.itu.moapd.scootersharing.vime.utils
 
 import android.app.Activity
 import android.app.AlertDialog
@@ -11,13 +11,12 @@ fun Context.hideKeyboard(view: View) {
     imm.hideSoftInputFromWindow(view.windowToken, 0)
 }
 
-fun createDialog(
-    context: Context,
+fun Context.createDialog(
     title: String,
     message: String,
     onOkClick: () -> Unit
 ) {
-    val builder = AlertDialog.Builder(context)
+    val builder = AlertDialog.Builder(this)
     builder.setTitle(title)
         .setCancelable(false)
         .setMessage(message)

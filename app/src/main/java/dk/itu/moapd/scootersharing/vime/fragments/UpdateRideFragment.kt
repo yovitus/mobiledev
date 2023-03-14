@@ -18,7 +18,7 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package dk.itu.moapd.scootersharing.vime
+package dk.itu.moapd.scootersharing.vime.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -28,22 +28,25 @@ import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
-import dk.itu.moapd.scootersharing.vime.databinding.FragmentStartRideBinding
+import dk.itu.moapd.scootersharing.vime.R
+import dk.itu.moapd.scootersharing.vime.RidesDB
+import dk.itu.moapd.scootersharing.vime.utils.createDialog
+import dk.itu.moapd.scootersharing.vime.databinding.FragmentUpdateRideBinding
+import dk.itu.moapd.scootersharing.vime.utils.hideKeyboard
 
 /**
  * An activity class with methods to manage the main activity of Getting Started application.
  */
-class StartRideFragment : Fragment() {
+class UpdateRideFragment : Fragment() {
     companion object {
-        private val TAG = StartRideFragment::class.qualifiedName
+        private val TAG = UpdateRideFragment::class.qualifiedName
         lateinit var ridesDB: RidesDB
     }
-
     /*
     * These are viewbindings that allows easy read
      */
 
-    private var _binding: FragmentStartRideBinding? = null
+    private var _binding: FragmentUpdateRideBinding? = null
     private val binding
         get() = checkNotNull(_binding) {
             "Cannot access binding because it is null. Is the view visible?"
@@ -54,13 +57,14 @@ class StartRideFragment : Fragment() {
         ridesDB = RidesDB.get(requireContext())
     }
 
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding =
-            FragmentStartRideBinding.inflate(inflater, container, false)
+            FragmentUpdateRideBinding.inflate(inflater, container, false)
 
         return binding.root
     }
@@ -70,35 +74,31 @@ class StartRideFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
 
+            editTextName.setText(ridesDB.getCurrentScooter().name)
+            editTextLocation.setText(ridesDB.getCurrentScooter().location)
+
             // Buttons.
-            startRideButton.setOnClickListener {
-                if (binding.editTextName.text.toString().isEmpty() ||
-                        binding.editTextLocation.text.toString().isEmpty()) {
+            updateRideButton.setOnClickListener {
+                if (binding.editTextLocation.text.toString().isEmpty()) {
                     Snackbar.make(
                         root,
-                        "Please fill out name and location",
+                        "Please fill out location",
                         Snackbar.LENGTH_SHORT
                     ).show()
                 } else {
-                    createDialog(
-                        requireContext(),
-                        "Start Ride",
-                        "Are you sure you want to start a ride?",
-                        (fun () {
-                            // Update the object attributes.
-                            val name = binding.editTextName.text.toString().trim()
-                            val location = binding.editTextLocation.text.toString().trim()
-
-                            ridesDB.addScooter(name, location)
-
-                            // Reset the text fields and update the UI
-                            binding.editTextName.text?.clear()
-                            binding.editTextLocation.text?.clear()
-
-                            ridesDB.showMessage(binding.root, ridesDB.getCurrentScooterInfo(), TAG)
-
+                    requireContext().createDialog(
+                        "Update Ride",
+                        "Are you sure you want to update ride?",
+                        (fun() {
+                            if (binding.editTextLocation.text.toString().isNotEmpty()) {
+                                // Update the object attributes.
+                                val location = binding.editTextLocation.text.toString().trim()
+                                ridesDB.updateCurrentScooter(location)
+                                binding.editTextLocation.text?.clear()
+                                ridesDB.showMessage(binding.root, ridesDB.getCurrentScooterInfo(), TAG)
+                            }
                             findNavController().navigate(
-                                R.id.show_mainFragment_from_startRideFragment
+                                R.id.show_mainFragment_from_updateRideFragment
                             )
                             requireContext().hideKeyboard(binding.root)
                         })
@@ -106,10 +106,5 @@ class StartRideFragment : Fragment() {
                 }
             }
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-            _binding = null
     }
 }

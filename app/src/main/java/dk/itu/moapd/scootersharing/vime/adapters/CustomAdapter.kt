@@ -1,9 +1,10 @@
-package dk.itu.moapd.scootersharing.vime
+package dk.itu.moapd.scootersharing.vime.adapters
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import dk.itu.moapd.scootersharing.vime.R
+import dk.itu.moapd.scootersharing.vime.Scooter
 import dk.itu.moapd.scootersharing.vime.databinding.ListRideBinding
 
 class CustomAdapter(
@@ -16,11 +17,13 @@ class CustomAdapter(
 //        private val TAG = CustomAdapter::class.qualifiedName
     }
 
-    class ViewHolder(private val binding: ListRideBinding, val onRemoveClicked: (Scooter) -> Unit) : RecyclerView.ViewHolder(binding.root) {
-        @SuppressLint("SetTextI18n")
+    class ViewHolder(
+        private val binding: ListRideBinding,
+        val onRemoveClicked: (Scooter) -> Unit)
+        : RecyclerView.ViewHolder(binding.root) {
         fun bind(scooter: Scooter) {
             binding.listName.text = scooter.name
-            binding.listLocationTime.text = scooter.location + " - " + scooter.getDate()
+            binding.listLocationTime.text = binding.root.resources.getString(R.string.locationTimeText, scooter.location, scooter.getDate())
 
             binding.listDeleteButton.setOnClickListener {
                 onRemoveClicked(scooter)

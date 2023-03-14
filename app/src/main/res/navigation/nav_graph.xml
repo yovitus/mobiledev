@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/mainFragment"
-        android:name="dk.itu.moapd.scootersharing.vime.MainFragment"
+        android:name="dk.itu.moapd.scootersharing.vime.fragments.MainFragment"
         android:label="MainFragment"
         tools:layout="@layout/fragment_main" >
         <action
@@ -19,7 +19,7 @@
     </fragment>
     <fragment
         android:id="@+id/startRideFragment"
-        android:name="dk.itu.moapd.scootersharing.vime.StartRideFragment"
+        android:name="dk.itu.moapd.scootersharing.vime.fragments.StartRideFragment"
         android:label="fragment_start_ride"
         tools:layout="@layout/fragment_start_ride" >
         <action
@@ -28,7 +28,7 @@
     </fragment>
     <fragment
         android:id="@+id/updateRideFragment"
-        android:name="dk.itu.moapd.scootersharing.vime.UpdateRideFragment"
+        android:name="dk.itu.moapd.scootersharing.vime.fragments.UpdateRideFragment"
         android:label="fragment_update_ride"
         tools:layout="@layout/fragment_update_ride" >
         <action
