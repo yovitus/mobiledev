@@ -29,6 +29,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import dk.itu.moapd.scootersharing.vime.databinding.FragmentMainBinding
 
 /**
@@ -91,10 +92,17 @@ class MainFragment : Fragment() {
             }
 
             updateRideButton.setOnClickListener {
-                findNavController().navigate(
-                    R.id.show_updateRideFragment
-                )
-
+                if (ridesDB.getRidesList().isEmpty()) {
+                    Snackbar.make(
+                        binding.root,
+                        "Rides list is empty, start a ride before updating.",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                } else {
+                    findNavController().navigate(
+                        R.id.show_updateRideFragment
+                    )
+                }
             }
 
             showRidelistButton.setOnClickListener {
