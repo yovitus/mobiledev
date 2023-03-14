@@ -2,8 +2,12 @@ package dk.itu.moapd.scootersharing.vime.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
+import dk.itu.moapd.scootersharing.vime.R
 import dk.itu.moapd.scootersharing.vime.databinding.ActivityMainBinding
 
 /**
@@ -11,7 +15,7 @@ import dk.itu.moapd.scootersharing.vime.databinding.ActivityMainBinding
  */
 class MainActivity : AppCompatActivity() {
     companion object {
-//        private val TAG = MainActivity::class.qualifiedName
+        private val TAG = MainActivity::class.qualifiedName
     }
 
     /**
@@ -43,6 +47,23 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
         if (auth.currentUser == null)
             startLoginActivity()
+        Log.println(Log.INFO, TAG, "Signed in as user ${auth.currentUser?.displayName}")
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.sign_out_button -> {
+                auth.signOut()
+                Log.println(Log.INFO, TAG, "Signing out...")
+                startLoginActivity()
+                true
+            } else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun startLoginActivity() {

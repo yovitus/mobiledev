@@ -14,5 +14,5 @@
     <string name="locationTimeText">%s - %s</string>
     <string name="android_version_text">API Level %1$d</string>
     <string name="removes_ride">Removes ride</string>
-
+    <string name="sign_out_button">Sign out</string>
 </resources>
