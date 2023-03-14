@@ -21,10 +21,18 @@
         android:id="@+id/startRideFragment"
         android:name="dk.itu.moapd.scootersharing.vime.StartRideFragment"
         android:label="fragment_start_ride"
-        tools:layout="@layout/fragment_start_ride" />
+        tools:layout="@layout/fragment_start_ride" >
+        <action
+            android:id="@+id/show_mainFragment"
+            app:destination="@id/mainFragment" />
+    </fragment>
     <fragment
         android:id="@+id/updateRideFragment"
         android:name="dk.itu.moapd.scootersharing.vime.UpdateRideFragment"
         android:label="fragment_update_ride"
-        tools:layout="@layout/fragment_update_ride" />
+        tools:layout="@layout/fragment_update_ride" >
+        <action
+            android:id="@+id/show_mainFragment3"
+            app:destination="@id/mainFragment" />
+    </fragment>
 </navigation>

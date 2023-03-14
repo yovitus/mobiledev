@@ -20,6 +20,7 @@
  */
 package dk.itu.moapd.scootersharing.vime
 
+import android.app.AlertDialog
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -89,6 +90,7 @@ class MainFragment : Fragment() {
                 findNavController().navigate(
                     R.id.show_updateRideFragment
                 )
+
             }
 
             showRidelistButton.setOnClickListener {
