@@ -1,7 +1,9 @@
 package dk.itu.moapd.scootersharing.vime.activities
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
 import dk.itu.moapd.scootersharing.vime.databinding.ActivityMainBinding
 
 /**
@@ -18,6 +20,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding : ActivityMainBinding
 
     /**
+     * Authentication for logged in user. If auth.currentUser == null, navigate to LoginActivity.
+     */
+    private lateinit var auth: FirebaseAuth
+
+    /**
      * onCreate is called when the activity starts. Initialization such as `setContentView(view)`
      * is called here.
      *
@@ -26,8 +33,21 @@ class MainActivity : AppCompatActivity() {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        auth = FirebaseAuth.getInstance()
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (auth.currentUser == null)
+            startLoginActivity()
+    }
+
+    private fun startLoginActivity() {
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 }
