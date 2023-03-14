@@ -23,7 +23,7 @@
         android:label="fragment_start_ride"
         tools:layout="@layout/fragment_start_ride" >
         <action
-            android:id="@+id/show_mainFragment"
+            android:id="@+id/show_mainFragment_from_startRideFragment"
             app:destination="@id/mainFragment" />
     </fragment>
     <fragment
@@ -32,7 +32,7 @@
         android:label="fragment_update_ride"
         tools:layout="@layout/fragment_update_ride" >
         <action
-            android:id="@+id/show_mainFragment3"
+            android:id="@+id/show_mainFragment_from_updateRideFragment"
             app:destination="@id/mainFragment" />
     </fragment>
 </navigation>

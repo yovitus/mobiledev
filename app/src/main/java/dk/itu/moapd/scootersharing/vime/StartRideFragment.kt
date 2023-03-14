@@ -21,7 +21,9 @@
 package dk.itu.moapd.scootersharing.vime
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -50,6 +52,17 @@ class StartRideFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ridesDB = RidesDB.get(requireContext())
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding =
+            FragmentStartRideBinding.inflate(inflater, container, false)
+
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -85,7 +98,7 @@ class StartRideFragment : Fragment() {
                             ridesDB.showMessage(binding.root, ridesDB.getCurrentScooterInfo(), TAG)
 
                             findNavController().navigate(
-                                R.id.show_mainFragment
+                                R.id.show_mainFragment_from_startRideFragment
                             )
                             requireContext().hideKeyboard(binding.root)
                         })

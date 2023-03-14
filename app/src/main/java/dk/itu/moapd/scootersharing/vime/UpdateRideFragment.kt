@@ -95,7 +95,7 @@ class UpdateRideFragment : Fragment() {
                                 ridesDB.showMessage(binding.root, ridesDB.getCurrentScooterInfo(), TAG)
                             }
                             findNavController().navigate(
-                                R.id.show_mainFragment3
+                                R.id.show_mainFragment_from_updateRideFragment
                             )
                             requireContext().hideKeyboard(binding.root)
                         })
