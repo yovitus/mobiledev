@@ -8,25 +8,30 @@ import dk.itu.moapd.scootersharing.vime.databinding.ListRideBinding
 
 class CustomAdapter(
     private val data: List<Scooter>,
-    private val onItemClicked: (Scooter) -> Unit) :
+    private val onItemClicked: (Scooter) -> Unit,
+    private val onRemoveClicked: (Scooter) -> Unit) :
     RecyclerView.Adapter<CustomAdapter.ViewHolder>() {
 
     companion object {
-        private val TAG = CustomAdapter::class.qualifiedName
+//        private val TAG = CustomAdapter::class.qualifiedName
     }
 
-    class ViewHolder(private val binding: ListRideBinding) : RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(private val binding: ListRideBinding, val onRemoveClicked: (Scooter) -> Unit) : RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
         fun bind(scooter: Scooter) {
             binding.listName.text = scooter.name
             binding.listLocationTime.text = scooter.location + " - " + scooter.getDate()
+
+            binding.listDeleteButton.setOnClickListener {
+                onRemoveClicked(scooter)
+            }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = ListRideBinding.inflate(inflater, parent, false)
-        return ViewHolder(binding)
+        return ViewHolder(binding, onRemoveClicked)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

@@ -22,7 +22,6 @@ package dk.itu.moapd.scootersharing.vime
 
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -53,9 +52,14 @@ class MainFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         ridesDB = RidesDB.get(requireContext())
-        adapter = CustomAdapter(ridesDB.getRidesList(), (fun (scooter: Scooter) {
-            ridesDB.showMessage(binding.root, scooter.toString(), TAG)
-        }))
+        adapter = CustomAdapter(ridesDB.getRidesList(),
+            (fun (scooter) { ridesDB.showMessage(binding.root, scooter.toString(), TAG) }),
+            (fun (scooter) {
+                val index = ridesDB.getRidesList().indexOf(scooter)
+                ridesDB.deleteScooter(scooter)
+                adapter.notifyItemRemoved(index)
+            })
+        )
     }
 
     override fun onCreateView(
@@ -76,7 +80,7 @@ class MainFragment : Fragment() {
             recyclerView.adapter = adapter
 
             // For 'Reporting the Device’s Android Version' challenge
-            textViewAndroidversion?.text = resources.getString(R.string.android_version_text, Build.VERSION.SDK_INT)
+            textViewAndroidversion.text = resources.getString(R.string.android_version_text, Build.VERSION.SDK_INT)
 
             // Buttons.
             startRideButton.setOnClickListener {

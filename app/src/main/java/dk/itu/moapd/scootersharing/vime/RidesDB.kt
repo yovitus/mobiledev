@@ -30,6 +30,10 @@ class RidesDB private constructor(context: Context) {
         rides.add(Scooter(name, location, randomDate()))
     }
 
+    fun deleteScooter(scooter: Scooter) {
+        rides.remove(scooter)
+    }
+
     fun updateCurrentScooter(location: String) {
         rides.last().location = location
     }
