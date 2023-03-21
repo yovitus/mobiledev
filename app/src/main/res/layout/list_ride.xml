@@ -15,21 +15,29 @@
             android:id="@+id/list_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:layout_marginBottom="10dp"
+            android:fontFamily="@font/neon"
             android:hint="@string/name"/>
 
         <TextView
             android:id="@+id/list_location_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/neon"
+            android:layout_marginLeft="40dp"
+            android:layout_marginBottom="10dp"
             android:hint="@string/locationAndTime"/>
     </LinearLayout>
 
     <ImageButton
         android:id="@+id/list_delete_button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_alignParentEnd="true"
         android:src="@drawable/baseline_remove_24"
+        android:layout_marginRight="40dp"
+        android:layout_marginBottom="20dp"
         android:contentDescription="@string/removes_ride" />
 
 </RelativeLayout>
