@@ -23,7 +23,7 @@ class CustomAdapter(
         : RecyclerView.ViewHolder(binding.root) {
         fun bind(scooter: Scooter) {
             binding.listName.text = scooter.name
-            binding.listLocationTime.text = binding.root.resources.getString(R.string.locationTimeText, scooter.location, scooter.getDate())
+            binding.listLocationTime.text = binding.root.resources.getString(R.string.locationTimeText, scooter.location, scooter.date)
 
             binding.listDeleteButton.setOnClickListener {
                 onRemoveClicked(scooter)

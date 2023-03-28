@@ -1,8 +1,6 @@
 package dk.itu.moapd.scootersharing.vime
 
-import android.os.Build
-import java.time.Instant
-import java.time.ZoneId
+import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -13,28 +11,14 @@ import java.util.*
  * @property timestamp The timestamp of the scooter being rented
  */
 
-class Scooter (name: String, location: String, timestamp: Long = System.currentTimeMillis()) {
-    var name = name
-    var location = location
-    var timestamp = timestamp
+class Scooter (var name: String, var location: String, var timestamp: Long = System.currentTimeMillis()) {
+    var date: String = SimpleDateFormat("dd/MM", Locale.getDefault()).format(Date(timestamp))
+    private var weekDay = SimpleDateFormat("EEEE", Locale.getDefault()).format(Date(timestamp))
+
     /**+
      * Overriding method to display a different toString().
      */
     override fun toString(): String {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val date = Instant.ofEpochMilli(timestamp).atZone(ZoneId.of("CET")).toLocalDateTime()
-            "Ride started at ${date.dayOfWeek.name.lowercase()} the ${getDate()}, using scooter $name at $location"
-        } else {
-            "Ride started at $timestamp, using scooter $name at $location"
-        }
-    }
-
-    fun getDate(): String {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val date = Instant.ofEpochMilli(timestamp).atZone(ZoneId.of("CET")).toLocalDateTime()
-            "${date.dayOfMonth}/${date.monthValue}"
-        } else {
-            "$timestamp"
-        }
+        return "Ride started at ${weekDay.lowercase()} the $date, using scooter $name at $location"
     }
 }
