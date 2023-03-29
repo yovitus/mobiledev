@@ -21,13 +21,15 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class MainActivityTest {
-
     // companion object is for @BeforeClass annotations
     companion object {
 
         /**
-         * Helper function for setUpAll().
-         * Waits until a specified view is visible.
+         * Helper function for setUpAll(). Waits until a specified view is visible.
+         * @param view The view that the function waits for.
+         * @param delayMillis Millisecond delay between each check if it has become visible.
+         * @param maxTries Amount of tries checking if it has become visible, will throw exception
+         * when tries exceed maxTries.
          */
         private fun waitForView(view: Matcher<View>, delayMillis: Long=500, maxTries: Int=5) {
             var viewNotFound = true
@@ -54,7 +56,7 @@ class MainActivityTest {
          */
         @BeforeClass @JvmStatic
         fun setUpAll() {
-            val scenario = launch(LoginActivity::class.java)
+            val loginScenario = launch(LoginActivity::class.java)
 
             waitForView(withText("Sign in with email"))
             onView(withText("Sign in with email")).perform(click())
@@ -67,7 +69,7 @@ class MainActivityTest {
             onView(withHint("Password")).perform(typeText("123456"))
             onView(withText("SIGN IN")).perform(click())
 
-            scenario.close()
+            loginScenario.close()
         }
     }
 
