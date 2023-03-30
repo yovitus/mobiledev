@@ -25,8 +25,22 @@
                   <entry key="Duration" value="90" />
                   <entry key="OnePlus" value="120" />
                   <entry key="OnePlus&#10; IV2201" value="120" />
+                  <entry key="Pixel_6_Pro_API_25" value="120" />
                   <entry key="Tests" value="360" />
                   <entry key="XK55JVUS7PIBJZD6" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="-1111267848">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Pixel_6_Pro_API_25" value="120" />
+                  <entry key="Tests" value="360" />
                 </map>
               </option>
             </AndroidTestResultsTableState>

@@ -2,7 +2,9 @@ package dk.itu.moapd.scootersharing.vime
 import android.content.Context
 import android.util.Log
 import android.widget.LinearLayout
+import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.android.material.snackbar.Snackbar
+import dk.itu.moapd.scootersharing.vime.data.Scooter
 import java.util.*
 
 class RidesDB private constructor(context: Context) {
@@ -20,10 +22,6 @@ class RidesDB private constructor(context: Context) {
         rides.add(
             Scooter("CPH003", "Lufthavn", randomDate())
         )
-    }
-
-    fun getRidesList(): List<Scooter> {
-        return rides
     }
 
     fun addScooter(name: String, location: String) {

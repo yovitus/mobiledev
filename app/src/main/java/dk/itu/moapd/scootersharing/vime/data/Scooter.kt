@@ -1,9 +1,8 @@
-package dk.itu.moapd.scootersharing.vime
+package dk.itu.moapd.scootersharing.vime.data
 
 import android.os.Build
 import java.time.Instant
 import java.time.ZoneId
-import java.util.*
 
 /**
  * A class containing information about scooters.

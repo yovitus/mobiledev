@@ -8,10 +8,16 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import dk.itu.moapd.scootersharing.vime.R
 import dk.itu.moapd.scootersharing.vime.RidesDB
 import dk.itu.moapd.scootersharing.vime.adapters.CustomAdapter
+import dk.itu.moapd.scootersharing.vime.data.Scooter
 import dk.itu.moapd.scootersharing.vime.utils.createDialog
 import dk.itu.moapd.scootersharing.vime.databinding.FragmentMainBinding
 
@@ -21,8 +27,9 @@ import dk.itu.moapd.scootersharing.vime.databinding.FragmentMainBinding
 class MainFragment : Fragment() {
     companion object {
         private val TAG = MainFragment::class.qualifiedName
-        lateinit var ridesDB: RidesDB
         private lateinit var adapter: CustomAdapter
+        private lateinit var auth: FirebaseAuth
+        private lateinit var database: DatabaseReference
     }
     /*
     * These are viewbindings that allows easy read
@@ -35,23 +42,18 @@ class MainFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        ridesDB = RidesDB.get(requireContext())
-        adapter = CustomAdapter(
-            ridesDB.getRidesList(),
-            (fun(scooter) { ridesDB.showMessage(binding.root, scooter.toString(), TAG) }),
-            (fun(scooter) {
-                requireContext().createDialog(
-                    "Delete Ride",
-                    "Are you sure you want to delete ride ${scooter.name}?",
-                    (fun() {
-                        val index = ridesDB.getRidesList().indexOf(scooter)
-                        ridesDB.deleteScooter(scooter)
-                        adapter.notifyItemRemoved(index)
-                    })
-                )
-            })
-        )
+        auth = FirebaseAuth.getInstance()
+        database = Firebase.database("https://scooter-sharing-6a9a7-default-rtdb.europe-west1.firebasedatabase.app/").reference
+        auth.currentUser?.let{
+            val query = database.child("users")
+                                .child(it.uid)
+                                .child("rides")
+            val options = FirebaseRecyclerOptions.Builder<Scooter>()
+                .setQuery(query, Scooter::class.java)
+                .setLifecycleOwner(this)
+                .build()
+            adapter = CustomAdapter(options)
+        }
     }
 
     override fun onCreateView(
@@ -85,7 +87,7 @@ class MainFragment : Fragment() {
             }
 
             updateRideButton.setOnClickListener {
-                if (ridesDB.getRidesList().isEmpty()) {
+                if (database.) {
                     Snackbar.make(
                         root,
                         "Rides list is empty, start a ride before updating.",
