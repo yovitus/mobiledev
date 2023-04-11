@@ -25,7 +25,7 @@ class RidesDB private constructor(context: Context) {
     }
 
     fun addScooter(name: String, location: String) {
-        rides.add(Scooter(name, location, randomDate()))
+        rides.add(Scooter(name, location))
     }
 
     fun deleteScooter(scooter: Scooter) {
