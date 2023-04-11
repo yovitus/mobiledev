@@ -15,7 +15,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import dk.itu.moapd.scootersharing.vime.R
-import dk.itu.moapd.scootersharing.vime.RidesDB
+import dk.itu.moapd.scootersharing.vime.activities.MainActivity.Companion.database
 import dk.itu.moapd.scootersharing.vime.adapters.CustomAdapter
 import dk.itu.moapd.scootersharing.vime.data.Scooter
 import dk.itu.moapd.scootersharing.vime.utils.createDialog
@@ -29,8 +29,8 @@ class MainFragment : Fragment() {
         private val TAG = MainFragment::class.qualifiedName
         private lateinit var adapter: CustomAdapter
         private lateinit var auth: FirebaseAuth
-        private lateinit var database: DatabaseReference
     }
+
     /*
     * These are viewbindings that allows easy read
      */
@@ -43,11 +43,17 @@ class MainFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = FirebaseAuth.getInstance()
-        database = Firebase.database("https://scooter-sharing-6a9a7-default-rtdb.europe-west1.firebasedatabase.app/").reference
+        var scooterOne = Scooter("001", "CPH001", "ITU")
+        var scooterTwo = Scooter("002", "CPH002", "Fields")
+        var scooterThree = Scooter("003", "CPH003", "Lufthavn")
+
+        database.child("scooters").child("001").setValue(scooterOne)
+        database.child("scooters").child("002").setValue(scooterTwo)
+        database.child("scooters").child("003").setValue(scooterThree)
+
         auth.currentUser?.let{
-            val query = database.child("users")
+            val query = database.child("rides")
                                 .child(it.uid)
-                                .child("rides")
             val options = FirebaseRecyclerOptions.Builder<Scooter>()
                 .setQuery(query, Scooter::class.java)
                 .setLifecycleOwner(this)
@@ -86,19 +92,19 @@ class MainFragment : Fragment() {
                 )
             }
 
-            updateRideButton.setOnClickListener {
-                if (database.) {
-                    Snackbar.make(
-                        root,
-                        "Rides list is empty, start a ride before updating.",
-                        Snackbar.LENGTH_SHORT
-                    ).show()
-                } else {
-                    findNavController().navigate(
-                        R.id.show_updateRideFragment
-                    )
-                }
-            }
+//            updateRideButton.setOnClickListener {
+//                if (database.) {
+//                    Snackbar.make(
+//                        root,
+//                        "Rides list is empty, start a ride before updating.",
+//                        Snackbar.LENGTH_SHORT
+//                    ).show()
+//                } else {
+//                    findNavController().navigate(
+//                        R.id.show_updateRideFragment
+//                    )
+//                }
+//            }
 
             showRidelistButton.setOnClickListener {
                 if (recyclerView.visibility == View.VISIBLE) {

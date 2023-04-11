@@ -28,8 +28,9 @@ import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.database.DatabaseReference
 import dk.itu.moapd.scootersharing.vime.R
-import dk.itu.moapd.scootersharing.vime.RidesDB
+import dk.itu.moapd.scootersharing.vime.activities.MainActivity
 import dk.itu.moapd.scootersharing.vime.utils.createDialog
 import dk.itu.moapd.scootersharing.vime.databinding.FragmentStartRideBinding
 import dk.itu.moapd.scootersharing.vime.utils.hideKeyboard
@@ -40,7 +41,6 @@ import dk.itu.moapd.scootersharing.vime.utils.hideKeyboard
 class StartRideFragment : Fragment() {
     companion object {
         private val TAG = StartRideFragment::class.qualifiedName
-        lateinit var ridesDB: RidesDB
     }
 
     /*
@@ -55,7 +55,7 @@ class StartRideFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ridesDB = RidesDB.get(requireContext())
+        MainActivity.database.child("")
     }
 
     override fun onCreateView(
@@ -92,13 +92,13 @@ class StartRideFragment : Fragment() {
                             val name = binding.editTextName.text.toString().trim()
                             val location = binding.editTextLocation.text.toString().trim()
 
-                            ridesDB.addScooter(name, location)
+                            //ridesDB.addScooter(name, location)
 
                             // Reset the text fields and update the UI
                             binding.editTextName.text?.clear()
                             binding.editTextLocation.text?.clear()
 
-                            ridesDB.showMessage(binding.root, ridesDB.getCurrentScooterInfo(), TAG)
+                            //ridesDB.showMessage(binding.root, ridesDB.getCurrentScooterInfo(), TAG)
 
                             findNavController().navigate(
                                 R.id.show_mainFragment_from_startRideFragment

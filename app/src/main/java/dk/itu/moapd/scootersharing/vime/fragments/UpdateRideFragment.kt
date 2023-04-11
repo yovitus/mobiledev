@@ -29,7 +29,6 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import dk.itu.moapd.scootersharing.vime.R
-import dk.itu.moapd.scootersharing.vime.RidesDB
 import dk.itu.moapd.scootersharing.vime.utils.createDialog
 import dk.itu.moapd.scootersharing.vime.databinding.FragmentUpdateRideBinding
 import dk.itu.moapd.scootersharing.vime.utils.hideKeyboard
@@ -40,7 +39,6 @@ import dk.itu.moapd.scootersharing.vime.utils.hideKeyboard
 class UpdateRideFragment : Fragment() {
     companion object {
         private val TAG = UpdateRideFragment::class.qualifiedName
-        lateinit var ridesDB: RidesDB
     }
     /*
     * These are viewbindings that allows easy read
@@ -54,7 +52,6 @@ class UpdateRideFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ridesDB = RidesDB.get(requireContext())
     }
 
 
@@ -74,8 +71,8 @@ class UpdateRideFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
 
-            editTextName.setText(ridesDB.getCurrentScooter().name)
-            editTextLocation.setText(ridesDB.getCurrentScooter().location)
+            //editTextName.setText(ridesDB.getCurrentScooter().name)
+            //editTextLocation.setText(ridesDB.getCurrentScooter().location)
 
             // Buttons.
             updateRideButton.setOnClickListener {
@@ -93,9 +90,9 @@ class UpdateRideFragment : Fragment() {
                             if (binding.editTextLocation.text.toString().isNotEmpty()) {
                                 // Update the object attributes.
                                 val location = binding.editTextLocation.text.toString().trim()
-                                ridesDB.updateCurrentScooter(location)
+                                //ridesDB.updateCurrentScooter(location)
                                 binding.editTextLocation.text?.clear()
-                                ridesDB.showMessage(binding.root, ridesDB.getCurrentScooterInfo(), TAG)
+                                //ridesDB.showMessage(binding.root, ridesDB.getCurrentScooterInfo(), TAG)
                             }
                             findNavController().navigate(
                                 R.id.show_mainFragment_from_updateRideFragment
