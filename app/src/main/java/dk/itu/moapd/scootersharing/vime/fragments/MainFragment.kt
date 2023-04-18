@@ -15,6 +15,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import dk.itu.moapd.scootersharing.vime.R
+import dk.itu.moapd.scootersharing.vime.activities.MainActivity
 import dk.itu.moapd.scootersharing.vime.activities.MainActivity.Companion.database
 import dk.itu.moapd.scootersharing.vime.adapters.CustomAdapter
 import dk.itu.moapd.scootersharing.vime.data.Scooter
@@ -29,6 +30,7 @@ class MainFragment : Fragment() {
         private val TAG = MainFragment::class.qualifiedName
         private lateinit var adapter: CustomAdapter
         private lateinit var auth: FirebaseAuth
+        private lateinit var database: DatabaseReference
     }
 
     /*
@@ -42,18 +44,19 @@ class MainFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        database = Firebase.database("https://scooter-sharing-6a9a7-default-rtdb.europe-west1.firebasedatabase.app/").reference
         auth = FirebaseAuth.getInstance()
-        var scooterOne = Scooter("001", "CPH001", "ITU")
-        var scooterTwo = Scooter("002", "CPH002", "Fields")
-        var scooterThree = Scooter("003", "CPH003", "Lufthavn")
+        val scooterOne = Scooter("001", "CPH001", "ITU")
+        val scooterTwo = Scooter("002", "CPH002", "Fields")
+        val scooterThree = Scooter("003", "CPH003", "Lufthavn")
 
-        database.child("scooters").child("001").setValue(scooterOne)
-        database.child("scooters").child("002").setValue(scooterTwo)
-        database.child("scooters").child("003").setValue(scooterThree)
+        database.child("scooters").setValue(scooterOne)
+        database.child("scooters").setValue(scooterTwo)
+        database.child("scooters").setValue(scooterThree)
 
         auth.currentUser?.let{
             val query = database.child("rides")
-                                .child(it.uid)
+                                .child(it.uid).push()
             val options = FirebaseRecyclerOptions.Builder<Scooter>()
                 .setQuery(query, Scooter::class.java)
                 .setLifecycleOwner(this)
@@ -86,11 +89,11 @@ class MainFragment : Fragment() {
             )
 
             // Buttons.
-            startRideButton.setOnClickListener {
-                findNavController().navigate(
-                    R.id.show_startRideFragment
-                )
-            }
+//            startRideButton.setOnClickListener {
+//                findNavController().navigate(
+//                    R.id.show_startRideFragment
+//                )
+//            }
 
 //            updateRideButton.setOnClickListener {
 //                if (database.) {
