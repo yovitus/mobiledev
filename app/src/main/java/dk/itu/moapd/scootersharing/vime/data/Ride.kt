@@ -6,10 +6,12 @@ import java.util.*
 import java.time.Instant
 import java.time.ZoneId
 
-data class Ride (val scooterId: String, val start_time: Long, val end_time: Long) {
+data class Ride (val scooterId: String, val time_start: Long, val time_end: Long) {
 
-    var date: String = SimpleDateFormat("dd/MM", Locale.getDefault()).format(Date(start_time))
-    private var weekDay = SimpleDateFormat("EEEE", Locale.getDefault()).format(Date(start_time))
+    constructor() : this("", 0, 0)
+
+    private var date: String = SimpleDateFormat("dd/MM", Locale.getDefault()).format(Date(time_end))
+    private var weekDay = SimpleDateFormat("EEEE", Locale.getDefault()).format(Date(time_end))
 
     /**+
      * Overriding method to display a different toString().

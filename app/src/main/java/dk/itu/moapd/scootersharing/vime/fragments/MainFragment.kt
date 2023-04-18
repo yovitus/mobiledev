@@ -30,7 +30,7 @@ import java.util.UUID
 class MainFragment : Fragment() {
     companion object {
         private val TAG = MainFragment::class.qualifiedName
-//        private lateinit var adapter: CustomAdapter
+        private lateinit var adapter: CustomAdapter
         private lateinit var auth: FirebaseAuth
         private lateinit var database: DatabaseReference
     }
@@ -46,20 +46,22 @@ class MainFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        database = Firebase.database("https://scooter-sharing-6a9a7-default-rtdb.europe-west1.firebasedatabase.app/").reference
         auth = FirebaseAuth.getInstance()
+        database = Firebase.database("https://scooter-sharing-6a9a7-default-rtdb.europe-west1.firebasedatabase.app/").reference
 
-//        val scooter = Scooter("CPH003", "Lufthavnen")
-//
-//        auth.currentUser?.let{ user ->
-//            val uid = database.child("scooters").push().key
-//
-//            uid?.let {
-//                database.child("scooters")
-//                    .child(it)
-//                    .setValue(scooter)
-//            }
-//        }
+        auth.currentUser?.let{
+            val query = database.child("rides").child(it.uid).orderByChild("time_end")
+
+            val options = FirebaseRecyclerOptions.Builder<Ride>()
+                .setQuery(query, Ride::class.java)
+                .setLifecycleOwner(this)
+                .build()
+
+            adapter = CustomAdapter(options)
+        }
+
+//        binding.recyclerView.layoutManager = LinearLayoutManager(this.requireContext())
+//        binding.recyclerView.adapter = adapter
 
     }
 
@@ -78,7 +80,7 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
             recyclerView.layoutManager = LinearLayoutManager(context)
-//            recyclerView.adapter = adapter
+            recyclerView.adapter = adapter
 
             // For 'Reporting the Device’s Android Version' challenge
             textViewAndroidversion.text = resources.getString(
@@ -87,11 +89,11 @@ class MainFragment : Fragment() {
             )
 
             // Buttons.
-//            startRideButton.setOnClickListener {
-//                findNavController().navigate(
-//                    R.id.show_startRideFragment
-//                )
-//            }
+            startRideButton.setOnClickListener {
+                findNavController().navigate(
+                    R.id.show_startRideFragment
+                )
+            }
 
 //            updateRideButton.setOnClickListener {
 //                if (database.) {

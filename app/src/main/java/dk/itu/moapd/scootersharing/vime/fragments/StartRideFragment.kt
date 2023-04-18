@@ -27,10 +27,18 @@ import android.view.ViewGroup
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import dk.itu.moapd.scootersharing.vime.R
+import dk.itu.moapd.scootersharing.vime.activities.LoginActivity
 import dk.itu.moapd.scootersharing.vime.activities.MainActivity
+import dk.itu.moapd.scootersharing.vime.adapters.CustomAdapter
+import dk.itu.moapd.scootersharing.vime.data.Ride
+import dk.itu.moapd.scootersharing.vime.data.Scooter
 import dk.itu.moapd.scootersharing.vime.utils.createDialog
 import dk.itu.moapd.scootersharing.vime.databinding.FragmentStartRideBinding
 import dk.itu.moapd.scootersharing.vime.utils.hideKeyboard
@@ -41,6 +49,8 @@ import dk.itu.moapd.scootersharing.vime.utils.hideKeyboard
 class StartRideFragment : Fragment() {
     companion object {
         private val TAG = StartRideFragment::class.qualifiedName
+        private lateinit var auth: FirebaseAuth
+        private lateinit var database: DatabaseReference
     }
 
     /*
@@ -55,7 +65,9 @@ class StartRideFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        MainActivity.database.child("")
+        auth = FirebaseAuth.getInstance()
+        database =
+            Firebase.database("https://scooter-sharing-6a9a7-default-rtdb.europe-west1.firebasedatabase.app/").reference
     }
 
     override fun onCreateView(
@@ -77,7 +89,8 @@ class StartRideFragment : Fragment() {
             // Buttons.
             startRideButton.setOnClickListener {
                 if (binding.editTextName.text.toString().isEmpty() ||
-                        binding.editTextLocation.text.toString().isEmpty()) {
+                    binding.editTextLocation.text.toString().isEmpty()
+                ) {
                     Snackbar.make(
                         root,
                         "Please fill out name and location",
@@ -87,23 +100,52 @@ class StartRideFragment : Fragment() {
                     requireContext().createDialog(
                         "Start Ride",
                         "Are you sure you want to start a ride?",
-                        (fun () {
+                        (fun() {
                             // Update the object attributes.
                             val name = binding.editTextName.text.toString().trim()
                             val location = binding.editTextLocation.text.toString().trim()
 
-                            //ridesDB.addScooter(name, location)
+                            // Getting the scooter
+                            database.child("scooters").child(name).get().addOnSuccessListener {
+                                val scooter = it.getValue(Scooter::class.java)
 
-                            // Reset the text fields and update the UI
-                            binding.editTextName.text?.clear()
-                            binding.editTextLocation.text?.clear()
+                                // Adding ride
+                                auth.currentUser?.let { user ->
+                                    val uid = database.child("rides").child(user.uid).push().key
 
-                            //ridesDB.showMessage(binding.root, ridesDB.getCurrentScooterInfo(), TAG)
+                                    if (uid != null) {
+                                        database.child("rides").child(user.uid).child(uid).setValue(
+                                            Ride(
+                                                name,
+                                                System.currentTimeMillis(),
+                                                System.currentTimeMillis() + 5000
+                                            )
+                                        )
+                                    }
+                                }
 
-                            findNavController().navigate(
-                                R.id.show_mainFragment_from_startRideFragment
-                            )
-                            requireContext().hideKeyboard(binding.root)
+                                // Updating the scooter
+                                if (scooter != null) {
+                                    database.child("scooters").child(name)
+                                        .setValue(Scooter(scooter.name, location))
+                                }
+
+                                //ridesDB.addScooter(name, location)
+
+                                // Reset the text fields and update the UI
+                                binding.editTextName.text?.clear()
+                                binding.editTextLocation.text?.clear()
+
+                                //ridesDB.showMessage(binding.root, ridesDB.getCurrentScooterInfo(), TAG)
+
+                                findNavController().navigate(
+                                    R.id.show_mainFragment_from_startRideFragment
+                                )
+                                requireContext().hideKeyboard(binding.root)
+
+                            }
+
+
                         })
                     )
                 }
@@ -113,6 +155,6 @@ class StartRideFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-            _binding = null
+        _binding = null
     }
 }
