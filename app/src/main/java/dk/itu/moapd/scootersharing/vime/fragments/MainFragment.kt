@@ -57,12 +57,8 @@ class MainFragment : Fragment() {
                 .setLifecycleOwner(this)
                 .build()
 
-            adapter = CustomAdapter(options)
+            adapter = CustomAdapter(database, options)
         }
-
-//        binding.recyclerView.layoutManager = LinearLayoutManager(this.requireContext())
-//        binding.recyclerView.adapter = adapter
-
     }
 
     override fun onCreateView(

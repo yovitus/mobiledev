@@ -5,10 +5,14 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.google.firebase.database.DatabaseReference
+import dk.itu.moapd.scootersharing.vime.R
 import dk.itu.moapd.scootersharing.vime.data.Ride
+import dk.itu.moapd.scootersharing.vime.data.Scooter
 import dk.itu.moapd.scootersharing.vime.databinding.ListRideBinding
 
-class CustomAdapter(options: FirebaseRecyclerOptions<Ride>
+class CustomAdapter(private val database: DatabaseReference,
+    options: FirebaseRecyclerOptions<Ride>
 ) :
     FirebaseRecyclerAdapter<Ride,
             CustomAdapter.ViewHolder>(options) {
@@ -20,9 +24,9 @@ class CustomAdapter(options: FirebaseRecyclerOptions<Ride>
         private val binding: ListRideBinding
     ) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(ride: Ride) {
-            binding.listName.text = ride.scooterId
-            //binding.listLocationTime.text = binding.root.resources.getString(R.string.locationTimeText, scooter.location)
+        fun bind(ride: Ride, scooter: Scooter) {
+            binding.listNameLocation.text = scooter.name
+            binding.listLocationTime.text = binding.root.resources.getString(R.string.stringCombiner, ride.getStartDate(), ride.getEndDate())
         }
     }
 
@@ -33,8 +37,13 @@ class CustomAdapter(options: FirebaseRecyclerOptions<Ride>
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int, ride: Ride) {
-        holder.apply {
-            bind(ride)
+        database.child("scooters").child(ride.scooterId).get().addOnSuccessListener {
+            val scooter = it.getValue(Scooter::class.java)
+            holder.apply {
+                if (scooter != null) {
+                    bind(ride, scooter)
+                }
+            }
         }
     }
 }

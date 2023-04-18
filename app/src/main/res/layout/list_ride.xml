@@ -12,7 +12,7 @@
         android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/list_name"
+            android:id="@+id/list_name_location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
@@ -20,14 +20,14 @@
             android:fontFamily="@font/neon"
             android:hint="@string/name"/>
 
-<!--        <TextView-->
-<!--            android:id="@+id/list_location_time"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:fontFamily="@font/neon"-->
-<!--            android:layout_marginStart="20dp"-->
-<!--            android:layout_marginBottom="10dp"-->
-<!--            android:hint="@string/locationAndTime"/>-->
+        <TextView
+            android:id="@+id/list_location_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/neon"
+            android:layout_marginStart="20dp"
+            android:layout_marginBottom="10dp"
+            android:hint="@string/locationAndTime"/>
     </LinearLayout>
 
 <!--    <ImageButton-->
