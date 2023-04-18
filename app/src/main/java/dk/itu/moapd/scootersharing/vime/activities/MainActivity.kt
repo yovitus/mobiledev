@@ -7,6 +7,9 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import dk.itu.moapd.scootersharing.vime.R
 import dk.itu.moapd.scootersharing.vime.databinding.ActivityMainBinding
 
@@ -16,6 +19,7 @@ import dk.itu.moapd.scootersharing.vime.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
     companion object {
         private val TAG = MainActivity::class.qualifiedName
+        lateinit var database: DatabaseReference
     }
 
     /**
@@ -41,6 +45,8 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+        database = Firebase.database("https://scooter-sharing-6a9a7-default-rtdb.europe-west1.firebasedatabase.app/").reference
+
     }
 
     override fun onStart() {

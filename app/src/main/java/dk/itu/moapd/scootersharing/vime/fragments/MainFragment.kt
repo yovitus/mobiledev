@@ -8,12 +8,21 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import dk.itu.moapd.scootersharing.vime.R
-import dk.itu.moapd.scootersharing.vime.RidesDB
+import dk.itu.moapd.scootersharing.vime.activities.MainActivity
+import dk.itu.moapd.scootersharing.vime.activities.MainActivity.Companion.database
 import dk.itu.moapd.scootersharing.vime.adapters.CustomAdapter
+import dk.itu.moapd.scootersharing.vime.data.Ride
+import dk.itu.moapd.scootersharing.vime.data.Scooter
 import dk.itu.moapd.scootersharing.vime.utils.createDialog
 import dk.itu.moapd.scootersharing.vime.databinding.FragmentMainBinding
+import java.util.UUID
 
 /**
  * An activity class with methods to manage the main activity of Getting Started application.
@@ -21,9 +30,11 @@ import dk.itu.moapd.scootersharing.vime.databinding.FragmentMainBinding
 class MainFragment : Fragment() {
     companion object {
         private val TAG = MainFragment::class.qualifiedName
-        lateinit var ridesDB: RidesDB
         private lateinit var adapter: CustomAdapter
+        private lateinit var auth: FirebaseAuth
+        private lateinit var database: DatabaseReference
     }
+
     /*
     * These are viewbindings that allows easy read
      */
@@ -35,23 +46,19 @@ class MainFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        auth = FirebaseAuth.getInstance()
+        database = Firebase.database("https://scooter-sharing-6a9a7-default-rtdb.europe-west1.firebasedatabase.app/").reference
 
-        ridesDB = RidesDB.get(requireContext())
-        adapter = CustomAdapter(
-            ridesDB.getRidesList(),
-            (fun(scooter) { ridesDB.showMessage(binding.root, scooter.toString(), TAG) }),
-            (fun(scooter) {
-                requireContext().createDialog(
-                    "Delete Ride",
-                    "Are you sure you want to delete ride ${scooter.name}?",
-                    (fun() {
-                        val index = ridesDB.getRidesList().indexOf(scooter)
-                        ridesDB.deleteScooter(scooter)
-                        adapter.notifyItemRemoved(index)
-                    })
-                )
-            })
-        )
+        auth.currentUser?.let{
+            val query = database.child("rides").child(it.uid).orderByChild("time_end")
+
+            val options = FirebaseRecyclerOptions.Builder<Ride>()
+                .setQuery(query, Ride::class.java)
+                .setLifecycleOwner(this)
+                .build()
+
+            adapter = CustomAdapter(database, options)
+        }
     }
 
     override fun onCreateView(
@@ -84,24 +91,23 @@ class MainFragment : Fragment() {
                 )
             }
 
+//            updateRideButton.setOnClickListener {
+//                if (database.) {
+//                    Snackbar.make(
+//                        root,
+//                        "Rides list is empty, start a ride before updating.",
+//                        Snackbar.LENGTH_SHORT
+//                    ).show()
+//                } else {
+//                    findNavController().navigate(
+//                        R.id.show_updateRideFragment
+//                    )
+//                }
+//            }
             mapButton?.setOnClickListener {
                 findNavController().navigate(
                     R.id.action_mainFragment_to_mapsFragment
                 )
-            }
-
-            updateRideButton.setOnClickListener {
-                if (ridesDB.getRidesList().isEmpty()) {
-                    Snackbar.make(
-                        root,
-                        "Rides list is empty, start a ride before updating.",
-                        Snackbar.LENGTH_SHORT
-                    ).show()
-                } else {
-                    findNavController().navigate(
-                        R.id.show_updateRideFragment
-                    )
-                }
             }
 
             showRidelistButton.setOnClickListener {
