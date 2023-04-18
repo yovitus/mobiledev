@@ -6,9 +6,12 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import dk.itu.moapd.scootersharing.vime.R
 import dk.itu.moapd.scootersharing.vime.databinding.ActivityMainBinding
+
 
 /**
  * An activity class with methods to manage the main activity of Getting Started application.
@@ -18,15 +21,17 @@ class MainActivity : AppCompatActivity() {
         private val TAG = MainActivity::class.qualifiedName
     }
 
+
     /**
      * View binding allows easy written code to interact with views.
      */
     private lateinit var binding : ActivityMainBinding
-
     /**
      * Authentication for logged in user. If auth.currentUser == null, navigate to LoginActivity.
      */
     private lateinit var auth: FirebaseAuth
+
+    private lateinit var navGraph: NavController
 
     /**
      * onCreate is called when the activity starts. Initialization such as `setContentView(view)`
@@ -38,6 +43,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = FirebaseAuth.getInstance()
+        navGraph = findNavController(R.id.nav_graph)
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
@@ -57,10 +63,14 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.sign_out_button -> {
-                auth.signOut()
-                Log.println(Log.INFO, TAG, "Signing out...")
-                startLoginActivity()
+            R.id.home -> {
+                navGraph.navigate(R.id.mainFragment)
+                true
+            } R.id.maps -> {
+                navGraph.navigate(R.id.mapsFragment)
+                true
+            } R.id.profile -> {
+                navGraph.navigate(R.id.startRideFragment)
                 true
             } else -> super.onOptionsItemSelected(item)
         }
