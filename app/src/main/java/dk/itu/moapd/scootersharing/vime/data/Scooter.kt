@@ -4,5 +4,5 @@ import android.os.Build
 import java.time.Instant
 import java.time.ZoneId
 
-data class Scooter (val id: String, val name: String, val location: String)
+data class Scooter (val name: String, val location: String)
 

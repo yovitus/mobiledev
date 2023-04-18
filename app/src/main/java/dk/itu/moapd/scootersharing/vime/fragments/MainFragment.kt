@@ -18,9 +18,11 @@ import dk.itu.moapd.scootersharing.vime.R
 import dk.itu.moapd.scootersharing.vime.activities.MainActivity
 import dk.itu.moapd.scootersharing.vime.activities.MainActivity.Companion.database
 import dk.itu.moapd.scootersharing.vime.adapters.CustomAdapter
+import dk.itu.moapd.scootersharing.vime.data.Ride
 import dk.itu.moapd.scootersharing.vime.data.Scooter
 import dk.itu.moapd.scootersharing.vime.utils.createDialog
 import dk.itu.moapd.scootersharing.vime.databinding.FragmentMainBinding
+import java.util.UUID
 
 /**
  * An activity class with methods to manage the main activity of Getting Started application.
@@ -28,7 +30,7 @@ import dk.itu.moapd.scootersharing.vime.databinding.FragmentMainBinding
 class MainFragment : Fragment() {
     companion object {
         private val TAG = MainFragment::class.qualifiedName
-        private lateinit var adapter: CustomAdapter
+//        private lateinit var adapter: CustomAdapter
         private lateinit var auth: FirebaseAuth
         private lateinit var database: DatabaseReference
     }
@@ -46,23 +48,19 @@ class MainFragment : Fragment() {
         super.onCreate(savedInstanceState)
         database = Firebase.database("https://scooter-sharing-6a9a7-default-rtdb.europe-west1.firebasedatabase.app/").reference
         auth = FirebaseAuth.getInstance()
-        val scooterOne = Scooter("001", "CPH001", "ITU")
-        val scooterTwo = Scooter("002", "CPH002", "Fields")
-        val scooterThree = Scooter("003", "CPH003", "Lufthavn")
 
-        database.child("scooters").setValue(scooterOne)
-        database.child("scooters").setValue(scooterTwo)
-        database.child("scooters").setValue(scooterThree)
+//        val scooter = Scooter("CPH003", "Lufthavnen")
+//
+//        auth.currentUser?.let{ user ->
+//            val uid = database.child("scooters").push().key
+//
+//            uid?.let {
+//                database.child("scooters")
+//                    .child(it)
+//                    .setValue(scooter)
+//            }
+//        }
 
-        auth.currentUser?.let{
-            val query = database.child("rides")
-                                .child(it.uid).push()
-            val options = FirebaseRecyclerOptions.Builder<Scooter>()
-                .setQuery(query, Scooter::class.java)
-                .setLifecycleOwner(this)
-                .build()
-            adapter = CustomAdapter(options)
-        }
     }
 
     override fun onCreateView(
@@ -80,7 +78,7 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
             recyclerView.layoutManager = LinearLayoutManager(context)
-            recyclerView.adapter = adapter
+//            recyclerView.adapter = adapter
 
             // For 'Reporting the Device’s Android Version' challenge
             textViewAndroidversion.text = resources.getString(
