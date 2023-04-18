@@ -15,4 +15,9 @@
     <string name="android_version_text">API Level %1$d</string>
     <string name="removes_ride">Removes ride</string>
     <string name="sign_out_button">Sign out</string>
+    <string name="latitude_text">Latitude</string>
+    <string name="longitude_text">Longitude</string>
+    <string name="time_text">Time</string>
+    <string name="address_text">Address</string>
+    <string name="content_description_location">Location</string>
 </resources>

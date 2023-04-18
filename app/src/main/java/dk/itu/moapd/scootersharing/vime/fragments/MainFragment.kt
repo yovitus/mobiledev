@@ -104,6 +104,11 @@ class MainFragment : Fragment() {
 //                    )
 //                }
 //            }
+            mapButton?.setOnClickListener {
+                findNavController().navigate(
+                    R.id.action_mainFragment_to_mapsFragment
+                )
+            }
 
             showRidelistButton.setOnClickListener {
                 if (recyclerView.visibility == View.VISIBLE) {
