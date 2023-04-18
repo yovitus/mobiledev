@@ -84,6 +84,12 @@ class MainFragment : Fragment() {
                 )
             }
 
+            mapButton?.setOnClickListener {
+                findNavController().navigate(
+                    R.id.action_mainFragment_to_mapsFragment
+                )
+            }
+
             updateRideButton.setOnClickListener {
                 if (ridesDB.getRidesList().isEmpty()) {
                     Snackbar.make(
