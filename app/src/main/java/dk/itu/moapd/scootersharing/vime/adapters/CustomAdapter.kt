@@ -11,7 +11,8 @@ import dk.itu.moapd.scootersharing.vime.data.Ride
 import dk.itu.moapd.scootersharing.vime.data.Scooter
 import dk.itu.moapd.scootersharing.vime.databinding.ListRideBinding
 
-class CustomAdapter(private val database: DatabaseReference,
+class CustomAdapter(
+    private val database: DatabaseReference,
     options: FirebaseRecyclerOptions<Ride>
 ) :
     FirebaseRecyclerAdapter<Ride,
@@ -26,7 +27,11 @@ class CustomAdapter(private val database: DatabaseReference,
         RecyclerView.ViewHolder(binding.root) {
         fun bind(ride: Ride, scooter: Scooter) {
             binding.listNameLocation.text = scooter.name
-            binding.listLocationTime.text = binding.root.resources.getString(R.string.stringCombiner, ride.getStartDate(), ride.getEndDate())
+            binding.listLocationTime.text = binding.root.resources.getString(
+                R.string.stringCombiner,
+                ride.getStartDate(),
+                ride.getEndDate()
+            )
         }
     }
 

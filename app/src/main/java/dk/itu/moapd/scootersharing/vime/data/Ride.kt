@@ -1,20 +1,26 @@
 package dk.itu.moapd.scootersharing.vime.data
 
-import android.os.Build
 import java.text.SimpleDateFormat
 import java.util.*
-import java.time.Instant
-import java.time.ZoneId
 
-data class Ride (val scooterId: String, val time_start: Long, val time_end: Long) {
+data class Ride(
+    val scooterId: String,
+    val timeStart: Long,
+    val timeEnd: Long,
+    val endLocationLat: Long,
+    val endLocationLon: Long,
+    val price: Int
+) {
 
-    constructor() : this("", 0, 0)
+    constructor() : this("", 0, 0, 0, 0, 0)
 
-    private var startDate: String = SimpleDateFormat("dd/MM", Locale.getDefault()).format(Date(time_start))
-    private var startWeekDay = SimpleDateFormat("EEEE", Locale.getDefault()).format(Date(time_start))
+    private var startDate: String =
+        SimpleDateFormat("dd/MM", Locale.getDefault()).format(Date(timeStart))
+    private var startWeekDay = SimpleDateFormat("EEEE", Locale.getDefault()).format(Date(timeStart))
 
-    private var endDate: String = SimpleDateFormat("dd/MM", Locale.getDefault()).format(Date(time_end))
-    private var endWeekDay = SimpleDateFormat("EEEE", Locale.getDefault()).format(Date(time_end))
+    private var endDate: String =
+        SimpleDateFormat("dd/MM", Locale.getDefault()).format(Date(timeEnd))
+    private var endWeekDay = SimpleDateFormat("EEEE", Locale.getDefault()).format(Date(timeEnd))
 
     /**+
      * Overriding method to display a different toString().
