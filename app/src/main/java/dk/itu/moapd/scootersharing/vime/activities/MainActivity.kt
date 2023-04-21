@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
     /**
      * View binding allows easy written code to interact with views.
      */
-    private lateinit var binding : ActivityMainBinding
+    private lateinit var binding: ActivityMainBinding
 
     /**
      * Authentication for logged in user. If auth.currentUser == null, navigate to LoginActivity.
@@ -45,7 +45,8 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        database = Firebase.database("https://scooter-sharing-6a9a7-default-rtdb.europe-west1.firebasedatabase.app/").reference
+        database =
+            Firebase.database("https://scooter-sharing-6a9a7-default-rtdb.europe-west1.firebasedatabase.app/").reference
 
     }
 
@@ -68,7 +69,8 @@ class MainActivity : AppCompatActivity() {
                 Log.println(Log.INFO, TAG, "Signing out...")
                 startLoginActivity()
                 true
-            } else -> super.onOptionsItemSelected(item)
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 

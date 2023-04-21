@@ -27,20 +27,16 @@ import android.view.ViewGroup
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import dk.itu.moapd.scootersharing.vime.R
-import dk.itu.moapd.scootersharing.vime.activities.LoginActivity
-import dk.itu.moapd.scootersharing.vime.activities.MainActivity
-import dk.itu.moapd.scootersharing.vime.adapters.CustomAdapter
 import dk.itu.moapd.scootersharing.vime.data.Ride
-import dk.itu.moapd.scootersharing.vime.data.Scooter
-import dk.itu.moapd.scootersharing.vime.utils.createDialog
 import dk.itu.moapd.scootersharing.vime.databinding.FragmentStartRideBinding
+import dk.itu.moapd.scootersharing.vime.utils.addRide
+import dk.itu.moapd.scootersharing.vime.utils.createDialog
 import dk.itu.moapd.scootersharing.vime.utils.hideKeyboard
 
 /**
@@ -105,47 +101,30 @@ class StartRideFragment : Fragment() {
                             val name = binding.editTextName.text.toString().trim()
                             val location = binding.editTextLocation.text.toString().trim()
 
-                            // Getting the scooter
-                            database.child("scooters").child(name).get().addOnSuccessListener {
-                                val scooter = it.getValue(Scooter::class.java)
+                            val ride = Ride(
+                                name,
+                                System.currentTimeMillis(),
+                                System.currentTimeMillis() + 5000,
+                                0,
+                                0,
+                                0
+                            )
 
-                                // Adding ride
-                                auth.currentUser?.let { user ->
-                                    val uid = database.child("rides").child(user.uid).push().key
-
-                                    if (uid != null) {
-                                        database.child("rides").child(user.uid).child(uid).setValue(
-                                            Ride(
-                                                name,
-                                                System.currentTimeMillis(),
-                                                System.currentTimeMillis() + 5000
-                                            )
-                                        )
-                                    }
-                                }
-
-                                // Updating the scooter
-                                if (scooter != null) {
-                                    database.child("scooters").child(name)
-                                        .setValue(Scooter(scooter.name, location))
-                                }
-
-                                //ridesDB.addScooter(name, location)
-
-                                // Reset the text fields and update the UI
-                                binding.editTextName.text?.clear()
-                                binding.editTextLocation.text?.clear()
-
-                                //ridesDB.showMessage(binding.root, ridesDB.getCurrentScooterInfo(), TAG)
-
-                                findNavController().navigate(
-                                    R.id.show_mainFragment_from_startRideFragment
-                                )
-                                requireContext().hideKeyboard(binding.root)
-
-                            }
+                            auth.currentUser?.addRide(database, ride)
 
 
+//                            auth.currentUser?.addRide(database, ride)
+
+                            // Reset the text fields and update the UI
+                            binding.editTextName.text?.clear()
+                            binding.editTextLocation.text?.clear()
+
+                            //ridesDB.showMessage(binding.root, ridesDB.getCurrentScooterInfo(), TAG)
+
+                            findNavController().navigate(
+                                R.id.show_mainFragment_from_startRideFragment
+                            )
+                            requireContext().hideKeyboard(binding.root)
                         })
                     )
                 }

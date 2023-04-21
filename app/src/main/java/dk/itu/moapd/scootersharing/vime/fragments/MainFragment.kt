@@ -9,20 +9,14 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.firebase.ui.database.FirebaseRecyclerOptions
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import dk.itu.moapd.scootersharing.vime.R
-import dk.itu.moapd.scootersharing.vime.activities.MainActivity
-import dk.itu.moapd.scootersharing.vime.activities.MainActivity.Companion.database
 import dk.itu.moapd.scootersharing.vime.adapters.CustomAdapter
 import dk.itu.moapd.scootersharing.vime.data.Ride
-import dk.itu.moapd.scootersharing.vime.data.Scooter
-import dk.itu.moapd.scootersharing.vime.utils.createDialog
 import dk.itu.moapd.scootersharing.vime.databinding.FragmentMainBinding
-import java.util.UUID
 
 /**
  * An activity class with methods to manage the main activity of Getting Started application.
@@ -47,9 +41,10 @@ class MainFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = FirebaseAuth.getInstance()
-        database = Firebase.database("https://scooter-sharing-6a9a7-default-rtdb.europe-west1.firebasedatabase.app/").reference
+        database =
+            Firebase.database("https://scooter-sharing-6a9a7-default-rtdb.europe-west1.firebasedatabase.app/").reference
 
-        auth.currentUser?.let{
+        auth.currentUser?.let {
             val query = database.child("rides").child(it.uid).orderByChild("time_end")
 
             val options = FirebaseRecyclerOptions.Builder<Ride>()
@@ -59,6 +54,14 @@ class MainFragment : Fragment() {
 
             adapter = CustomAdapter(database, options)
         }
+
+//        val scooter1 = Scooter("CPH001", 0, 0, "url1", true)
+//        val scooter2 = Scooter("CPH002", 0, 0, "url2", true)
+//        val scooter3 = Scooter("CPH003", 0, 0, "url3", true)
+//
+//        database.addScooter(scooter1)
+//        database.addScooter(scooter2)
+//        database.addScooter(scooter3)
     }
 
     override fun onCreateView(
@@ -118,6 +121,7 @@ class MainFragment : Fragment() {
             }
         }
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
