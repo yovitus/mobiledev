@@ -7,18 +7,22 @@ data class Ride(
     val scooterId: String,
     val timeStart: Long,
     val timeEnd: Long,
-    val endLocationLat: Long,
-    val endLocationLon: Long,
+    val endLocationLat: Double,
+    val endLocationLon: Double,
     val price: Int
 ) {
 
-    constructor() : this("", 0, 0, 0, 0, 0)
+    constructor() : this("", 0, 0, 0.0, 0.0, 0)
 
     /**+
      * Overriding method to display a different toString().
      */
     override fun toString(): String {
-        return "Ride started at ${getStartDateWithFormat("EEEE").lowercase()} the ${getStartDateWithFormat("dd/MM")}"
+        return "Ride started at ${getStartDateWithFormat("EEEE").lowercase()} the ${
+            getStartDateWithFormat(
+                "dd/MM"
+            )
+        }"
     }
 
     /**+
