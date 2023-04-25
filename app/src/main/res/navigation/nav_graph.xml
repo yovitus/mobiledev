@@ -3,44 +3,33 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/mainFragment">
+    app:startDestination="@id/home">
 
     <fragment
-        android:id="@+id/mainFragment"
+        android:id="@+id/home"
         android:name="dk.itu.moapd.scootersharing.vime.fragments.MainFragment"
         android:label="MainFragment"
         tools:layout="@layout/fragment_main" >
-        <action
-            android:id="@+id/show_startRideFragment"
-            app:destination="@id/startRideFragment" />
-        <action
-            android:id="@+id/show_updateRideFragment"
-            app:destination="@id/updateRideFragment" />
-        <action
-            android:id="@+id/action_mainFragment_to_mapsFragment"
-            app:destination="@id/mapsFragment" />
     </fragment>
+
     <fragment
-        android:id="@+id/startRideFragment"
+        android:id="@+id/profile"
         android:name="dk.itu.moapd.scootersharing.vime.fragments.StartRideFragment"
         android:label="fragment_start_ride"
         tools:layout="@layout/fragment_start_ride" >
-        <action
-            android:id="@+id/show_mainFragment_from_startRideFragment"
-            app:destination="@id/mainFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/updateRideFragment"
         android:name="dk.itu.moapd.scootersharing.vime.fragments.UpdateRideFragment"
         android:label="fragment_update_ride"
         tools:layout="@layout/fragment_update_ride" >
-        <action
-            android:id="@+id/show_mainFragment_from_updateRideFragment"
-            app:destination="@id/mainFragment" />
     </fragment>
+
     <fragment
-        android:id="@+id/mapsFragment"
+        android:id="@+id/maps"
         android:name="dk.itu.moapd.scootersharing.vime.fragments.MapsFragment"
         android:label="fragment_maps"
-        tools:layout="@layout/fragment_maps" />
+        tools:layout="@layout/fragment_maps" >
+    </fragment>
 </navigation>

@@ -8,11 +8,14 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.snackbar.Snackbar
+import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import dk.itu.moapd.scootersharing.vime.R
-import dk.itu.moapd.scootersharing.vime.RidesDB
 import dk.itu.moapd.scootersharing.vime.adapters.CustomAdapter
-import dk.itu.moapd.scootersharing.vime.utils.createDialog
+import dk.itu.moapd.scootersharing.vime.data.Ride
 import dk.itu.moapd.scootersharing.vime.databinding.FragmentMainBinding
 
 /**
@@ -21,9 +24,11 @@ import dk.itu.moapd.scootersharing.vime.databinding.FragmentMainBinding
 class MainFragment : Fragment() {
     companion object {
         private val TAG = MainFragment::class.qualifiedName
-        lateinit var ridesDB: RidesDB
         private lateinit var adapter: CustomAdapter
+        private lateinit var auth: FirebaseAuth
+        private lateinit var database: DatabaseReference
     }
+
     /*
     * These are viewbindings that allows easy read
      */
@@ -35,23 +40,28 @@ class MainFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        auth = FirebaseAuth.getInstance()
+        database =
+            Firebase.database("https://scooter-sharing-6a9a7-default-rtdb.europe-west1.firebasedatabase.app/").reference
 
-        ridesDB = RidesDB.get(requireContext())
-        adapter = CustomAdapter(
-            ridesDB.getRidesList(),
-            (fun(scooter) { ridesDB.showMessage(binding.root, scooter.toString(), TAG) }),
-            (fun(scooter) {
-                requireContext().createDialog(
-                    "Delete Ride",
-                    "Are you sure you want to delete ride ${scooter.name}?",
-                    (fun() {
-                        val index = ridesDB.getRidesList().indexOf(scooter)
-                        ridesDB.deleteScooter(scooter)
-                        adapter.notifyItemRemoved(index)
-                    })
-                )
-            })
-        )
+        auth.currentUser?.let {
+            val query = database.child("rides").child(it.uid).orderByChild("time_end")
+
+            val options = FirebaseRecyclerOptions.Builder<Ride>()
+                .setQuery(query, Ride::class.java)
+                .setLifecycleOwner(this)
+                .build()
+
+            adapter = CustomAdapter(database, options)
+        }
+
+//        val scooter1 = Scooter("CPH001", 0, 0, "url1", true)
+//        val scooter2 = Scooter("CPH002", 0, 0, "url2", true)
+//        val scooter3 = Scooter("CPH003", 0, 0, "url3", true)
+//
+//        database.addScooter(scooter1)
+//        database.addScooter(scooter2)
+//        database.addScooter(scooter3)
     }
 
     override fun onCreateView(
@@ -78,30 +88,29 @@ class MainFragment : Fragment() {
             )
 
             // Buttons.
-            startRideButton.setOnClickListener {
-                findNavController().navigate(
-                    R.id.show_startRideFragment
-                )
-            }
+//            startRideButton.setOnClickListener {
+//                findNavController().navigate(
+//                    R.id.show_startRideFragment
+//                )
+//            }
 
+//            updateRideButton.setOnClickListener {
+//                if (database.) {
+//                    Snackbar.make(
+//                        root,
+//                        "Rides list is empty, start a ride before updating.",
+//                        Snackbar.LENGTH_SHORT
+//                    ).show()
+//                } else {
+//                    findNavController().navigate(
+//                        R.id.show_updateRideFragment
+//                    )
+//                }
+//            }
             mapButton?.setOnClickListener {
                 findNavController().navigate(
-                    R.id.action_mainFragment_to_mapsFragment
+                    R.id.maps
                 )
-            }
-
-            updateRideButton.setOnClickListener {
-                if (ridesDB.getRidesList().isEmpty()) {
-                    Snackbar.make(
-                        root,
-                        "Rides list is empty, start a ride before updating.",
-                        Snackbar.LENGTH_SHORT
-                    ).show()
-                } else {
-                    findNavController().navigate(
-                        R.id.show_updateRideFragment
-                    )
-                }
             }
 
             showRidelistButton.setOnClickListener {
@@ -112,6 +121,7 @@ class MainFragment : Fragment() {
             }
         }
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
