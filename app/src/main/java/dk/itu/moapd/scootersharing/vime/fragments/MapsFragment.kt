@@ -1,35 +1,33 @@
 package dk.itu.moapd.scootersharing.vime.fragments
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import android.Manifest
 import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import android.os.Build
+import android.os.Bundle
 import android.os.Looper
-import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat.checkSelfPermission
+import androidx.fragment.app.Fragment
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import dk.itu.moapd.scootersharing.vime.R
 import dk.itu.moapd.scootersharing.vime.utils.getScooters
 import kotlinx.coroutines.*
 import java.util.*
-import kotlin.collections.ArrayList
 
 class MapsFragment : Fragment() {
 
@@ -59,6 +57,7 @@ class MapsFragment : Fragment() {
             withContext(Dispatchers.Main) {
                 scooters.forEach { scooter ->
                     val markerPos = LatLng(scooter.locationLat, scooter.locationLon)
+                    // Should be updated with onclick, for modal popup
                     googleMap.addMarker(MarkerOptions().position(markerPos).title("Scooter"))
                 }
             }
@@ -157,10 +156,16 @@ class MapsFragment : Fragment() {
             if (task.isSuccessful) {
                 val lastKnownLocation = task.result
                 if (lastKnownLocation != null) {
-                    map?.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                        LatLng(lastKnownLocation.latitude,
-                            lastKnownLocation.longitude), DEFAULT_ZOOM.toFloat()))
+                    map?.moveCamera(
+                        CameraUpdateFactory.newLatLngZoom(
+                            LatLng(
+                                lastKnownLocation.latitude,
+                                lastKnownLocation.longitude
+                            ), DEFAULT_ZOOM.toFloat()
+                        )
+                    )
                     val markerPos = LatLng(lastKnownLocation.latitude, lastKnownLocation.longitude)
+                    // Should be updated to other than marker, shows user location
                     userMarker = map?.addMarker(MarkerOptions().position(markerPos))
                 }
             }
