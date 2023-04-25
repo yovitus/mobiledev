@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
@@ -14,23 +13,32 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import android.Manifest
 import android.content.pm.PackageManager
+import android.location.Address
+import android.location.Geocoder
+import android.location.Location
+import android.os.Build
 import android.os.Looper
+import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat.checkSelfPermission
 import com.google.android.gms.location.*
 import dk.itu.moapd.scootersharing.vime.R
 import dk.itu.moapd.scootersharing.vime.utils.getScooters
 import kotlinx.coroutines.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 class MapsFragment : Fragment() {
 
     companion object {
+        private val TAG = MapsFragment::class.qualifiedName
         private const val ALL_PERMISSION_RESULTS = 1011
-        private var
     }
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
+    private lateinit var address: String
+    private lateinit var location: Location
 
     private val database =
         Firebase.database("https://scooter-sharing-6a9a7-default-rtdb.europe-west1.firebasedatabase.app/").reference
@@ -54,7 +62,7 @@ class MapsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-//        startLocationAware()
+        startLocationAware()
         return inflater.inflate(R.layout.fragment_maps, container, false)
     }
 
@@ -145,8 +153,43 @@ class MapsFragment : Fragment() {
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)
     }
 
-    private fun setAddress(location: Location) {
+    private fun setAddress(loc: Location) {
+        if (!Geocoder.isPresent())
+            return
 
+        val geocoder = Geocoder(requireActivity(), Locale.getDefault())
+
+        if (Build.VERSION.SDK_INT >= 33) {
+            val geocodeListener = Geocoder.GeocodeListener { addresses ->
+                addresses.firstOrNull()?.toAddressString()?.let {
+                    location = loc
+                    address = it
+                }
+            }
+            geocoder.getFromLocation(loc.latitude, loc.longitude, 1, geocodeListener)
+        } else {
+            geocoder.getFromLocation(loc.latitude, loc.longitude, 1)?.let { addresses ->
+                addresses.firstOrNull()?.toAddressString()?.let {
+                    location = loc
+                    address = it
+                }
+            }
+        }
+    }
+
+    private fun Address.toAddressString(): String {
+        val address = this
+
+        // Create a `String` with multiple lines.
+        val stringBuilder = StringBuilder()
+        stringBuilder.apply {
+            append(address.getAddressLine(0)).append("\n")
+            append(address.postalCode).append(" ")
+            append(address.locality).append("\n")
+            append(address.countryName)
+        }
+
+        return stringBuilder.toString()
     }
 
 }
