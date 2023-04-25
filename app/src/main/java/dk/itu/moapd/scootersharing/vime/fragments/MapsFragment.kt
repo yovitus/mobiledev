@@ -145,6 +145,8 @@ class MapsFragment : Fragment() {
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)
     }
 
-    private fun setAddress
+    private fun setAddress(location: Location) {
+
+    }
 
 }
