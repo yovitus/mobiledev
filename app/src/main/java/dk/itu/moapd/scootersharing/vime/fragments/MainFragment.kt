@@ -51,7 +51,6 @@ class MainFragment : Fragment() {
                 .setQuery(query, Ride::class.java)
                 .setLifecycleOwner(this)
                 .build()
-
             adapter = CustomAdapter(database, options)
         }
 

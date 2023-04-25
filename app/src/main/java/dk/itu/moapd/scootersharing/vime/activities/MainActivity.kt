@@ -39,7 +39,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = FirebaseAuth.getInstance()
-//        navGraph = findNavController(R.id.nav_graph)
+        if (auth.currentUser == null)
+            startLoginActivity()
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
@@ -53,8 +54,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        if (auth.currentUser == null)
-            startLoginActivity()
         Log.println(Log.INFO, TAG, "Signed in as user ${auth.currentUser?.displayName}")
     }
 
