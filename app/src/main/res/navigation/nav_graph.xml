@@ -13,17 +13,17 @@
     </fragment>
 
     <fragment
-        android:id="@+id/profile"
+        android:id="@+id/startRide"
         android:name="dk.itu.moapd.scootersharing.vime.fragments.StartRideFragment"
         android:label="fragment_start_ride"
         tools:layout="@layout/fragment_start_ride" >
     </fragment>
 
     <fragment
-        android:id="@+id/updateRideFragment"
-        android:name="dk.itu.moapd.scootersharing.vime.fragments.UpdateRideFragment"
+        android:id="@+id/profile"
+        android:name="dk.itu.moapd.scootersharing.vime.fragments.ProfileFragment"
         android:label="fragment_update_ride"
-        tools:layout="@layout/fragment_update_ride" >
+        tools:layout="@layout/fragment_profile" >
     </fragment>
 
     <fragment

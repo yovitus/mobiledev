@@ -20,6 +20,7 @@
  */
 package dk.itu.moapd.scootersharing.vime.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -28,27 +29,34 @@ import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
 import dk.itu.moapd.scootersharing.vime.R
-import dk.itu.moapd.scootersharing.vime.databinding.FragmentUpdateRideBinding
+import dk.itu.moapd.scootersharing.vime.activities.LoginActivity
+import dk.itu.moapd.scootersharing.vime.databinding.FragmentProfileBinding
 import dk.itu.moapd.scootersharing.vime.utils.createDialog
 import dk.itu.moapd.scootersharing.vime.utils.hideKeyboard
 
 /**
  * An activity class with methods to manage the main activity of Getting Started application.
  */
-class UpdateRideFragment : Fragment() {
+class ProfileFragment : Fragment() {
     companion object {
-        private val TAG = UpdateRideFragment::class.qualifiedName
+        private val TAG = ProfileFragment::class.qualifiedName
+        private lateinit var auth: FirebaseAuth
     }
     /*
     * These are viewbindings that allows easy read
      */
 
-    private var _binding: FragmentUpdateRideBinding? = null
+    private var _binding: FragmentProfileBinding? = null
     private val binding
         get() = checkNotNull(_binding) {
             "Cannot access binding because it is null. Is the view visible?"
         }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        auth = FirebaseAuth.getInstance()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,7 +64,7 @@ class UpdateRideFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding =
-            FragmentUpdateRideBinding.inflate(inflater, container, false)
+            FragmentProfileBinding.inflate(inflater, container, false)
 
         return binding.root
     }
@@ -65,37 +73,11 @@ class UpdateRideFragment : Fragment() {
         WindowCompat.setDecorFitsSystemWindows(requireActivity().window, false)
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
-
-            //editTextName.setText(ridesDB.getCurrentScooter().name)
-            //editTextLocation.setText(ridesDB.getCurrentScooter().location)
-
-            // Buttons.
-            updateRideButton.setOnClickListener {
-                if (binding.editTextLocation.text.toString().isEmpty()) {
-                    Snackbar.make(
-                        root,
-                        "Please fill out location",
-                        Snackbar.LENGTH_SHORT
-                    ).show()
-                } else {
-                    requireContext().createDialog(
-                        "Update Ride",
-                        "Are you sure you want to update ride?",
-                        (fun() {
-                            if (binding.editTextLocation.text.toString().isNotEmpty()) {
-                                // Update the object attributes.
-                                val location = binding.editTextLocation.text.toString().trim()
-                                //ridesDB.updateCurrentScooter(location)
-                                binding.editTextLocation.text?.clear()
-                                //ridesDB.showMessage(binding.root, ridesDB.getCurrentScooterInfo(), TAG)
-                            }
-                            findNavController().navigate(
-                                R.id.home
-                            )
-                            requireContext().hideKeyboard(binding.root)
-                        })
-                    )
-                }
+            signOutButton.setOnClickListener {
+                auth.signOut()
+                val intent = Intent(requireActivity(), LoginActivity::class.java)
+                startActivity(intent)
+                requireActivity().finish()
             }
         }
     }
