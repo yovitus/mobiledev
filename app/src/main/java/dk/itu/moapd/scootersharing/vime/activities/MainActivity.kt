@@ -4,12 +4,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
-import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import dk.itu.moapd.scootersharing.vime.R
 import dk.itu.moapd.scootersharing.vime.databinding.ActivityMainBinding
 
@@ -19,7 +17,6 @@ import dk.itu.moapd.scootersharing.vime.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
     companion object {
         private val TAG = MainActivity::class.qualifiedName
-        lateinit var database: DatabaseReference
     }
 
     /**
@@ -42,18 +39,21 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = FirebaseAuth.getInstance()
+        if (auth.currentUser == null)
+            startLoginActivity()
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        database =
-            Firebase.database("https://scooter-sharing-6a9a7-default-rtdb.europe-west1.firebasedatabase.app/").reference
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.fragment_container) as NavHostFragment
+        val navController = navHostFragment.navController
 
+        binding.bottomNav.setupWithNavController(navController)
     }
+
 
     override fun onStart() {
         super.onStart()
-        if (auth.currentUser == null)
-            startLoginActivity()
         Log.println(Log.INFO, TAG, "Signed in as user ${auth.currentUser?.displayName}")
     }
 
@@ -62,22 +62,9 @@ class MainActivity : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.sign_out_button -> {
-                auth.signOut()
-                Log.println(Log.INFO, TAG, "Signing out...")
-                startLoginActivity()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
     private fun startLoginActivity() {
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
         finish()
     }
-
 }

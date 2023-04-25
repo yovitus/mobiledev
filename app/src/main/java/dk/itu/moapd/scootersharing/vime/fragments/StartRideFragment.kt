@@ -122,7 +122,7 @@ class StartRideFragment : Fragment() {
                             //ridesDB.showMessage(binding.root, ridesDB.getCurrentScooterInfo(), TAG)
 
                             findNavController().navigate(
-                                R.id.show_mainFragment_from_startRideFragment
+                                R.id.profile
                             )
                             requireContext().hideKeyboard(binding.root)
                         })

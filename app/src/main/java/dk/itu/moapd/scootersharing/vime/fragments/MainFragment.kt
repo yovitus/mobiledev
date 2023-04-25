@@ -51,7 +51,6 @@ class MainFragment : Fragment() {
                 .setQuery(query, Ride::class.java)
                 .setLifecycleOwner(this)
                 .build()
-
             adapter = CustomAdapter(database, options)
         }
 
@@ -88,11 +87,11 @@ class MainFragment : Fragment() {
             )
 
             // Buttons.
-            startRideButton.setOnClickListener {
-                findNavController().navigate(
-                    R.id.show_startRideFragment
-                )
-            }
+//            startRideButton.setOnClickListener {
+//                findNavController().navigate(
+//                    R.id.show_startRideFragment
+//                )
+//            }
 
 //            updateRideButton.setOnClickListener {
 //                if (database.) {
@@ -109,7 +108,7 @@ class MainFragment : Fragment() {
 //            }
             mapButton?.setOnClickListener {
                 findNavController().navigate(
-                    R.id.action_mainFragment_to_mapsFragment
+                    R.id.maps
                 )
             }
 

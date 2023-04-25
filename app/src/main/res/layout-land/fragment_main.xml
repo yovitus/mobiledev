@@ -33,12 +33,12 @@
         android:text="@string/start_ride_button" />
 
     <Button
-        android:id="@+id/update_ride_button"
+        android:id="@+id/sign_out_button"
         android:layout_width="170dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="40dp"
         app:icon="@drawable/baseline_edit_24"
-        android:text="@string/update_ride_button" />
+        android:text="@string/sign_out_button" />
 
     <Button
         android:id="@+id/show_ridelist_button"
