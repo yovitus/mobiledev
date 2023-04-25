@@ -40,11 +40,11 @@ android {
 
 dependencies {
     implementation platform('com.google.firebase:firebase-bom:31.2.3')
-    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.core:core-ktx:1.10.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.5.3'
     implementation 'androidx.navigation:navigation-ui-ktx:2.5.3'
     implementation 'com.firebaseui:firebase-ui-storage:8.0.0'
@@ -53,8 +53,8 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-auth:8.0.0'
     implementation 'com.google.firebase:firebase-database-ktx'
     implementation 'com.firebaseui:firebase-ui-database:7.1.1'
-    implementation 'com.google.android.gms:play-services-location:17.1.0'
-    implementation 'com.google.android.gms:play-services-auth:20.4.1'
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
+    implementation 'com.google.android.gms:play-services-auth:20.5.0'
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
     implementation 'com.google.firebase:firebase-storage-ktx'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
