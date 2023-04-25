@@ -1,9 +1,15 @@
 package dk.itu.moapd.scootersharing.vime.utils
 
+import android.content.Context
+import android.widget.ImageView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.storage.StorageReference
 import dk.itu.moapd.scootersharing.vime.data.Ride
 import dk.itu.moapd.scootersharing.vime.data.Scooter
+import kotlinx.coroutines.tasks.await
 
 fun FirebaseUser?.addRide(db: DatabaseReference, ride: Ride) {
     // Getting the scooter
@@ -22,7 +28,7 @@ fun FirebaseUser?.addRide(db: DatabaseReference, ride: Ride) {
 
             // Updating the scooter
             db.child("scooters").child(ride.scooterId)
-                .setValue(Scooter(scooter.name, 0, 0, "url", true))
+                .setValue(Scooter(scooter.name, 0.0, 0.0, "url", true))
         }
 
     }
@@ -33,5 +39,27 @@ fun DatabaseReference.addScooter(scooter: Scooter) {
 
     if (uid != null) {
         this.child("scooters").child(uid).setValue(scooter)
+    }
+}
+
+suspend fun DatabaseReference.getScooters(): List<Scooter> {
+    val list = mutableListOf<Scooter>()
+    val snapshot = this.child("scooters").get().await()
+    snapshot.children.forEach { scooterSnap ->
+        scooterSnap.getValue(Scooter::class.java)?.let { scooter ->
+            list.add(scooter)
+        }
+    }
+    return list
+}
+
+// To use, hopefully Firebase.storage(scooter.imageUrl).reference.loadScooterImageInto(...) will work
+fun StorageReference.loadScooterImageInto(ctx: Context, view: ImageView) {
+    this.downloadUrl.addOnSuccessListener {
+        Glide.with(ctx)
+            .load(it)
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .centerCrop()
+            .into(view)
     }
 }

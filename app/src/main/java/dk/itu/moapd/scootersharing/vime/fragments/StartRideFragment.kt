@@ -105,8 +105,8 @@ class StartRideFragment : Fragment() {
                                 name,
                                 System.currentTimeMillis(),
                                 System.currentTimeMillis() + 5000,
-                                0,
-                                0,
+                                0.0,
+                                0.0,
                                 0
                             )
 
