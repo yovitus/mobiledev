@@ -8,7 +8,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     >
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/frament_container"
+        android:id="@+id/fragment_container"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="0pt"
