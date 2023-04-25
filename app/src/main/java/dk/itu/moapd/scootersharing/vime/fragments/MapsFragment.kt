@@ -22,6 +22,9 @@ import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat.checkSelfPermission
 import com.google.android.gms.location.*
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.Marker
 import dk.itu.moapd.scootersharing.vime.R
 import dk.itu.moapd.scootersharing.vime.utils.getScooters
 import kotlinx.coroutines.*
@@ -33,25 +36,30 @@ class MapsFragment : Fragment() {
     companion object {
         private val TAG = MapsFragment::class.qualifiedName
         private const val ALL_PERMISSION_RESULTS = 1011
+        private const val DEFAULT_ZOOM = 15
     }
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
+
     private lateinit var address: String
-    private lateinit var location: Location
+    private var userMarker: Marker? = null
+
+    private var map: GoogleMap? = null
 
     private val database =
         Firebase.database("https://scooter-sharing-6a9a7-default-rtdb.europe-west1.firebasedatabase.app/").reference
 
     @OptIn(DelicateCoroutinesApi::class)
     private val callback = OnMapReadyCallback { googleMap ->
+        map = googleMap
         GlobalScope.launch {
             val scooters = database.getScooters()
 
             withContext(Dispatchers.Main) {
                 scooters.forEach { scooter ->
-                    val marker = LatLng(scooter.locationLat, scooter.locationLon)
-                    googleMap.addMarker(MarkerOptions().position(marker).title("Scooter"))
+                    val markerPos = LatLng(scooter.locationLat, scooter.locationLon)
+                    googleMap.addMarker(MarkerOptions().position(markerPos).title("Scooter"))
                 }
             }
         }
@@ -144,6 +152,20 @@ class MapsFragment : Fragment() {
             .Builder(Priority.PRIORITY_HIGH_ACCURACY, 5)
             .build()
 
+        val locationResult = fusedLocationProviderClient.lastLocation
+        locationResult.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val lastKnownLocation = task.result
+                if (lastKnownLocation != null) {
+                    map?.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                        LatLng(lastKnownLocation.latitude,
+                            lastKnownLocation.longitude), DEFAULT_ZOOM.toFloat()))
+                    val markerPos = LatLng(lastKnownLocation.latitude, lastKnownLocation.longitude)
+                    userMarker = map?.addMarker(MarkerOptions().position(markerPos))
+                }
+            }
+        }
+
         fusedLocationProviderClient.requestLocationUpdates(
             locationRequest, locationCallback, Looper.getMainLooper()
         )
@@ -162,7 +184,7 @@ class MapsFragment : Fragment() {
         if (Build.VERSION.SDK_INT >= 33) {
             val geocodeListener = Geocoder.GeocodeListener { addresses ->
                 addresses.firstOrNull()?.toAddressString()?.let {
-                    location = loc
+                    userMarker?.position = LatLng(loc.latitude, loc.longitude)
                     address = it
                 }
             }
@@ -170,7 +192,7 @@ class MapsFragment : Fragment() {
         } else {
             geocoder.getFromLocation(loc.latitude, loc.longitude, 1)?.let { addresses ->
                 addresses.firstOrNull()?.toAddressString()?.let {
-                    location = loc
+                    userMarker?.position = LatLng(loc.latitude, loc.longitude)
                     address = it
                 }
             }
