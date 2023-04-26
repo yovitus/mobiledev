@@ -1,18 +1,19 @@
 package dk.itu.moapd.scootersharing.vime.fragments
 
 import android.Manifest
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.content.pm.PackageManager
-import android.location.Address
-import android.location.Geocoder
 import android.location.Location
-import android.os.Build
 import android.os.Bundle
-import android.os.Looper
+import android.os.IBinder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat.checkSelfPermission
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -25,6 +26,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import dk.itu.moapd.scootersharing.vime.R
+import dk.itu.moapd.scootersharing.vime.services.LocationUpdatesService
 import dk.itu.moapd.scootersharing.vime.utils.getScooters
 import kotlinx.coroutines.*
 import java.util.*
@@ -37,8 +39,28 @@ class MapsFragment : Fragment() {
         private const val DEFAULT_ZOOM = 15
     }
 
-    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    private lateinit var locationCallback: LocationCallback
+    private lateinit var locationUpdatesService: LocationUpdatesService
+    private var serviceBound = false
+
+    private val connection = object : ServiceConnection {
+
+        override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance.
+            val binder = service as LocationUpdatesService.LocalBinder
+            locationUpdatesService = binder.getService()
+            serviceBound = true
+
+            locationUpdatesService.subscribeToLocationUpdates(
+                ::addUserMarker,
+                ::updateUserPosAndAddr
+            )
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            serviceBound = false
+            locationUpdatesService.unsubscribeToLocationUpdates()
+        }
+    }
 
     private lateinit var address: String
     private var userMarker: Marker? = null
@@ -69,7 +91,11 @@ class MapsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        startLocationAware()
+        requestUserPermissions()
+
+        Intent(requireContext(), LocationUpdatesService::class.java).also { intent ->
+            requireActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE)
+        }
         return inflater.inflate(R.layout.fragment_maps, container, false)
     }
 
@@ -79,31 +105,10 @@ class MapsFragment : Fragment() {
         mapFragment?.getMapAsync(callback)
     }
 
-    override fun onResume() {
-        super.onResume()
-        subscribeToLocationUpdates()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        unsubscribeToLocationUpdates()
-    }
-
-    private fun startLocationAware() {
-        requestUserPermissions()
-
-        fusedLocationProviderClient =
-            LocationServices.getFusedLocationProviderClient(this.requireActivity())
-
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(p0: LocationResult) {
-                super.onLocationResult(p0)
-
-                p0.lastLocation?.let { location ->
-                    setAddress(location)
-                }
-            }
-        }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        requireActivity().unbindService(connection)
+        serviceBound = false
     }
 
     private fun requestUserPermissions() {
@@ -115,10 +120,18 @@ class MapsFragment : Fragment() {
         val permissionsToRequest = permissionsToRequest(permissions)
 
         if (permissionsToRequest.size > 0) {
-            requestPermissions(
-                permissionsToRequest.toTypedArray(),
-                ALL_PERMISSION_RESULTS
-            )
+            val requestPermissionLauncher = registerForActivityResult(
+                ActivityResultContracts.RequestMultiplePermissions()
+            ) { perms ->
+                val allGranted = perms.all { it.value }
+                if (allGranted) {
+                    locationUpdatesService.subscribeToLocationUpdates(
+                        ::addUserMarker,
+                        ::updateUserPosAndAddr
+                    )
+                }
+            }
+            requestPermissionLauncher.launch(permissionsToRequest.toTypedArray())
         }
     }
 
@@ -126,97 +139,36 @@ class MapsFragment : Fragment() {
         val result: ArrayList<String> = ArrayList()
 
         for (permission in permissions)
-            if (checkSelfPermission(
+            if (ContextCompat.checkSelfPermission(
                     requireContext(),
                     permission
                 ) != PackageManager.PERMISSION_GRANTED
             )
                 result.add(permission)
+
         return result
     }
 
-    private fun checkPermission() =
-        ActivityCompat.checkSelfPermission(
-            requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION
-        ) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(
-                    requireActivity(), Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
+    private fun addUserMarker(location: Location) {
+        val markerPos = LatLng(location.latitude, location.longitude)
+        // Should be updated to other than marker, shows user location
+        userMarker = map?.addMarker(MarkerOptions().position(markerPos))
+        moveCamera(location)
+    }
 
-    private fun subscribeToLocationUpdates() {
-        if (checkPermission())
-            return
-
-        val locationRequest = LocationRequest
-            .Builder(Priority.PRIORITY_HIGH_ACCURACY, 5)
-            .build()
-
-        val locationResult = fusedLocationProviderClient.lastLocation
-        locationResult.addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val lastKnownLocation = task.result
-                if (lastKnownLocation != null) {
-                    map?.moveCamera(
-                        CameraUpdateFactory.newLatLngZoom(
-                            LatLng(
-                                lastKnownLocation.latitude,
-                                lastKnownLocation.longitude
-                            ), DEFAULT_ZOOM.toFloat()
-                        )
-                    )
-                    val markerPos = LatLng(lastKnownLocation.latitude, lastKnownLocation.longitude)
-                    // Should be updated to other than marker, shows user location
-                    userMarker = map?.addMarker(MarkerOptions().position(markerPos))
-                }
-            }
-        }
-
-        fusedLocationProviderClient.requestLocationUpdates(
-            locationRequest, locationCallback, Looper.getMainLooper()
+    private fun moveCamera(location: Location) {
+        map?.moveCamera(
+            CameraUpdateFactory.newLatLngZoom(
+                LatLng(
+                    location.latitude,
+                    location.longitude
+                ), DEFAULT_ZOOM.toFloat()
+            )
         )
     }
 
-    private fun unsubscribeToLocationUpdates() {
-        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+    private fun updateUserPosAndAddr(location: Location, addr: String) {
+        userMarker?.position = LatLng(location.latitude, location.longitude)
+        address = addr
     }
-
-    private fun setAddress(loc: Location) {
-        if (!Geocoder.isPresent())
-            return
-
-        val geocoder = Geocoder(requireActivity(), Locale.getDefault())
-
-        if (Build.VERSION.SDK_INT >= 33) {
-            val geocodeListener = Geocoder.GeocodeListener { addresses ->
-                addresses.firstOrNull()?.toAddressString()?.let {
-                    userMarker?.position = LatLng(loc.latitude, loc.longitude)
-                    address = it
-                }
-            }
-            geocoder.getFromLocation(loc.latitude, loc.longitude, 1, geocodeListener)
-        } else {
-            geocoder.getFromLocation(loc.latitude, loc.longitude, 1)?.let { addresses ->
-                addresses.firstOrNull()?.toAddressString()?.let {
-                    userMarker?.position = LatLng(loc.latitude, loc.longitude)
-                    address = it
-                }
-            }
-        }
-    }
-
-    private fun Address.toAddressString(): String {
-        val address = this
-
-        // Create a `String` with multiple lines.
-        val stringBuilder = StringBuilder()
-        stringBuilder.apply {
-            append(address.getAddressLine(0)).append("\n")
-            append(address.postalCode).append(" ")
-            append(address.locality).append("\n")
-            append(address.countryName)
-        }
-
-        return stringBuilder.toString()
-    }
-
 }
