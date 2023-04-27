@@ -42,15 +42,15 @@ fun DatabaseReference.addScooter(scooter: Scooter) {
     }
 }
 
-suspend fun DatabaseReference.getScooters(): List<Scooter> {
-    val list = mutableListOf<Scooter>()
+suspend fun DatabaseReference.getIdsToScooters(): Map<String, Scooter> {
+    val map = mutableMapOf<String, Scooter>()
     val snapshot = this.child("scooters").get().await()
     snapshot.children.forEach { scooterSnap ->
         scooterSnap.getValue(Scooter::class.java)?.let { scooter ->
-            list.add(scooter)
+            map[scooterSnap.key!!] = scooter
         }
     }
-    return list
+    return map
 }
 
 // To use, hopefully Firebase.storage(scooter.imageUrl).reference.loadScooterImageInto(...) will work

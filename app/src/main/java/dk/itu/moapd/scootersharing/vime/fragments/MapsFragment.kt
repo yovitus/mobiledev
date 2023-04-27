@@ -15,7 +15,6 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -26,10 +25,9 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import dk.itu.moapd.scootersharing.vime.R
+import dk.itu.moapd.scootersharing.vime.data.Scooter
+import dk.itu.moapd.scootersharing.vime.livedata.ScooterLiveData
 import dk.itu.moapd.scootersharing.vime.services.LocationUpdatesService
-import dk.itu.moapd.scootersharing.vime.utils.getScooters
-import kotlinx.coroutines.*
-import java.util.*
 
 class MapsFragment : Fragment() {
 
@@ -64,23 +62,42 @@ class MapsFragment : Fragment() {
 
     private lateinit var address: String
     private var userMarker: Marker? = null
+    private val scooterMarkers: MutableMap<String, Marker> =
+        emptyMap<String, Marker>().toMutableMap()
 
     private var map: GoogleMap? = null
 
     private val database =
         Firebase.database("https://scooter-sharing-6a9a7-default-rtdb.europe-west1.firebasedatabase.app/").reference
 
-    @OptIn(DelicateCoroutinesApi::class)
     private val callback = OnMapReadyCallback { googleMap ->
         map = googleMap
-        GlobalScope.launch {
-            val scooters = database.getScooters()
 
-            withContext(Dispatchers.Main) {
-                scooters.forEach { scooter ->
-                    val markerPos = LatLng(scooter.locationLat, scooter.locationLon)
-                    // Should be updated with onclick, for modal popup
-                    googleMap.addMarker(MarkerOptions().position(markerPos).title("Scooter"))
+        val scooterLiveData = ScooterLiveData(database)
+        scooterLiveData.observe(viewLifecycleOwner) { idsToScooters ->
+            val oldKeys = scooterMarkers.keys
+            val newKeys = idsToScooters.keys
+
+            val removedKeys = oldKeys.toMutableSet().apply { removeAll(newKeys) }
+
+            if (removedKeys.size > 0) {
+                removedKeys.forEach { id ->
+                    scooterMarkers[id]?.remove()
+                    scooterMarkers.remove(id)
+                }
+            }
+
+            idsToScooters.forEach { (id, scooter) ->
+                var marker = scooterMarkers[id]
+                if (marker != null) {
+                    if (marker.position.latitude != scooter.locationLat ||
+                        marker.position.longitude != scooter.locationLon
+                    )
+                        marker.position = LatLng(scooter.locationLat, scooter.locationLon)
+                } else {
+                    marker = addScooterMarker(scooter)
+                    if (marker != null)
+                        scooterMarkers[id] = marker
                 }
             }
         }
@@ -152,7 +169,7 @@ class MapsFragment : Fragment() {
     private fun addUserMarker(location: Location) {
         val markerPos = LatLng(location.latitude, location.longitude)
         // Should be updated to other than marker, shows user location
-        userMarker = map?.addMarker(MarkerOptions().position(markerPos))
+        userMarker = map?.addMarker(MarkerOptions().position(markerPos).title("Me :)"))
         moveCamera(location)
     }
 
@@ -170,5 +187,16 @@ class MapsFragment : Fragment() {
     private fun updateUserPosAndAddr(location: Location, addr: String) {
         userMarker?.position = LatLng(location.latitude, location.longitude)
         address = addr
+    }
+
+    private fun addScooterMarker(scooter: Scooter): Marker? {
+        return map?.addMarker(
+            MarkerOptions().position(
+                LatLng(
+                    scooter.locationLat,
+                    scooter.locationLon
+                )
+            ).title("Scooter: ${scooter.name}")
+        )
     }
 }
