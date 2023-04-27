@@ -29,8 +29,8 @@ class CustomAdapter(
             binding.listNameLocation.text = scooter.name
             binding.listLocationTime.text = binding.root.resources.getString(
                 R.string.stringCombiner,
-                ride.getStartDateWithFormat("dd/MM"),
-                ride.getEndDateWithFormat("dd/MM")
+                ride.getStartDateWithFormat("dd/MM HH:mm"),
+                ride.getEndDateWithFormat("dd/MM HH:mm")
             )
         }
     }
