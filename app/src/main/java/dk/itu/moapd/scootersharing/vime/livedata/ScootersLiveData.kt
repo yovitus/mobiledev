@@ -12,29 +12,29 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
-class ScooterLiveData(
+class ScootersLiveData(
     private val db: DatabaseReference
 ) : LiveData<Map<String, Scooter>>() {
 
-    private fun onChildAddedOrChanged(snapshot: DataSnapshot) {
-        val key = snapshot.key
-        val scooter = snapshot.getValue(Scooter::class.java)
-
-        value?.let {
-            val newList = it.toMutableMap().apply {
-                if (key != null && scooter != null) {
-                    if (scooter.available)
-                        put(key, scooter)
-                    else
-                        remove(key)
-                }
-
-            }
-            postValue(newList)
-        }
-    }
-
     private val listener = object : ChildEventListener {
+        private fun onChildAddedOrChanged(snapshot: DataSnapshot) {
+            val key = snapshot.key
+            val scooter = snapshot.getValue(Scooter::class.java)
+
+            value?.let {
+                val newList = it.toMutableMap().apply {
+                    if (key != null && scooter != null) {
+                        if (scooter.available)
+                            put(key, scooter)
+                        else
+                            remove(key)
+                    }
+
+                }
+                postValue(newList)
+            }
+        }
+
         override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
             onChildAddedOrChanged(snapshot)
         }

@@ -23,7 +23,7 @@ import dk.itu.moapd.scootersharing.vime.databinding.FragmentMainBinding
  */
 class MainFragment : Fragment() {
     companion object {
-        private val TAG = MainFragment::class.qualifiedName
+//        private val TAG = MainFragment::class.qualifiedName
         private lateinit var adapter: CustomAdapter
         private lateinit var auth: FirebaseAuth
         private lateinit var database: DatabaseReference
@@ -53,14 +53,9 @@ class MainFragment : Fragment() {
                 .build()
             adapter = CustomAdapter(database, options)
         }
-
-//        val scooter1 = Scooter("CPH001", 0, 0, "url1", true)
-//        val scooter2 = Scooter("CPH002", 0, 0, "url2", true)
-//        val scooter3 = Scooter("CPH003", 0, 0, "url3", true)
-//
-//        database.addScooter(scooter1)
-//        database.addScooter(scooter2)
-//        database.addScooter(scooter3)
+//        To add a scooter:
+//        val scooter = Scooter("name", locationLat, locationLon, "imageUrl")//
+//        database.addScooter(scooter)
     }
 
     override fun onCreateView(
@@ -86,26 +81,6 @@ class MainFragment : Fragment() {
                 Build.VERSION.SDK_INT
             )
 
-            // Buttons.
-//            startRideButton.setOnClickListener {
-//                findNavController().navigate(
-//                    R.id.show_startRideFragment
-//                )
-//            }
-
-//            updateRideButton.setOnClickListener {
-//                if (database.) {
-//                    Snackbar.make(
-//                        root,
-//                        "Rides list is empty, start a ride before updating.",
-//                        Snackbar.LENGTH_SHORT
-//                    ).show()
-//                } else {
-//                    findNavController().navigate(
-//                        R.id.show_updateRideFragment
-//                    )
-//                }
-//            }
             mapButton?.setOnClickListener {
                 findNavController().navigate(
                     R.id.maps

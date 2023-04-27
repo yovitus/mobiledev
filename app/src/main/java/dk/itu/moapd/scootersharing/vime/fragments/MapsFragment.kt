@@ -15,6 +15,7 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -26,14 +27,13 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import dk.itu.moapd.scootersharing.vime.R
 import dk.itu.moapd.scootersharing.vime.data.Scooter
-import dk.itu.moapd.scootersharing.vime.livedata.ScooterLiveData
+import dk.itu.moapd.scootersharing.vime.livedata.ScootersLiveData
 import dk.itu.moapd.scootersharing.vime.services.LocationUpdatesService
 
 class MapsFragment : Fragment() {
 
     companion object {
-        private val TAG = MapsFragment::class.qualifiedName
-        private const val ALL_PERMISSION_RESULTS = 1011
+        //        private val TAG = MapsFragment::class.qualifiedName
         private const val DEFAULT_ZOOM = 15
     }
 
@@ -60,8 +60,13 @@ class MapsFragment : Fragment() {
         }
     }
 
+    private var scootersLiveData: ScootersLiveData? = null
+    private var observer: Observer<Map<String, Scooter>>? = null
+
     private lateinit var address: String
     private var userMarker: Marker? = null
+
+
     private val scooterMarkers: MutableMap<String, Marker> =
         emptyMap<String, Marker>().toMutableMap()
 
@@ -73,8 +78,8 @@ class MapsFragment : Fragment() {
     private val callback = OnMapReadyCallback { googleMap ->
         map = googleMap
 
-        val scooterLiveData = ScooterLiveData(database)
-        scooterLiveData.observe(viewLifecycleOwner) { idsToScooters ->
+        scootersLiveData = ScootersLiveData(database)
+        observer = Observer { idsToScooters ->
             val oldKeys = scooterMarkers.keys
             val newKeys = idsToScooters.keys
 
@@ -101,6 +106,7 @@ class MapsFragment : Fragment() {
                 }
             }
         }
+        scootersLiveData!!.observe(viewLifecycleOwner, observer!!)
     }
 
     override fun onCreateView(
@@ -126,6 +132,7 @@ class MapsFragment : Fragment() {
         super.onDestroyView()
         requireActivity().unbindService(connection)
         serviceBound = false
+        observer?.let { scootersLiveData?.removeObserver(it) }
     }
 
     private fun requestUserPermissions() {
