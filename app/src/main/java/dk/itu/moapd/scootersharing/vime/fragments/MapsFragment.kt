@@ -6,6 +6,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
 import android.location.Location
 import android.os.Bundle
 import android.os.IBinder
@@ -23,6 +26,8 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
@@ -32,6 +37,7 @@ import dk.itu.moapd.scootersharing.vime.R
 import dk.itu.moapd.scootersharing.vime.data.Scooter
 import dk.itu.moapd.scootersharing.vime.livedata.ScootersLiveData
 import dk.itu.moapd.scootersharing.vime.services.LocationUpdatesService
+import dk.itu.moapd.scootersharing.vime.utils.getBitmapFromVectorDrawable
 
 class MapsFragment : Fragment() {
 
@@ -83,6 +89,7 @@ class MapsFragment : Fragment() {
         map = googleMap
 
         map?.setOnMarkerClickListener { marker ->
+            moveCamera(marker.position)
             if (marker != userMarker) {
                 val args: ScooterDialogFragmentArgs by navArgs()
                 val scooter = idsToScooters?.get(marker.tag)
@@ -90,7 +97,7 @@ class MapsFragment : Fragment() {
 
                     val bundle = bundleOf(
                         "scooterTitle" to scooter.name,
-                        "scooterAddress" to scooter.locationLon.toString(),
+                        "scooterAddress" to scooter.address,
                         "scooterImageUrl" to scooter.imageUrl
                     )
                     findNavController().navigate(
@@ -201,17 +208,17 @@ class MapsFragment : Fragment() {
     private fun addUserMarker(location: Location) {
         val markerPos = LatLng(location.latitude, location.longitude)
         // Should be updated to other than marker, shows user location
-        userMarker = map?.addMarker(MarkerOptions().position(markerPos).title("Me :)"))
-        moveCamera(location)
+        val bitmap = requireContext().getBitmapFromVectorDrawable(R.drawable.baseline_accessibility_new_24)
+        userMarker = map?.addMarker(MarkerOptions()
+            .position(markerPos)
+            .icon(BitmapDescriptorFactory.fromBitmap(bitmap)))
+        moveCamera(LatLng(location.latitude, location.longitude))
     }
 
-    private fun moveCamera(location: Location) {
+    private fun moveCamera(latLng: LatLng) {
         map?.moveCamera(
             CameraUpdateFactory.newLatLngZoom(
-                LatLng(
-                    location.latitude,
-                    location.longitude
-                ), DEFAULT_ZOOM.toFloat()
+                latLng, DEFAULT_ZOOM.toFloat()
             )
         )
     }

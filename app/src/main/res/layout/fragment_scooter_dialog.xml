@@ -15,7 +15,7 @@ android:layout_margin="8dp">
     <ImageView
         android:id="@+id/scooterImage"
         android:layout_width="match_parent"
-        android:layout_height="194dp"
+        android:layout_height="400dp"
         android:contentDescription="@string/image_of_scooter"
         android:scaleType="centerCrop"
         app:srcCompat="@drawable/baseline_electric_scooter_24" />

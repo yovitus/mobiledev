@@ -5,10 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import dk.itu.moapd.scootersharing.vime.databinding.FragmentScooterDialogBinding
+import dk.itu.moapd.scootersharing.vime.utils.loadScooterImageInto
 
 // TODO: Customize parameter argument names
-const val ARG_ITEM_COUNT = "item_count"
+const val BUCKET_URL = "gs://scooter-sharing-6a9a7.appspot.com"
 
 /**
  *
@@ -40,20 +43,11 @@ class ScooterDialogFragment : BottomSheetDialogFragment() {
         binding.apply {
             scooterTitle.text = arguments?.getString("scooterTitle")
             scooterAddress.text = arguments?.getString("scooterAddress")
-//            scooterImage.setImageResource(arguments?.getString("scooterImage"))
+            val imageUrl = arguments?.getString("scooterImageUrl")
+            val storageRef = Firebase.storage(BUCKET_URL).reference
+            if (imageUrl != null)
+                storageRef.child(imageUrl).loadScooterImageInto(requireContext(), scooterImage)
         }
-    }
-
-    companion object {
-
-        // TODO: Customize parameters
-        fun newInstance(itemCount: Int): ScooterDialogFragment =
-            ScooterDialogFragment().apply {
-                arguments = Bundle().apply {
-                    putInt(ARG_ITEM_COUNT, itemCount)
-                }
-            }
-
     }
 
     override fun onDestroyView() {

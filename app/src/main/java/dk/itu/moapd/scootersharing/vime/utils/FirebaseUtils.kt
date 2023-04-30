@@ -28,7 +28,7 @@ fun FirebaseUser?.addRide(db: DatabaseReference, ride: Ride) {
 
             // Updating the scooter
             db.child("scooters").child(ride.scooterId)
-                .setValue(Scooter(scooter.name, 0.0, 0.0, "url", true))
+                .setValue(Scooter(scooter.name, scooter.address, 0.0, 0.0, "url", true))
         }
 
     }
@@ -53,7 +53,6 @@ suspend fun DatabaseReference.getIdsToScooters(): Map<String, Scooter> {
     return map
 }
 
-// To use, hopefully Firebase.storage(scooter.imageUrl).reference.loadScooterImageInto(...) will work
 fun StorageReference.loadScooterImageInto(ctx: Context, view: ImageView) {
     this.downloadUrl.addOnSuccessListener {
         Glide.with(ctx)
