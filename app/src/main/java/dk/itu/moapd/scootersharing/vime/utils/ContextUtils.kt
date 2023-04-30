@@ -17,7 +17,8 @@ fun Context.hideKeyboard(view: View) {
 fun Context.createDialog(
     title: String,
     message: String,
-    onOkClick: () -> Unit
+    onOkClick: () -> Unit,
+    onCancelClick: () -> Unit = {}
 ) {
     val builder = AlertDialog.Builder(this)
     builder.setTitle(title)
@@ -28,6 +29,7 @@ fun Context.createDialog(
             dialog.dismiss()
         }
         .setNegativeButton("Cancel") { dialog, _ ->
+            onCancelClick()
             dialog.dismiss()
         }
     builder.create().show()

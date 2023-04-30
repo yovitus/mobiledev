@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.MainActivity"
+    tools:context=".fragments.MainFragment"
     android:gravity="center"
     android:orientation="vertical">
 
@@ -19,34 +19,12 @@
         android:layout_marginBottom="10dp"/>
 
     <Button
-        android:id="@+id/map_button"
-        android:layout_width="170dp"
-        android:layout_height="wrap_content"
-        android:text="Maps"
-      />
-
-    <Button
         android:id="@+id/start_ride_button"
         android:layout_width="170dp"
         android:layout_height="wrap_content"
-        app:icon="@drawable/baseline_play_arrow_24"
+        app:icon="@drawable/baseline_qr_code_scanner_24"
         android:text="@string/start_ride_button"
         />
-
-    <Button
-        android:id="@+id/profile_button"
-        android:layout_width="170dp"
-        android:layout_height="wrap_content"
-        app:icon="@drawable/baseline_edit_24"
-        android:text="@string/profile_button"/>
-
-    <Button
-        android:id="@+id/show_ridelist_button"
-        android:layout_width="170dp"
-        android:layout_height="wrap_content"
-        android:drawableStart="@drawable/baseline_format_list_bulleted_24"
-        app:icon="@drawable/baseline_format_list_bulleted_24"
-        android:text="@string/ride_list"/>
 
     <TextView
         android:id="@+id/text_view_androidversion"
@@ -56,8 +34,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="invisible" />
+        android:layout_height="match_parent" />
 
     <FrameLayout
         android:id="@+id/container"

@@ -10,6 +10,9 @@
         android:name="dk.itu.moapd.scootersharing.vime.fragments.MainFragment"
         android:label="MainFragment"
         tools:layout="@layout/fragment_main" >
+        <action
+            android:id="@+id/action_home_to_qrScannerFragment"
+            app:destination="@id/qrScannerFragment" />
     </fragment>
 
     <fragment
@@ -53,5 +56,14 @@
         <argument
             android:name="scooterImageUrl"
             app:argType="string" />
+    </dialog>
+    <dialog
+        android:id="@+id/qrScannerFragment"
+        android:name="dk.itu.moapd.scootersharing.vime.fragments.QrScannerDialogFragment"
+        android:label="fragment_qr_scanner"
+        tools:layout="@layout/fragment_qr_scanner_dialog" >
+        <action
+            android:id="@+id/action_qrScannerFragment_to_home"
+            app:destination="@id/home" />
     </dialog>
 </navigation>

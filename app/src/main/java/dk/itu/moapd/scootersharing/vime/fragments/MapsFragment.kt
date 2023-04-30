@@ -38,6 +38,7 @@ import dk.itu.moapd.scootersharing.vime.data.Scooter
 import dk.itu.moapd.scootersharing.vime.livedata.ScootersLiveData
 import dk.itu.moapd.scootersharing.vime.services.LocationUpdatesService
 import dk.itu.moapd.scootersharing.vime.utils.getBitmapFromVectorDrawable
+import dk.itu.moapd.scootersharing.vime.utils.requestUserPermissions
 
 class MapsFragment : Fragment() {
 
@@ -146,7 +147,14 @@ class MapsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        requestUserPermissions()
+        val permissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+        val onGranted: () -> Unit = {
+            locationUpdatesService?.subscribeToLocationUpdates(
+                ::addUserMarker,
+                ::updateUserPosAndAddr
+            )
+        }
+        requestUserPermissions(permissions, onGranted)
 
         Intent(requireContext(), LocationUpdatesService::class.java).also { intent ->
             requireActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE)
@@ -165,44 +173,6 @@ class MapsFragment : Fragment() {
         requireActivity().unbindService(connection)
         serviceBound = false
         observer?.let { scootersLiveData?.removeObserver(it) }
-    }
-
-    private fun requestUserPermissions() {
-        val permissions: ArrayList<String> = ArrayList()
-
-        permissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
-        permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION)
-
-        val permissionsToRequest = permissionsToRequest(permissions)
-
-        if (permissionsToRequest.size > 0) {
-            val requestPermissionLauncher = registerForActivityResult(
-                ActivityResultContracts.RequestMultiplePermissions()
-            ) { perms ->
-                val allGranted = perms.all { it.value }
-                if (allGranted) {
-                    locationUpdatesService?.subscribeToLocationUpdates(
-                        ::addUserMarker,
-                        ::updateUserPosAndAddr
-                    )
-                }
-            }
-            requestPermissionLauncher.launch(permissionsToRequest.toTypedArray())
-        }
-    }
-
-    private fun permissionsToRequest(permissions: ArrayList<String>): ArrayList<String> {
-        val result: ArrayList<String> = ArrayList()
-
-        for (permission in permissions)
-            if (ContextCompat.checkSelfPermission(
-                    requireContext(),
-                    permission
-                ) != PackageManager.PERMISSION_GRANTED
-            )
-                result.add(permission)
-
-        return result
     }
 
     private fun addUserMarker(location: Location) {

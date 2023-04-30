@@ -23,7 +23,7 @@ import dk.itu.moapd.scootersharing.vime.databinding.FragmentMainBinding
  */
 class MainFragment : Fragment() {
     companion object {
-//        private val TAG = MainFragment::class.qualifiedName
+        //        private val TAG = MainFragment::class.qualifiedName
         private lateinit var adapter: CustomAdapter
         private lateinit var auth: FirebaseAuth
         private lateinit var database: DatabaseReference
@@ -81,17 +81,10 @@ class MainFragment : Fragment() {
                 Build.VERSION.SDK_INT
             )
 
-            mapButton?.setOnClickListener {
+            startRideButton.setOnClickListener {
                 findNavController().navigate(
-                    R.id.maps
+                    R.id.action_home_to_qrScannerFragment
                 )
-            }
-
-            showRidelistButton.setOnClickListener {
-                if (recyclerView.visibility == View.VISIBLE) {
-                    recyclerView.visibility = View.INVISIBLE
-                } else
-                    recyclerView.visibility = View.VISIBLE
             }
         }
     }
