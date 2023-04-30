@@ -20,4 +20,7 @@
     <string name="time_text">Time</string>
     <string name="address_text">Address</string>
     <string name="content_description_location">Location</string>
+    <string name="scooter_title">Scooter Title</string>
+    <string name="scooter_address">Scooter Address</string>
+    <string name="image_of_scooter">Image of scooter</string>
 </resources>

@@ -109,17 +109,7 @@ class LocationUpdatesService : Service() {
     }
 
     private fun Address.toAddressString(): String {
-        val address = this
-
-        // Create a `String` with multiple lines.
-        val stringBuilder = StringBuilder()
-        stringBuilder.apply {
-            append(address.getAddressLine(0)).append("\n")
-            append(address.postalCode).append(" ")
-            append(address.locality).append("\n")
-            append(address.countryName)
-        }
-
-        return stringBuilder.toString()
+        println(this.getAddressLine(0).toString())
+        return this.getAddressLine(0).toString()
     }
 }
