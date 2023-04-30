@@ -14,8 +14,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -37,7 +40,7 @@ class MapsFragment : Fragment() {
         private const val DEFAULT_ZOOM = 15
     }
 
-    private lateinit var locationUpdatesService: LocationUpdatesService
+    private var locationUpdatesService: LocationUpdatesService? = null
     private var serviceBound = false
 
     private val connection = object : ServiceConnection {
@@ -48,7 +51,7 @@ class MapsFragment : Fragment() {
             locationUpdatesService = binder.getService()
             serviceBound = true
 
-            locationUpdatesService.subscribeToLocationUpdates(
+            locationUpdatesService?.subscribeToLocationUpdates(
                 ::addUserMarker,
                 ::updateUserPosAndAddr
             )
@@ -56,10 +59,11 @@ class MapsFragment : Fragment() {
 
         override fun onServiceDisconnected(name: ComponentName?) {
             serviceBound = false
-            locationUpdatesService.unsubscribeToLocationUpdates()
+            locationUpdatesService?.unsubscribeToLocationUpdates()
         }
     }
 
+    private var idsToScooters: Map<String, Scooter>? = null
     private var scootersLiveData: ScootersLiveData? = null
     private var observer: Observer<Map<String, Scooter>>? = null
 
@@ -78,6 +82,26 @@ class MapsFragment : Fragment() {
     private val callback = OnMapReadyCallback { googleMap ->
         map = googleMap
 
+        map?.setOnMarkerClickListener { marker ->
+            if (marker != userMarker) {
+                val args: ScooterDialogFragmentArgs by navArgs()
+                val scooter = idsToScooters?.get(marker.tag)
+                if (scooter != null) {
+
+                    val bundle = bundleOf(
+                        "scooterTitle" to scooter.name,
+                        "scooterAddress" to scooter.locationLon.toString(),
+                        "scooterImageUrl" to scooter.imageUrl
+                    )
+                    findNavController().navigate(
+                        R.id.action_maps_to_scooterDialog,
+                        bundle
+                    )
+                }
+            }
+            return@setOnMarkerClickListener true
+        }
+
         scootersLiveData = ScootersLiveData(database)
         observer = Observer { idsToScooters ->
             val oldKeys = scooterMarkers.keys
@@ -87,7 +111,6 @@ class MapsFragment : Fragment() {
 
             if (removedKeys.size > 0) {
                 removedKeys.forEach { id ->
-                    scooterMarkers[id]?.remove()
                     scooterMarkers.remove(id)
                 }
             }
@@ -101,10 +124,12 @@ class MapsFragment : Fragment() {
                         marker.position = LatLng(scooter.locationLat, scooter.locationLon)
                 } else {
                     marker = addScooterMarker(scooter)
+                    marker?.tag = id
                     if (marker != null)
                         scooterMarkers[id] = marker
                 }
             }
+            this.idsToScooters = idsToScooters
         }
         scootersLiveData!!.observe(viewLifecycleOwner, observer!!)
     }
@@ -149,7 +174,7 @@ class MapsFragment : Fragment() {
             ) { perms ->
                 val allGranted = perms.all { it.value }
                 if (allGranted) {
-                    locationUpdatesService.subscribeToLocationUpdates(
+                    locationUpdatesService?.subscribeToLocationUpdates(
                         ::addUserMarker,
                         ::updateUserPosAndAddr
                     )
@@ -203,7 +228,8 @@ class MapsFragment : Fragment() {
                     scooter.locationLat,
                     scooter.locationLon
                 )
-            ).title("Scooter: ${scooter.name}")
+            )
+                .title("Scooter: ${scooter.name}")
         )
     }
 }

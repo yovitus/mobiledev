@@ -31,5 +31,27 @@
         android:name="dk.itu.moapd.scootersharing.vime.fragments.MapsFragment"
         android:label="fragment_maps"
         tools:layout="@layout/fragment_maps" >
+        <action
+            android:id="@+id/action_maps_to_scooterDialog"
+            app:destination="@id/scooterDialog" />
     </fragment>
+
+    <dialog
+        android:id="@+id/scooterDialog"
+        android:name="dk.itu.moapd.scootersharing.vime.fragments.ScooterDialogFragment"
+        android:label="fragment_scooter_dialog"
+        tools:layout="@layout/fragment_scooter_dialog" >
+        <action
+            android:id="@+id/action_scooterDialog_to_maps"
+            app:destination="@id/maps" />
+        <argument
+            android:name="scooterTitle"
+            app:argType="string" />
+        <argument
+            android:name="scooterAddress"
+            app:argType="string" />
+        <argument
+            android:name="scooterImageUrl"
+            app:argType="string" />
+    </dialog>
 </navigation>
