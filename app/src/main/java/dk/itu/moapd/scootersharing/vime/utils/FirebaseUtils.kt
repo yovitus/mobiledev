@@ -11,7 +11,7 @@ import dk.itu.moapd.scootersharing.vime.data.Ride
 import dk.itu.moapd.scootersharing.vime.data.Scooter
 import kotlinx.coroutines.tasks.await
 
-fun FirebaseUser?.addRide(db: DatabaseReference, ride: Ride) {
+fun FirebaseUser.addRide(db: DatabaseReference, ride: Ride) {
     // Getting the scooter
     db.child("scooters").child(ride.scooterId).get().addOnSuccessListener { snapshot ->
         val scooter = snapshot.getValue(Scooter::class.java)
@@ -19,7 +19,7 @@ fun FirebaseUser?.addRide(db: DatabaseReference, ride: Ride) {
         if (scooter != null) {
             // Adding ride
             this.let { user ->
-                val uid = user?.let { db.child("rides").child(it.uid).push().key }
+                val uid = user.let { db.child("rides").child(it.uid).push().key }
 
                 if (uid != null) {
                     db.child("rides").child(user.uid).child(uid).setValue(ride)
@@ -28,12 +28,13 @@ fun FirebaseUser?.addRide(db: DatabaseReference, ride: Ride) {
 
             // Updating the scooter
             db.child("scooters").child(ride.scooterId)
-                .setValue(Scooter(scooter.name, scooter.address, 0.0, 0.0, "url", true))
+                .setValue(Scooter(scooter.name, ride.endLocationAddress!!, ride.endLocationLat!!, ride.endLocationLon!!, scooter.imageUrl, true))
         }
 
     }
 }
 
+// Used for creating the 3 default scooters
 fun DatabaseReference.addScooter(scooter: Scooter) {
     val uid = this.child("scooters").push().key
 

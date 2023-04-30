@@ -5,14 +5,15 @@ import java.util.*
 
 data class Ride(
     val scooterId: String,
-    val timeStart: Long,
-    val timeEnd: Long,
-    val endLocationLat: Double,
-    val endLocationLon: Double,
-    val price: Int
+    val startTime: Long,
+    val endTime: Long?,
+    val endLocationAddress: String?,
+    val endLocationLat: Double?,
+    val endLocationLon: Double?,
+    val price: Int?
 ) {
 
-    constructor() : this("", 0, 0, 0.0, 0.0, 0)
+    constructor() : this("", 0, 0, "", 0.0, 0.0, 0)
 
     /**+
      * Overriding method to display a different toString().
@@ -33,7 +34,7 @@ data class Ride(
      */
     fun getStartDateWithFormat(pattern: String): String {
         // "EEEE" for WeekDay
-        return SimpleDateFormat(pattern, Locale.getDefault()).format(Date(timeStart))
+        return SimpleDateFormat(pattern, Locale.getDefault()).format(Date(startTime))
     }
 
     /**+
@@ -42,8 +43,10 @@ data class Ride(
      * See https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
      * for more details.
      */
-    fun getEndDateWithFormat(pattern: String): String {
-        // "EEEE" for WeekDay
-        return SimpleDateFormat(pattern, Locale.getDefault()).format(Date(timeEnd))
+    fun getEndDateWithFormat(pattern: String): String? {
+        return if (endTime != null)
+            SimpleDateFormat(pattern, Locale.getDefault()).format(Date(endTime))
+        else
+            null
     }
 }

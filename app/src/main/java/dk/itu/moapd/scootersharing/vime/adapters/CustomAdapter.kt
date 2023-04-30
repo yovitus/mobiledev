@@ -27,11 +27,14 @@ class CustomAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun bind(ride: Ride, scooter: Scooter) {
             binding.listNameLocation.text = scooter.name
-            binding.listLocationTime.text = binding.root.resources.getString(
-                R.string.stringCombiner,
-                ride.getStartDateWithFormat("dd/MM HH:mm"),
-                ride.getEndDateWithFormat("dd/MM HH:mm")
-            )
+            if (ride.endTime != null) {
+                binding.listLocationTime.text = binding.root.resources.getString(
+                    R.string.stringCombiner,
+                    ride.getStartDateWithFormat("dd/MM HH:mm"),
+                    ride.getEndDateWithFormat("dd/MM HH:mm")
+                )
+            } else
+                binding.listLocationTime.text = ride.getStartDateWithFormat("dd/MM HH:mm")
         }
     }
 
