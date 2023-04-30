@@ -44,7 +44,7 @@ import dk.itu.moapd.scootersharing.vime.utils.hideKeyboard
  */
 class StartRideFragment : Fragment() {
     companion object {
-        private val TAG = StartRideFragment::class.qualifiedName
+//        private val TAG = StartRideFragment::class.qualifiedName
         private lateinit var auth: FirebaseAuth
         private lateinit var database: DatabaseReference
     }
@@ -105,6 +105,7 @@ class StartRideFragment : Fragment() {
                                 name,
                                 System.currentTimeMillis(),
                                 System.currentTimeMillis() + 5000,
+                                "",
                                 0.0,
                                 0.0,
                                 0

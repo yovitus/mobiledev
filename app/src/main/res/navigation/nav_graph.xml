@@ -27,6 +27,9 @@
         android:name="dk.itu.moapd.scootersharing.vime.fragments.ProfileFragment"
         android:label="fragment_update_ride"
         tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_profile_to_editCardDialogFragment"
+            app:destination="@id/editCardDialogFragment" />
     </fragment>
 
     <fragment
@@ -65,5 +68,14 @@
         <action
             android:id="@+id/action_qrScannerFragment_to_home"
             app:destination="@id/home" />
+    </dialog>
+    <dialog
+        android:id="@+id/editCardDialogFragment"
+        android:name="dk.itu.moapd.scootersharing.vime.fragments.EditCardDialogFragment"
+        android:label="fragment_edit_card_dialog_list_dialog"
+        tools:layout="@layout/fragment_edit_card_dialog" >
+        <action
+            android:id="@+id/action_editCardDialogFragment_to_profile"
+            app:destination="@id/profile" />
     </dialog>
 </navigation>

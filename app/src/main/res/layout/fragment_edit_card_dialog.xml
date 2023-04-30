@@ -2,10 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".fragments.StartRideFragment"
+    android:layout_height="wrap_content"
     android:gravity="center"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".fragments.EditCardDialogFragment" >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,13 +17,12 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/scooter_name">
+            android:hint="@string/card_number">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edit_text_name"
+                android:id="@+id/edit_text_cardnumber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableStart="@drawable/baseline_electric_scooter_24"
                 android:drawableTint="@color/indigo_300"
                 android:drawablePadding="10dp"/>
 
@@ -31,25 +30,45 @@
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        >
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/expiration_month_year">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_text_expiration"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableTint="@color/indigo_300"
+                android:drawablePadding="10dp"/>
+
+
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
-        android:paddingTop="10dp"
         >
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/enter_location">
+            android:hint="@string/cvv">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edit_text_location"
+                android:id="@+id/edit_text_cvv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableStart="@drawable/baseline_location_on_24"
                 android:drawableTint="@color/indigo_300"
                 android:drawablePadding="10dp"/>
 
@@ -58,12 +77,9 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/start_ride_button"
+        android:id="@+id/save_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/start_ride_button" />
-
+        android:text="@string/save" />
 
 </LinearLayout>
-
-
