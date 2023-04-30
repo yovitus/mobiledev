@@ -10,19 +10,8 @@ import com.google.firebase.storage.ktx.storage
 import dk.itu.moapd.scootersharing.vime.databinding.FragmentScooterDialogBinding
 import dk.itu.moapd.scootersharing.vime.utils.loadScooterImageInto
 
-// TODO: Customize parameter argument names
-const val BUCKET_URL = "gs://scooter-sharing-6a9a7.appspot.com"
-
-/**
- *
- * A fragment that shows a list of items as a modal bottom sheet.
- *
- * You can show this modal bottom sheet from your activity like this:
- * <pre>
- *    ScooterDialogFragment.newInstance(30).show(supportFragmentManager, "dialog")
- * </pre>
- */
 class ScooterDialogFragment : BottomSheetDialogFragment() {
+    private val BUCKET_URL = "gs://scooter-sharing-6a9a7.appspot.com"
 
     private var _binding: FragmentScooterDialogBinding? = null
 
@@ -33,10 +22,9 @@ class ScooterDialogFragment : BottomSheetDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentScooterDialogBinding.inflate(inflater, container, false)
         return binding.root
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

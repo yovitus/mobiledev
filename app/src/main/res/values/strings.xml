@@ -23,4 +23,10 @@
     <string name="scooter_title">Scooter Title</string>
     <string name="scooter_address">Scooter Address</string>
     <string name="image_of_scooter">Image of scooter</string>
+    <string name="edit_card">Edit card</string>
+    <string name="card_number">Card number</string>
+    <string name="expiration_month_year">Expiration month/year</string>
+    <string name="cvv">CVV</string>
+    <string name="save">Save</string>
+    <string name="exp_month_year">%s/%s</string>
 </resources>

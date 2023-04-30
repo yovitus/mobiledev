@@ -28,21 +28,17 @@ import android.view.ViewGroup
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import dk.itu.moapd.scootersharing.vime.R
 import dk.itu.moapd.scootersharing.vime.activities.LoginActivity
 import dk.itu.moapd.scootersharing.vime.databinding.FragmentProfileBinding
-import dk.itu.moapd.scootersharing.vime.utils.createDialog
-import dk.itu.moapd.scootersharing.vime.utils.hideKeyboard
 
 /**
  * An activity class with methods to manage the main activity of Getting Started application.
  */
 class ProfileFragment : Fragment() {
     companion object {
-        private val TAG = ProfileFragment::class.qualifiedName
-        private lateinit var auth: FirebaseAuth
+//        private val TAG = ProfileFragment::class.qualifiedName
     }
     /*
     * These are viewbindings that allows easy read
@@ -53,6 +49,9 @@ class ProfileFragment : Fragment() {
         get() = checkNotNull(_binding) {
             "Cannot access binding because it is null. Is the view visible?"
         }
+
+    private lateinit var auth: FirebaseAuth
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = FirebaseAuth.getInstance()
@@ -72,7 +71,14 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(requireActivity().window, false)
         super.onViewCreated(view, savedInstanceState)
+
         binding.apply {
+            editCardButton.setOnClickListener {
+                findNavController().navigate(
+                    R.id.action_profile_to_editCardDialogFragment
+                )
+            }
+
             signOutButton.setOnClickListener {
                 auth.signOut()
                 val intent = Intent(requireActivity(), LoginActivity::class.java)
