@@ -11,15 +11,12 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.firebase.ui.database.FirebaseRecyclerOptions
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import dk.itu.moapd.scootersharing.vime.R
 import dk.itu.moapd.scootersharing.vime.adapters.CustomAdapter
 import dk.itu.moapd.scootersharing.vime.data.Ride
 import dk.itu.moapd.scootersharing.vime.databinding.FragmentMainBinding
 import dk.itu.moapd.scootersharing.vime.utils.getCard
+import dk.itu.moapd.scootersharing.vime.utils.getRidesQuery
 import dk.itu.moapd.scootersharing.vime.utils.requestUserPermissions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -31,9 +28,6 @@ import kotlinx.coroutines.launch
 class MainFragment : Fragment() {
     companion object {
         //        private val TAG = MainFragment::class.qualifiedName
-        private lateinit var adapter: CustomAdapter
-        private lateinit var auth: FirebaseAuth
-        private lateinit var database: DatabaseReference
     }
 
     /*
@@ -45,23 +39,19 @@ class MainFragment : Fragment() {
             "Cannot access binding because it is null. Is the view visible?"
         }
 
+    private lateinit var adapter: CustomAdapter
+
     private var requestCameraPermission: (() -> Unit)? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        auth = FirebaseAuth.getInstance()
-        database =
-            Firebase.database("https://scooter-sharing-6a9a7-default-rtdb.europe-west1.firebasedatabase.app/").reference
 
-        auth.currentUser?.let {
-            val query = database.child("rides").child(it.uid).orderByChild("time_end")
-
-            val options = FirebaseRecyclerOptions.Builder<Ride>()
-                .setQuery(query, Ride::class.java)
-                .setLifecycleOwner(this)
-                .build()
-            adapter = CustomAdapter(database, options)
-        }
+        val query = getRidesQuery()
+        val options = FirebaseRecyclerOptions.Builder<Ride>()
+            .setQuery(query, Ride::class.java)
+            .setLifecycleOwner(this)
+            .build()
+        adapter = CustomAdapter(options)
 
         val permissions = arrayOf(Manifest.permission.CAMERA)
         val onGranted: () -> Unit = {
@@ -100,13 +90,17 @@ class MainFragment : Fragment() {
 
             startRideButton.setOnClickListener {
                 CoroutineScope(Dispatchers.Main).launch {
-                    if (auth.currentUser?.getCard(database) != null) {
+                    if (getCard() != null) {
                         if (requestCameraPermission != null)
                             requestCameraPermission!!()
                         else
                             findNavController().navigate(R.id.action_home_to_qrScannerFragment)
                     } else
-                        Toast.makeText(context, "Please add card under profile before starting ride", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            "Please add card under profile before starting ride",
+                            Toast.LENGTH_SHORT
+                        ).show()
                 }
 
             }

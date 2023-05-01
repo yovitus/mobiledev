@@ -16,13 +16,6 @@
     </fragment>
 
     <fragment
-        android:id="@+id/startRide"
-        android:name="dk.itu.moapd.scootersharing.vime.fragments.StartRideFragment"
-        android:label="fragment_start_ride"
-        tools:layout="@layout/fragment_start_ride" >
-    </fragment>
-
-    <fragment
         android:id="@+id/profile"
         android:name="dk.itu.moapd.scootersharing.vime.fragments.ProfileFragment"
         android:label="fragment_update_ride"
@@ -51,13 +44,7 @@
             android:id="@+id/action_scooterDialog_to_maps"
             app:destination="@id/maps" />
         <argument
-            android:name="scooterTitle"
-            app:argType="string" />
-        <argument
-            android:name="scooterAddress"
-            app:argType="string" />
-        <argument
-            android:name="scooterImageUrl"
+            android:name="scooterId"
             app:argType="string" />
     </dialog>
     <dialog

@@ -1,5 +1,4 @@
 package dk.itu.moapd.scootersharing.vime.data
-
 data class Card(
     val cardNumber: Long,
     val expMonth: Int,

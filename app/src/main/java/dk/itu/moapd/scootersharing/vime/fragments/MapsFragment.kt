@@ -5,34 +5,24 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.drawable.BitmapDrawable
 import android.location.Location
 import android.os.Bundle
 import android.os.IBinder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import dk.itu.moapd.scootersharing.vime.R
 import dk.itu.moapd.scootersharing.vime.data.Scooter
 import dk.itu.moapd.scootersharing.vime.livedata.ScootersLiveData
@@ -83,34 +73,23 @@ class MapsFragment : Fragment() {
 
     private var map: GoogleMap? = null
 
-    private val database =
-        Firebase.database("https://scooter-sharing-6a9a7-default-rtdb.europe-west1.firebasedatabase.app/").reference
-
     private val callback = OnMapReadyCallback { googleMap ->
         map = googleMap
 
         map?.setOnMarkerClickListener { marker ->
             moveCamera(marker.position)
             if (marker != userMarker) {
-                val args: ScooterDialogFragmentArgs by navArgs()
-                val scooter = idsToScooters?.get(marker.tag)
-                if (scooter != null) {
+                val bundle = bundleOf("scooterId" to marker.tag)
+                findNavController().navigate(
+                    R.id.action_maps_to_scooterDialog,
+                    bundle
+                )
 
-                    val bundle = bundleOf(
-                        "scooterTitle" to scooter.name,
-                        "scooterAddress" to scooter.address,
-                        "scooterImageUrl" to scooter.imageUrl
-                    )
-                    findNavController().navigate(
-                        R.id.action_maps_to_scooterDialog,
-                        bundle
-                    )
-                }
             }
             return@setOnMarkerClickListener true
         }
 
-        scootersLiveData = ScootersLiveData(database)
+        scootersLiveData = ScootersLiveData()
         observer = Observer { idsToScooters ->
             val oldKeys = scooterMarkers.keys
             val newKeys = idsToScooters.keys
@@ -147,7 +126,10 @@ class MapsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val permissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+        val permissions = arrayOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
         val onGranted: () -> Unit = {
             locationUpdatesService?.subscribeToLocationUpdates(
                 ::addUserMarker,
@@ -180,10 +162,13 @@ class MapsFragment : Fragment() {
     private fun addUserMarker(location: Location) {
         val markerPos = LatLng(location.latitude, location.longitude)
         // Should be updated to other than marker, shows user location
-        val bitmap = requireContext().getBitmapFromVectorDrawable(R.drawable.baseline_accessibility_new_24)
-        userMarker = map?.addMarker(MarkerOptions()
-            .position(markerPos)
-            .icon(BitmapDescriptorFactory.fromBitmap(bitmap)))
+        val bitmap =
+            requireContext().getBitmapFromVectorDrawable(R.drawable.baseline_accessibility_new_24)
+        userMarker = map?.addMarker(
+            MarkerOptions()
+                .position(markerPos)
+                .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
+        )
         moveCamera(LatLng(location.latitude, location.longitude))
     }
 

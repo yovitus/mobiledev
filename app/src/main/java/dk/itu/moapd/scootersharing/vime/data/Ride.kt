@@ -5,15 +5,14 @@ import java.util.*
 
 data class Ride(
     val scooterId: String,
-    val startTime: Long,
-    val endTime: Long?,
-    val endLocationAddress: String?,
-    val endLocationLat: Double?,
-    val endLocationLon: Double?,
-    val price: Int?
+    val startTime: Long = System.currentTimeMillis(),
+    var endTime: Long? = null,
+    var endLocationAddress: String? = null,
+    var endLocationLat: Double? = null,
+    var endLocationLon: Double? = null,
+    var price: Int? = null
 ) {
-
-    constructor() : this("", 0, 0, "", 0.0, 0.0, 0)
+    constructor() : this("")
 
     /**+
      * Overriding method to display a different toString().
@@ -33,7 +32,6 @@ data class Ride(
      * for more details.
      */
     fun getStartDateWithFormat(pattern: String): String {
-        // "EEEE" for WeekDay
         return SimpleDateFormat(pattern, Locale.getDefault()).format(Date(startTime))
     }
 
@@ -45,7 +43,7 @@ data class Ride(
      */
     fun getEndDateWithFormat(pattern: String): String? {
         return if (endTime != null)
-            SimpleDateFormat(pattern, Locale.getDefault()).format(Date(endTime))
+            SimpleDateFormat(pattern, Locale.getDefault()).format(Date(endTime!!))
         else
             null
     }

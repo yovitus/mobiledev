@@ -5,19 +5,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
+import dk.itu.moapd.scootersharing.vime.data.Scooter
 import dk.itu.moapd.scootersharing.vime.databinding.FragmentScooterDialogBinding
-import dk.itu.moapd.scootersharing.vime.utils.loadScooterImageInto
+import dk.itu.moapd.scootersharing.vime.utils.getScooter
+import dk.itu.moapd.scootersharing.vime.utils.loadImageInto
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class ScooterDialogFragment : BottomSheetDialogFragment() {
-    private val BUCKET_URL = "gs://scooter-sharing-6a9a7.appspot.com"
-
     private var _binding: FragmentScooterDialogBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
+    private lateinit var scooter: Scooter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,13 +31,15 @@ class ScooterDialogFragment : BottomSheetDialogFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.apply {
-            scooterTitle.text = arguments?.getString("scooterTitle")
-            scooterAddress.text = arguments?.getString("scooterAddress")
-            val imageUrl = arguments?.getString("scooterImageUrl")
-            val storageRef = Firebase.storage(BUCKET_URL).reference
-            if (imageUrl != null)
-                storageRef.child(imageUrl).loadScooterImageInto(requireContext(), scooterImage)
+        CoroutineScope(Dispatchers.IO).launch {
+            scooter = arguments?.getString("scooterId")?.let { getScooter(it) }!!
+
+            binding.apply {
+                scooterTitle.text = scooter.name
+                scooterAddress.text = scooter.address
+                val imageUrl = scooter.imageUrl // should be changed to latestImageUrl
+                loadImageInto(requireContext(), imageUrl, scooterImage)
+            }
         }
     }
 

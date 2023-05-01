@@ -7,9 +7,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import dk.itu.moapd.scootersharing.vime.R
 import dk.itu.moapd.scootersharing.vime.data.Card
 import dk.itu.moapd.scootersharing.vime.databinding.FragmentEditCardDialogBinding
@@ -27,16 +24,10 @@ class EditCardDialogFragment : BottomSheetDialogFragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
-    private val database =
-        Firebase.database("https://scooter-sharing-6a9a7-default-rtdb.europe-west1.firebasedatabase.app/").reference
-
-    private lateinit var auth: FirebaseAuth
-
     private var userCard: Card? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        auth = FirebaseAuth.getInstance()
     }
 
     override fun onCreateView(
@@ -50,7 +41,7 @@ class EditCardDialogFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         CoroutineScope(Dispatchers.Main).launch {
-            userCard = auth.currentUser?.getCard(database)
+            userCard = getCard()
 
             if (userCard != null) {
                 binding.apply {
@@ -120,7 +111,7 @@ class EditCardDialogFragment : BottomSheetDialogFragment() {
                         expYearUInt.toInt(),
                         cvvUInt.toInt()
                     )
-                    auth.currentUser?.editCard(database, card)
+                    editCard(card)
 
                     Toast.makeText(context, "Card saved!", Toast.LENGTH_SHORT).show()
                     findNavController().navigate(

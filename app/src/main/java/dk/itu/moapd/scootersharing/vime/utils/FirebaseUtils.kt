@@ -4,31 +4,50 @@ import android.content.Context
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.storage.StorageReference
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.Query
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import dk.itu.moapd.scootersharing.vime.data.Card
 import dk.itu.moapd.scootersharing.vime.data.Ride
 import dk.itu.moapd.scootersharing.vime.data.Scooter
 import kotlinx.coroutines.tasks.await
-import java.io.FileInputStream
+
+const val BUCKET_URL = "gs://scooter-sharing-6a9a7.appspot.com"
+const val DATABASE_URL =
+    "https://scooter-sharing-6a9a7-default-rtdb.europe-west1.firebasedatabase.app/"
+
+val storageRef = Firebase.storage(BUCKET_URL).reference
+val db = Firebase.database(DATABASE_URL).reference
+val auth = FirebaseAuth.getInstance()
+val currentUser = auth.currentUser!!
 
 /**
  * The following include extension function for the table 'scooters' in the firebase realtime db.
  */
 
 // Used for creating the 3 default scooters
-fun DatabaseReference.addScooter(scooter: Scooter) {
-    val uid = this.child("scooters").push().key
+fun addScooter(scooter: Scooter) {
+    val uid = db.child("scooters").push().key
 
     if (uid != null) {
-        this.child("scooters").child(uid).setValue(scooter)
+        db.child("scooters").child(uid).setValue(scooter)
     }
 }
 
-suspend fun DatabaseReference.getIdsToScooters(): Map<String, Scooter> {
+suspend fun getScooter(id: String): Scooter? {
+    val snapshot = db.child("scooters").child(id).get().await()
+
+    return if (snapshot.exists())
+        snapshot.getValue(Scooter::class.java)
+    else
+        null
+}
+
+suspend fun getIdsToScooters(): Map<String, Scooter> {
     val map = mutableMapOf<String, Scooter>()
-    val snapshot = this.child("scooters").get().await()
+    val snapshot = db.child("scooters").get().await()
     snapshot.children.forEach { scooterSnap ->
         scooterSnap.getValue(Scooter::class.java)?.let { scooter ->
             map[scooterSnap.key!!] = scooter
@@ -42,27 +61,69 @@ suspend fun DatabaseReference.getIdsToScooters(): Map<String, Scooter> {
  * The following include extension function for the table 'rides' in the firebase realtime db.
  */
 
-fun FirebaseUser.addRide(db: DatabaseReference, ride: Ride) {
-    // Getting the scooter
-    db.child("scooters").child(ride.scooterId).get().addOnSuccessListener { snapshot ->
-        val scooter = snapshot.getValue(Scooter::class.java)
+fun startRide(ride: Ride) {
+    db.child("scooters").child(ride.scooterId).child("available").setValue(false)
 
-        if (scooter != null) {
-            // Adding ride
-            this.let { user ->
-                val uid = user.let { db.child("rides").child(it.uid).push().key }
+    val userRef = db.child("users").child(currentUser.uid)
+    val uid = userRef.child("rides").push().key
 
-                if (uid != null) {
-                    db.child("rides").child(user.uid).child(uid).setValue(ride)
-                }
-            }
-
-            // Updating the scooter
-            db.child("scooters").child(ride.scooterId)
-                .setValue(Scooter(scooter.name, ride.endLocationAddress!!, ride.endLocationLat!!, ride.endLocationLon!!, scooter.imageUrl, scooter.latestImageUrl, true))
-        }
-
+    if (uid != null) {
+        userRef.child("rides").child(uid).setValue(ride)
+        userRef.child("currentRide").setValue(uid)
     }
+}
+
+suspend fun endRide(ride: Ride) {
+    val scooter = getScooter(ride.scooterId)!!
+
+    if (ride.endLocationLat != null && ride.endLocationLon != null && ride.endLocationAddress != null) {
+        scooter.locationLon = ride.endLocationLon!!
+        scooter.locationLat = ride.endLocationLat!!
+        scooter.address = ride.endLocationAddress!!
+    } else {
+        ride.endLocationLat = scooter.locationLat
+        ride.endLocationLon = scooter.locationLon
+        ride.endLocationAddress = scooter.address
+    }
+    scooter.available = true
+
+    db.child("scooters").child(ride.scooterId).setValue(scooter)
+
+    val userRef = db.child("users").child(currentUser.uid)
+
+    val rideId = getCurrentRideId()
+    if (rideId != null) {
+        userRef.child("rides").child(rideId).setValue(ride)
+    }
+    userRef.child("currentRide").removeValue()
+}
+
+fun getRidesQuery(): Query {
+    return db.child("users").child(currentUser.uid).child("rides").orderByChild("time_end")
+}
+
+suspend fun getCurrentRideId(): String? {
+    val snapshot = db.child("users").child(currentUser.uid).child("currentRide").get().await()
+
+    return if (snapshot.exists())
+        snapshot.getValue(String::class.java)
+    else
+        null
+}
+
+suspend fun getCurrentRide(): Ride? {
+    val id = getCurrentRideId()
+
+    return if (id != null) {
+        val snapshot =
+            db.child("users").child(currentUser.uid).child("rides").child(id).get().await()
+
+        if (snapshot.exists())
+            snapshot.getValue(Ride::class.java)
+        else
+            null
+    } else
+        null
 }
 
 
@@ -70,12 +131,12 @@ fun FirebaseUser.addRide(db: DatabaseReference, ride: Ride) {
  * The following include extension function for the table 'cards' in the firebase realtime db.
  */
 
-fun FirebaseUser.editCard(db: DatabaseReference, card: Card) {
-    db.child("cards").child(this.uid).setValue(card)
+fun editCard(card: Card) {
+    db.child("users").child(currentUser.uid).child("card").setValue(card)
 }
 
-suspend fun FirebaseUser.getCard(db: DatabaseReference): Card? {
-    val snapshot = db.child("cards").child(this.uid).get().await()
+suspend fun getCard(): Card? {
+    val snapshot = db.child("users").child(currentUser.uid).child("card").get().await()
 
     return if (snapshot.exists())
         snapshot.getValue(Card::class.java)
@@ -88,8 +149,8 @@ suspend fun FirebaseUser.getCard(db: DatabaseReference): Card? {
  * The following include extension function for scooter images in the firebase storage.
  */
 
-fun StorageReference.loadScooterImageInto(ctx: Context, view: ImageView) {
-    this.downloadUrl.addOnSuccessListener {
+fun loadImageInto(ctx: Context, imageUrl: String, view: ImageView) {
+    storageRef.child(imageUrl).downloadUrl.addOnSuccessListener {
         Glide.with(ctx)
             .load(it)
             .transition(DrawableTransitionOptions.withCrossFade())

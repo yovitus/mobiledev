@@ -1,6 +1,7 @@
 package dk.itu.moapd.scootersharing.vime.fragments
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,14 +11,14 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import dk.itu.moapd.scootersharing.vime.R
+import dk.itu.moapd.scootersharing.vime.activities.CurrentRideActivity
+import dk.itu.moapd.scootersharing.vime.data.Ride
 import dk.itu.moapd.scootersharing.vime.data.Scooter
 import dk.itu.moapd.scootersharing.vime.databinding.FragmentQrScannerDialogBinding
 import dk.itu.moapd.scootersharing.vime.utils.createDialog
 import dk.itu.moapd.scootersharing.vime.utils.getIdsToScooters
-import dk.itu.moapd.scootersharing.vime.utils.requestUserPermissions
+import dk.itu.moapd.scootersharing.vime.utils.startRide
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -40,9 +41,6 @@ class QrScannerDialogFragment : BottomSheetDialogFragment(),
 
     private var hasScanned = false
 
-    private val database =
-        Firebase.database("https://scooter-sharing-6a9a7-default-rtdb.europe-west1.firebasedatabase.app/").reference
-
     private var idsToScooters: Map<String, Scooter>? = null
 
     override fun onCreateView(
@@ -52,8 +50,8 @@ class QrScannerDialogFragment : BottomSheetDialogFragment(),
         // Inflate the layout for this fragment
         binding = FragmentQrScannerDialogBinding.inflate(layoutInflater, container, false)
 
-        CoroutineScope(Dispatchers.IO).launch {
-            idsToScooters = database.getIdsToScooters()
+        CoroutineScope(Dispatchers.Main).launch {
+            idsToScooters = getIdsToScooters()
         }
 
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
@@ -153,9 +151,10 @@ class QrScannerDialogFragment : BottomSheetDialogFragment(),
         hasScanned = true
         CoroutineScope(Dispatchers.Main).launch {
             val onOkClick = {
-                findNavController().navigate(
-                    R.id.action_qrScannerFragment_to_home
-                )
+                val ride = Ride(scooterId)
+                startRide(ride)
+                startCurrentRideActivity()
+
             }
             val onCancelClick = {
                 hasScanned = false
@@ -167,5 +166,11 @@ class QrScannerDialogFragment : BottomSheetDialogFragment(),
                 onCancelClick
             )
         }
+    }
+
+    private fun startCurrentRideActivity() {
+        val intent = Intent(requireContext(), CurrentRideActivity::class.java)
+        startActivity(intent)
+        requireActivity().finish()
     }
 }

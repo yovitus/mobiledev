@@ -55,7 +55,7 @@ class LocationUpdatesService : Service() {
                 ) != PackageManager.PERMISSION_GRANTED
 
     fun subscribeToLocationUpdates(
-        initFunc: (Location) -> Unit,
+        initFunc: (Location) -> Unit = {},
         upFunc: (Location, String) -> Unit
     ) {
         if (checkPermission())

@@ -31,7 +31,7 @@
             android:textAppearance="@style/DigitalClockTextAppearance" />
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/stop_ride_button"
             android:layout_width="190dp"
             android:layout_height="75dp"
             android:layout_gravity="center"
