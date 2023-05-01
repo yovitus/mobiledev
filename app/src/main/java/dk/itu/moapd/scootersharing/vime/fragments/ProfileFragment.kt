@@ -35,11 +35,15 @@ import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
 import dk.itu.moapd.scootersharing.vime.R
 import dk.itu.moapd.scootersharing.vime.activities.LoginActivity
 import dk.itu.moapd.scootersharing.vime.databinding.FragmentProfileBinding
 import dk.itu.moapd.scootersharing.vime.utils.requestUserPermissions
 import java.io.File
+import java.io.FileInputStream
 
 /**
  * An activity class with methods to manage the main activity of Getting Started application.
@@ -58,16 +62,22 @@ class ProfileFragment : Fragment() {
             "Cannot access binding because it is null. Is the view visible?"
         }
 
+    private val BUCKET_URL = "gs://scooter-sharing-6a9a7.appspot.com"
+
     private lateinit var auth: FirebaseAuth
 
     private val takePhoto = registerForActivityResult(
         ActivityResultContracts.TakePicture()
     ) { didTakePhoto: Boolean ->
-        // TODO: Upload to storage, end ride in database, go to mainactivity
-        if (didTakePhoto)
-            findNavController().navigate(R.id.action_profile_to_editCardDialogFragment)
+        if (didTakePhoto) {
+            val storageRef = Firebase.storage(BUCKET_URL).reference
+            val imageRef = storageRef.child("images/CPH001-latest.jpg")
+            val stream = FileInputStream(photoFile)
+            imageRef.putStream(stream)
+        }
     }
 
+    private lateinit var photoFile: File
     private lateinit var photoUri: Uri
 
     private var requestCameraPermission: (() -> Unit)? = null
@@ -86,7 +96,7 @@ class ProfileFragment : Fragment() {
             FragmentProfileBinding.inflate(inflater, container, false)
 
         val photoName = "CPH001-latest.jpg"
-        val photoFile = File(requireContext().applicationContext.filesDir, photoName)
+        photoFile = File(requireContext().applicationContext.filesDir, photoName)
         photoUri = FileProvider.getUriForFile(
             requireContext(),
             "dk.itu.moapd.scootersharing.vime.fileprovider",

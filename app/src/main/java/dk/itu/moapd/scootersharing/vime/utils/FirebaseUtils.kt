@@ -11,6 +11,36 @@ import dk.itu.moapd.scootersharing.vime.data.Card
 import dk.itu.moapd.scootersharing.vime.data.Ride
 import dk.itu.moapd.scootersharing.vime.data.Scooter
 import kotlinx.coroutines.tasks.await
+import java.io.FileInputStream
+
+/**
+ * The following include extension function for the table 'scooters' in the firebase realtime db.
+ */
+
+// Used for creating the 3 default scooters
+fun DatabaseReference.addScooter(scooter: Scooter) {
+    val uid = this.child("scooters").push().key
+
+    if (uid != null) {
+        this.child("scooters").child(uid).setValue(scooter)
+    }
+}
+
+suspend fun DatabaseReference.getIdsToScooters(): Map<String, Scooter> {
+    val map = mutableMapOf<String, Scooter>()
+    val snapshot = this.child("scooters").get().await()
+    snapshot.children.forEach { scooterSnap ->
+        scooterSnap.getValue(Scooter::class.java)?.let { scooter ->
+            map[scooterSnap.key!!] = scooter
+        }
+    }
+    return map
+}
+
+
+/**
+ * The following include extension function for the table 'rides' in the firebase realtime db.
+ */
 
 fun FirebaseUser.addRide(db: DatabaseReference, ride: Ride) {
     // Getting the scooter
@@ -35,12 +65,13 @@ fun FirebaseUser.addRide(db: DatabaseReference, ride: Ride) {
     }
 }
 
+
+/**
+ * The following include extension function for the table 'cards' in the firebase realtime db.
+ */
+
 fun FirebaseUser.editCard(db: DatabaseReference, card: Card) {
     db.child("cards").child(this.uid).setValue(card)
-
-//    if (uid != null) {
-//        db.child("cards").child(uid).setValue(card)
-//    }
 }
 
 suspend fun FirebaseUser.getCard(db: DatabaseReference): Card? {
@@ -52,25 +83,10 @@ suspend fun FirebaseUser.getCard(db: DatabaseReference): Card? {
         null
 }
 
-// Used for creating the 3 default scooters
-fun DatabaseReference.addScooter(scooter: Scooter) {
-    val uid = this.child("scooters").push().key
 
-    if (uid != null) {
-        this.child("scooters").child(uid).setValue(scooter)
-    }
-}
-
-suspend fun DatabaseReference.getIdsToScooters(): Map<String, Scooter> {
-    val map = mutableMapOf<String, Scooter>()
-    val snapshot = this.child("scooters").get().await()
-    snapshot.children.forEach { scooterSnap ->
-        scooterSnap.getValue(Scooter::class.java)?.let { scooter ->
-            map[scooterSnap.key!!] = scooter
-        }
-    }
-    return map
-}
+/**
+ * The following include extension function for scooter images in the firebase storage.
+ */
 
 fun StorageReference.loadScooterImageInto(ctx: Context, view: ImageView) {
     this.downloadUrl.addOnSuccessListener {
