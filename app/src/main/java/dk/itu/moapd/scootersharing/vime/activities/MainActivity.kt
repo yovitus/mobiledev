@@ -39,6 +39,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = FirebaseAuth.getInstance()
+//        startCurrentRideActivity()
         if (auth.currentUser == null)
             startLoginActivity()
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -64,6 +65,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun startLoginActivity() {
         val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    private fun startCurrentRideActivity() {
+        val intent = Intent(this, CurrentRideActivity::class.java)
         startActivity(intent)
         finish()
     }
