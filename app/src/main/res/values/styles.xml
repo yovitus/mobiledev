@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="DurationAppearance">
+        <item name="android:textSize">40sp</item>
+    </style>
+
+    <style name="DigitalClockTextAppearance">
+        <item name="android:fontFamily">@font/digital7</item>
+        <item name="android:letterSpacing">0.2</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">50sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:textCursorDrawable">@null</item>
+        <item name="android:background">@drawable/digital_clock_background</item>
+    </style>
+
+</resources>
