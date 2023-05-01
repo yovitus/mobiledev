@@ -35,6 +35,8 @@
         <activity
             android:name=".activities.LoginActivity"
             android:exported="false" />
+        <activity android:name=".activities.CurrentRideActivity"
+            android:exported="false" />
         <activity
             android:name=".activities.MainActivity"
             android:exported="true">
