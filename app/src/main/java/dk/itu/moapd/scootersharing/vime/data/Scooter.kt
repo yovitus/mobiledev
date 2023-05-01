@@ -6,8 +6,9 @@ data class Scooter(
     val locationLat: Double,
     val locationLon: Double,
     val imageUrl: String,
+    val latestImageUrl: String,
     val available: Boolean = true
 ) {
-    constructor() : this("", "", 0.0, 0.0, "")
+    constructor() : this("", "", 0.0, 0.0, "", "")
 }
 

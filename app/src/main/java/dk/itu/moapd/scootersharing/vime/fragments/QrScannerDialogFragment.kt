@@ -59,16 +59,7 @@ class QrScannerDialogFragment : BottomSheetDialogFragment(),
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
             != PackageManager.PERMISSION_GRANTED
         ) {
-            val permissions = arrayOf(Manifest.permission.CAMERA)
-            val onGranted: () -> Unit = {
-                startCamera()
-            }
-            val onNotGranted: () -> Unit = {
-                findNavController().navigate(
-                    R.id.action_qrScannerFragment_to_home
-                )
-            }
-            requestUserPermissions(permissions, onGranted, onNotGranted)
+            findNavController().navigate(R.id.action_qrScannerFragment_to_home)
         } else {
             startCamera()
         }
@@ -157,7 +148,7 @@ class QrScannerDialogFragment : BottomSheetDialogFragment(),
         else
             loaderCallback!!.onManagerConnected(LoaderCallbackInterface.SUCCESS)
     }
-    
+
     private fun onScooterScan(scooterId: String) {
         hasScanned = true
         CoroutineScope(Dispatchers.Main).launch {

@@ -20,11 +20,17 @@
  */
 package dk.itu.moapd.scootersharing.vime.fragments
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -32,6 +38,8 @@ import com.google.firebase.auth.FirebaseAuth
 import dk.itu.moapd.scootersharing.vime.R
 import dk.itu.moapd.scootersharing.vime.activities.LoginActivity
 import dk.itu.moapd.scootersharing.vime.databinding.FragmentProfileBinding
+import dk.itu.moapd.scootersharing.vime.utils.requestUserPermissions
+import java.io.File
 
 /**
  * An activity class with methods to manage the main activity of Getting Started application.
@@ -52,6 +60,18 @@ class ProfileFragment : Fragment() {
 
     private lateinit var auth: FirebaseAuth
 
+    private val takePhoto = registerForActivityResult(
+        ActivityResultContracts.TakePicture()
+    ) { didTakePhoto: Boolean ->
+        // TODO: Upload to storage, end ride in database, go to mainactivity
+        if (didTakePhoto)
+            findNavController().navigate(R.id.action_profile_to_editCardDialogFragment)
+    }
+
+    private lateinit var photoUri: Uri
+
+    private var requestCameraPermission: (() -> Unit)? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = FirebaseAuth.getInstance()
@@ -64,6 +84,20 @@ class ProfileFragment : Fragment() {
     ): View {
         _binding =
             FragmentProfileBinding.inflate(inflater, container, false)
+
+        val photoName = "CPH001-latest.jpg"
+        val photoFile = File(requireContext().applicationContext.filesDir, photoName)
+        photoUri = FileProvider.getUriForFile(
+            requireContext(),
+            "dk.itu.moapd.scootersharing.vime.fileprovider",
+            photoFile
+        )
+
+        val permissions = arrayOf(Manifest.permission.CAMERA)
+        val onGranted: () -> Unit = {
+            takePhoto.launch(photoUri)
+        }
+        requestCameraPermission = requestUserPermissions(permissions, onGranted)
 
         return binding.root
     }
@@ -84,6 +118,13 @@ class ProfileFragment : Fragment() {
                 val intent = Intent(requireActivity(), LoginActivity::class.java)
                 startActivity(intent)
                 requireActivity().finish()
+            }
+
+            capturePhotoButton.setOnClickListener {
+                if (requestCameraPermission != null)
+                    requestCameraPermission!!()
+                else
+                    takePhoto.launch(photoUri)
             }
         }
     }

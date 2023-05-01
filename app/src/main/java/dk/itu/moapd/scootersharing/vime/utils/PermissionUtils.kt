@@ -5,7 +5,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 
-fun Fragment.requestUserPermissions(permissions: Array<String>, onGranted: () -> Unit = {}, onNotGranted: () -> Unit = {}) {
+fun Fragment.requestUserPermissions(permissions: Array<String>, onGranted: () -> Unit = {}, onNotGranted: () -> Unit = {}): (() -> Unit)? {
     val permissionsToRequest = permissionsToRequest(permissions)
 
     if (permissionsToRequest.size > 0) {
@@ -18,8 +18,9 @@ fun Fragment.requestUserPermissions(permissions: Array<String>, onGranted: () ->
             else
                 onNotGranted()
         }
-        requestPermissionLauncher.launch(permissionsToRequest.toTypedArray())
+        return { requestPermissionLauncher.launch(permissionsToRequest.toTypedArray()) }
     }
+    return null
 }
 
 private fun Fragment.permissionsToRequest(permissions: Array<String>): ArrayList<String> {

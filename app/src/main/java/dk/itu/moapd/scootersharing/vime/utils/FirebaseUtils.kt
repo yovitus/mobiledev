@@ -29,7 +29,7 @@ fun FirebaseUser.addRide(db: DatabaseReference, ride: Ride) {
 
             // Updating the scooter
             db.child("scooters").child(ride.scooterId)
-                .setValue(Scooter(scooter.name, ride.endLocationAddress!!, ride.endLocationLat!!, ride.endLocationLon!!, scooter.imageUrl, true))
+                .setValue(Scooter(scooter.name, ride.endLocationAddress!!, ride.endLocationLat!!, ride.endLocationLon!!, scooter.imageUrl, scooter.latestImageUrl, true))
         }
 
     }

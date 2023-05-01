@@ -154,7 +154,9 @@ class MapsFragment : Fragment() {
                 ::updateUserPosAndAddr
             )
         }
-        requestUserPermissions(permissions, onGranted)
+        val request = requestUserPermissions(permissions, onGranted)
+        if (request != null)
+            request()
 
         Intent(requireContext(), LocationUpdatesService::class.java).also { intent ->
             requireActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE)
