@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = FirebaseAuth.getInstance()
-        startCurrentRideActivity()
+//        startCurrentRideActivity()
         if (auth.currentUser == null)
             startLoginActivity()
         binding = ActivityMainBinding.inflate(layoutInflater)
