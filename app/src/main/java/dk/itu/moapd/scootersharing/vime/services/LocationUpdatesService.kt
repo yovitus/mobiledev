@@ -109,7 +109,6 @@ class LocationUpdatesService : Service() {
     }
 
     private fun Address.toAddressString(): String {
-        println(this.getAddressLine(0).toString())
         return this.getAddressLine(0).toString()
     }
 }

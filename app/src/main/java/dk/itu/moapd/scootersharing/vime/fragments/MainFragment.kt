@@ -1,5 +1,6 @@
 package dk.itu.moapd.scootersharing.vime.fragments
 
+import android.Manifest
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -19,6 +20,7 @@ import dk.itu.moapd.scootersharing.vime.adapters.CustomAdapter
 import dk.itu.moapd.scootersharing.vime.data.Ride
 import dk.itu.moapd.scootersharing.vime.databinding.FragmentMainBinding
 import dk.itu.moapd.scootersharing.vime.utils.getCard
+import dk.itu.moapd.scootersharing.vime.utils.requestUserPermissions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -43,6 +45,8 @@ class MainFragment : Fragment() {
             "Cannot access binding because it is null. Is the view visible?"
         }
 
+    private var requestCameraPermission: (() -> Unit)? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = FirebaseAuth.getInstance()
@@ -58,6 +62,14 @@ class MainFragment : Fragment() {
                 .build()
             adapter = CustomAdapter(database, options)
         }
+
+        val permissions = arrayOf(Manifest.permission.CAMERA)
+        val onGranted: () -> Unit = {
+            findNavController().navigate(
+                R.id.action_home_to_qrScannerFragment
+            )
+        }
+        requestCameraPermission = requestUserPermissions(permissions, onGranted)
 //        To add a scooter:
 //        val scooter = Scooter("name", locationLat, locationLon, "imageUrl")//
 //        database.addScooter(scooter)
@@ -89,9 +101,10 @@ class MainFragment : Fragment() {
             startRideButton.setOnClickListener {
                 CoroutineScope(Dispatchers.Main).launch {
                     if (auth.currentUser?.getCard(database) != null) {
-                        findNavController().navigate(
-                            R.id.action_home_to_qrScannerFragment
-                        )
+                        if (requestCameraPermission != null)
+                            requestCameraPermission!!()
+                        else
+                            findNavController().navigate(R.id.action_home_to_qrScannerFragment)
                     } else
                         Toast.makeText(context, "Please add card under profile before starting ride", Toast.LENGTH_SHORT).show()
                 }
