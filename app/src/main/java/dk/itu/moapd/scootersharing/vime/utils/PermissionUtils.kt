@@ -7,11 +7,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 
-fun Fragment.requestUserPermissions(
+fun Fragment.getRequestUserPermissions(
     permissions: Array<String>,
     onGranted: () -> Unit = {},
     onNotGranted: () -> Unit = {}
-): (() -> Unit)? {
+): (() -> Unit) {
     val permissionsToRequest = permissionsToRequest(requireContext(), permissions)
 
     if (permissionsToRequest.size > 0) {
@@ -26,14 +26,14 @@ fun Fragment.requestUserPermissions(
         }
         return { requestPermissionLauncher.launch(permissionsToRequest.toTypedArray()) }
     }
-    return null
+    return onGranted
 }
 
-fun AppCompatActivity.requestUserPermissions(
+fun AppCompatActivity.getRequestUserPermissions(
     permissions: Array<String>,
     onGranted: () -> Unit = {},
     onNotGranted: () -> Unit = {}
-): (() -> Unit)? {
+): (() -> Unit) {
     val permissionsToRequest = permissionsToRequest(this, permissions)
 
     if (permissionsToRequest.size > 0) {
@@ -48,7 +48,7 @@ fun AppCompatActivity.requestUserPermissions(
         }
         return { requestPermissionLauncher.launch(permissionsToRequest.toTypedArray()) }
     }
-    return null
+    return onGranted
 }
 
 private fun permissionsToRequest(ctx: Context, permissions: Array<String>): ArrayList<String> {

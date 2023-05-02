@@ -28,7 +28,7 @@ import dk.itu.moapd.scootersharing.vime.data.Scooter
 import dk.itu.moapd.scootersharing.vime.livedata.ScootersLiveData
 import dk.itu.moapd.scootersharing.vime.services.LocationUpdatesService
 import dk.itu.moapd.scootersharing.vime.utils.getBitmapFromVectorDrawable
-import dk.itu.moapd.scootersharing.vime.utils.requestUserPermissions
+import dk.itu.moapd.scootersharing.vime.utils.getRequestUserPermissions
 
 class MapsFragment : Fragment() {
 
@@ -131,18 +131,13 @@ class MapsFragment : Fragment() {
             Manifest.permission.ACCESS_COARSE_LOCATION
         )
         val onGranted: () -> Unit = {
-            locationUpdatesService?.subscribeToLocationUpdates(
-                ::addUserMarker,
-                ::updateUserPosAndAddr
-            )
+            Intent(requireContext(), LocationUpdatesService::class.java).also { intent ->
+                requireActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE)
+            }
         }
-        val request = requestUserPermissions(permissions, onGranted)
-        if (request != null)
-            request()
+        val request = getRequestUserPermissions(permissions, onGranted)
+        request()
 
-        Intent(requireContext(), LocationUpdatesService::class.java).also { intent ->
-            requireActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE)
-        }
         return inflater.inflate(R.layout.fragment_maps, container, false)
     }
 

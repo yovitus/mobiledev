@@ -16,8 +16,8 @@ import dk.itu.moapd.scootersharing.vime.adapters.CustomAdapter
 import dk.itu.moapd.scootersharing.vime.data.Ride
 import dk.itu.moapd.scootersharing.vime.databinding.FragmentMainBinding
 import dk.itu.moapd.scootersharing.vime.utils.getCard
+import dk.itu.moapd.scootersharing.vime.utils.getRequestUserPermissions
 import dk.itu.moapd.scootersharing.vime.utils.getRidesQuery
-import dk.itu.moapd.scootersharing.vime.utils.requestUserPermissions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -59,10 +59,7 @@ class MainFragment : Fragment() {
                 R.id.action_home_to_qrScannerFragment
             )
         }
-        requestCameraPermission = requestUserPermissions(permissions, onGranted)
-//        To add a scooter:
-//        val scooter = Scooter("name", locationLat, locationLon, "imageUrl")//
-//        database.addScooter(scooter)
+        requestCameraPermission = getRequestUserPermissions(permissions, onGranted)
     }
 
     override fun onCreateView(
@@ -91,10 +88,7 @@ class MainFragment : Fragment() {
             startRideButton.setOnClickListener {
                 CoroutineScope(Dispatchers.Main).launch {
                     if (getCard() != null) {
-                        if (requestCameraPermission != null)
-                            requestCameraPermission!!()
-                        else
-                            findNavController().navigate(R.id.action_home_to_qrScannerFragment)
+                        requestCameraPermission!!()
                     } else
                         Toast.makeText(
                             context,

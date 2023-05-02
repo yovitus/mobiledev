@@ -109,26 +109,14 @@ class CurrentRideActivity : AppCompatActivity() {
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
-                locationUpdatesService?.subscribeToLocationUpdates(
-                    upFunc = { loc, addr ->
-                        curLat = loc.latitude
-                        curLon = loc.longitude
-                        curAddr = addr
-                    }
-                )
+                Intent(this@CurrentRideActivity, LocationUpdatesService::class.java).also { intent ->
+                    bindService(intent, connection, Context.BIND_AUTO_CREATE)
+                }
             }
         }
 
-        val requestLocationPermission = requestUserPermissions(permissions, onPermissionsGranted)
-        if (requestLocationPermission != null)
-            requestLocationPermission()
-        else
-            onPermissionsGranted()
-
-
-        Intent(this@CurrentRideActivity, LocationUpdatesService::class.java).also { intent ->
-            bindService(intent, connection, Context.BIND_AUTO_CREATE)
-        }
+        val requestPermission = getRequestUserPermissions(permissions, onPermissionsGranted)
+        requestPermission()
 
         CoroutineScope(Dispatchers.Main).launch {
             ride = getCurrentRide()!!
