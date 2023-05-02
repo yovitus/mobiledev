@@ -37,7 +37,7 @@ class ScooterDialogFragment : BottomSheetDialogFragment() {
             binding.apply {
                 scooterTitle.text = scooter.name
                 scooterAddress.text = scooter.address
-                val imageUrl = scooter.imageUrl // should be changed to latestImageUrl
+                val imageUrl = scooter.latestImageUrl // should be changed to latestImageUrl
                 loadImageInto(requireContext(), imageUrl, scooterImage)
             }
         }
