@@ -217,7 +217,7 @@ class CurrentRideActivity : AppCompatActivity() {
                 ride.endLocationAddress = curAddr
                 ride.endTime = endTime
                 val price =
-                    ((endTime!! - ride.startTime).toFloat() / 1000f / 60f) * resources.getString(R.string.price)
+                    ((endTime!! - ride.startTime).toFloat() / 1000f / 60f) * resources.getString(R.string.price_number)
                         .toFloat()
                 val df = DecimalFormat("#.##")
                 df.roundingMode = RoundingMode.UP
