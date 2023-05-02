@@ -146,7 +146,7 @@ class CurrentRideActivity : AppCompatActivity() {
                 })
 
                 stopRideButton.setOnClickListener {
-
+                    stopRide()
                 }
             }
         }
