@@ -20,14 +20,15 @@
             android:layout_marginBottom="10pt"
             android:layout_width="match_parent"
             android:layout_height="351dp"
-            app:srcCompat="@drawable/baseline_electric_scooter_24" />
+            app:srcCompat="@drawable/baseline_electric_scooter_24"
+            android:contentDescription="@string/image_of_scooter" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/duration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="00:00:00"
+            android:text="@string/default_time"
             android:textAppearance="@style/DigitalClockTextAppearance" />
 
         <com.google.android.material.textview.MaterialTextView
@@ -36,7 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="0.0 km/h"
+            android:text="@string/default_acceleration"
             android:textAppearance="@style/Speed"/>
 
         <com.google.android.material.textview.MaterialTextView
@@ -45,17 +46,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="0.0 DDK"
+            android:text="@string/default_price"
             android:textAppearance="@style/CurrentPrice"/>
 
         <Button
             android:id="@+id/stop_ride_button"
             android:layout_width="190dp"
-            android:layout_height="75dp"
+            android:layout_height="0dp"
             android:layout_gravity="center"
             android:layout_marginTop="10pt"
             android:layout_weight="0"
-            android:text="Stop ride" />
+            android:text="@string/stop_ride" />
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

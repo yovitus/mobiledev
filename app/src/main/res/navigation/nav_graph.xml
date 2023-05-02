@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/home"
         android:name="dk.itu.moapd.scootersharing.vime.fragments.MainFragment"
-        android:label="MainFragment"
+        android:label="fragment_main"
         tools:layout="@layout/fragment_main" >
         <action
             android:id="@+id/action_home_to_qrScannerFragment"
@@ -18,7 +18,7 @@
     <fragment
         android:id="@+id/profile"
         android:name="dk.itu.moapd.scootersharing.vime.fragments.ProfileFragment"
-        android:label="fragment_update_ride"
+        android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" >
         <action
             android:id="@+id/action_profile_to_editCardDialogFragment"

@@ -53,7 +53,7 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginBottom="10dp"
                 android:fontFamily="@font/neon"
-                android:hint="@string/_0_km_h" />
+                android:hint="@string/default_acceleration" />
 
 
         </LinearLayout>

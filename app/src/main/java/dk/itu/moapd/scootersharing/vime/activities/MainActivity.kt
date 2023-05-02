@@ -2,7 +2,6 @@ package dk.itu.moapd.scootersharing.vime.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -50,16 +49,6 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
 
         binding.bottomNav.setupWithNavController(navController)
-    }
-
-
-    override fun onStart() {
-        super.onStart()
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return super.onCreateOptionsMenu(menu)
     }
 
     private fun startLoginActivity() {

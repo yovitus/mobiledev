@@ -34,5 +34,11 @@
     <string name="price_dkk">%s DKK</string>
     <string name="speed_m_ss">%s m/s\u00B2</string>
     <string name="_0_00_dkk">0.00 DKK</string>
-    <string name="_0_km_h">0 km/h</string>
+    <string name="home">Home</string>
+    <string name="map">Map</string>
+    <string name="profile">Profile</string>
+    <string name="default_time">00:00:00</string>
+    <string name="default_acceleration">0.0 m/s²</string>
+    <string name="default_price">0.0 DDK</string>
+    <string name="stop_ride">Stop ride</string>
 </resources>
