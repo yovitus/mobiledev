@@ -3,8 +3,7 @@ package dk.itu.moapd.scootersharing.vime.activities
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ActivityScenario.launch
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.typeText
+import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -23,12 +22,12 @@ class MainActivityTest {
     // companion object is for @BeforeClass annotations
     companion object {
         /**
-         * setUpAll() is for logging in to a test user. @BeforeClass @JvmStatic ensures that this function is called once
-         * before all tests.
+         * setUpAll() is for logging in to a test user. @BeforeClass @JvmStatic ensures that this
+         * function is called once before all tests.
          */
         @BeforeClass @JvmStatic
         fun setUpAll() {
-            val loginScenario = launch(LoginActivity::class.java)
+            launch(LoginActivity::class.java)
 
             onView(withText("Sign in with email").awaitView()).perform(click())
 
@@ -37,8 +36,6 @@ class MainActivityTest {
 
             onView(withHint("Password").awaitView()).perform(typeText("123456"))
             onView(withText("SIGN IN")).perform(click())
-
-            loginScenario.close()
         }
     }
 
@@ -56,14 +53,28 @@ class MainActivityTest {
 
     @Test
     fun saveButtonSavesCardNumber() {
-        // Checking if new mock card number is saved
-        val lowestCardNumber = 1000000000000000L
-        val highestCardNumber = 9999999999999999L
+        /*
+         As per documentation:
+         Generates an Int random value uniformly distributed between the specified from (inclusive)
+         and until (exclusive) bounds.
+         From is included, until is excluded.
+         */
+        val fromCardNumber = 1000000000000000L
+        val untilCardNumber = 10000000000000000L
+        val mockCardNumber = Random.nextLong(fromCardNumber, untilCardNumber).toString()
 
-        val mockCardNumber = Random.nextLong(lowestCardNumber, highestCardNumber).toString()
+        val fromMonth = 1
+        val toMonth = 13
+        val mockMonth = Random.nextInt(fromMonth, toMonth).toString()
 
-        val mockMonthYear = "12/24"
-        val mockCvv = "000"
+        val untilYear = 100
+        val mockYear = Random.nextInt(untilYear).toString()
+
+        val mockMonthAndYear = "$mockMonth/$mockYear"
+
+        val fromCvv = 100
+        val untilCvv = 1000
+        val mockCvv = Random.nextInt(fromCvv, untilCvv).toString()
 
         onView(withId(R.id.profile))
             .perform(click())
@@ -75,13 +86,13 @@ class MainActivityTest {
             .check(matches(isDisplayed()))
 
         onView(withId(R.id.edit_text_cardnumber))
-            .perform(typeText(mockCardNumber))
+            .perform(clearText(), typeText(mockCardNumber), closeSoftKeyboard())
 
         onView(withId(R.id.edit_text_expiration))
-            .perform(typeText(mockMonthYear))
+            .perform(clearText(), typeText(mockMonthAndYear), closeSoftKeyboard())
 
         onView(withId(R.id.edit_text_cvv))
-            .perform(typeText(mockCvv))
+            .perform(clearText(), typeText(mockCvv), closeSoftKeyboard())
 
         onView(withId(R.id.save_button))
             .perform(click())

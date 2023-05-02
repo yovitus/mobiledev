@@ -72,7 +72,7 @@ class EditCardDialogFragment : BottomSheetDialogFragment() {
                     }
 
                     val exp = expiration.split("/")
-                    if (exp.size != 2 || exp[0].length != 2 || exp[1].length != 2) {
+                    if (exp.size != 2) {
                         Toast.makeText(
                             context,
                             "Invalid expiration date (e.g. '00/00')",
@@ -84,7 +84,7 @@ class EditCardDialogFragment : BottomSheetDialogFragment() {
 
                     val expMonthUInt = exp[0].toUIntOrNull()
                     val expYearUInt = exp[1].toUIntOrNull()
-                    if (expMonthUInt == null || expMonthUInt > 12u || expYearUInt == null) {
+                    if (expMonthUInt == null || expMonthUInt > 12u || expMonthUInt <= 0u || expYearUInt == null || expYearUInt > 99u) {
                         Toast.makeText(
                             context,
                             "Invalid expiration date (e.g. '00/00')",
