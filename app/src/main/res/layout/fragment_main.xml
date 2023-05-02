@@ -30,7 +30,7 @@
         android:id="@+id/price"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:text="1.5 DKK pr. min"
+        android:text="@string/price"
         android:gravity="center"/>
 
     <TextView
