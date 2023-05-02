@@ -28,6 +28,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileInputStream
+import java.math.RoundingMode
+import java.text.DecimalFormat
 
 class CurrentRideActivity : AppCompatActivity() {
 
@@ -42,6 +44,8 @@ class CurrentRideActivity : AppCompatActivity() {
 
     private var locationUpdatesService: LocationUpdatesService? = null
     private var serviceBound = false
+
+    private var endTime: Long? = null
 
     private var curLat: Double? = null
     private var curLon: Double? = null
@@ -76,15 +80,7 @@ class CurrentRideActivity : AppCompatActivity() {
             val imageRef = storageRef.child(scooter.latestImageUrl)
             val stream = FileInputStream(photoFile)
             imageRef.putStream(stream)
-            if (curAddr != null && curLat != null && curLon != null) {
-                ride.endLocationLat = curLat
-                ride.endLocationLon = curLon
-                ride.endLocationAddress = curAddr
-            }
-            CoroutineScope(Dispatchers.Main).launch {
-                endRide(ride)
-                startMainActivity()
-            }
+            stopRide()
         }
     }
 
@@ -94,29 +90,7 @@ class CurrentRideActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val permissions = arrayOf(
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.CAMERA
-        )
-        val onPermissionsGranted: () -> Unit = {
-            if ((ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED) &&
-                ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                Intent(this@CurrentRideActivity, LocationUpdatesService::class.java).also { intent ->
-                    bindService(intent, connection, Context.BIND_AUTO_CREATE)
-                }
-            }
-        }
-
-        val requestPermission = getRequestUserPermissions(permissions, onPermissionsGranted)
-        requestPermission()
+        getPermissions()
 
         CoroutineScope(Dispatchers.Main).launch {
             ride = getCurrentRide()!!
@@ -153,8 +127,8 @@ class CurrentRideActivity : AppCompatActivity() {
                 handler.post(object : Runnable {
                     override fun run() {
                         val startTimeDate = ride.startTime
-                        val curTimeDate = System.currentTimeMillis()
-                        val timeDiff = curTimeDate - startTimeDate
+                        endTime = System.currentTimeMillis()
+                        val timeDiff = endTime!! - startTimeDate
 
                         val seconds = (timeDiff / 1000).toInt()
                         val hours = seconds / 3600
@@ -172,19 +146,7 @@ class CurrentRideActivity : AppCompatActivity() {
                 })
 
                 stopRideButton.setOnClickListener {
-                    if (ContextCompat.checkSelfPermission(this@CurrentRideActivity, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
-                        takePhoto.launch(photoUri)
-                    else {
-                        if (curAddr != null && curLat != null && curLon != null) {
-                            ride.endLocationLat = curLat
-                            ride.endLocationLon = curLon
-                            ride.endLocationAddress = curAddr
-                        }
-                        CoroutineScope(Dispatchers.Main).launch {
-                            endRide(ride)
-                            startMainActivity()
-                        }
-                    }
+
                 }
             }
         }
@@ -195,6 +157,82 @@ class CurrentRideActivity : AppCompatActivity() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finish()
+    }
+
+    private fun getPermissions() {
+        val permissions = arrayOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.CAMERA
+        )
+        val onPermissionsGranted: () -> Unit = {
+            if ((ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED) &&
+                ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                Intent(
+                    this@CurrentRideActivity,
+                    LocationUpdatesService::class.java
+                ).also { intent ->
+                    bindService(intent, connection, Context.BIND_AUTO_CREATE)
+                }
+            }
+        }
+
+        val requestPermission = getRequestUserPermissions(permissions, onPermissionsGranted)
+        requestPermission()
+    }
+
+    private fun stopRide() {
+        if (ContextCompat.checkSelfPermission(
+                this@CurrentRideActivity,
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+        )
+            takePhoto.launch(photoUri)
+        else {
+            stopRideFunc()
+        }
+    }
+
+    private fun stopRideFunc() {
+        if (
+            ContextCompat.checkSelfPermission(
+                this@CurrentRideActivity,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(
+                this@CurrentRideActivity,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            if (curAddr != null && curLat != null && curLon != null) {
+                ride.endLocationLat = curLat
+                ride.endLocationLon = curLon
+                ride.endLocationAddress = curAddr
+                ride.endTime = endTime
+                val price =
+                    ((endTime!! - ride.startTime).toFloat() / 1000f / 60f) * resources.getString(R.string.price)
+                        .toFloat()
+                val df = DecimalFormat("#.##")
+                df.roundingMode = RoundingMode.UP
+                ride.price = df.format(price).toFloat()
+            }
+            CoroutineScope(Dispatchers.Main).launch {
+                endRide(ride)
+                startMainActivity()
+            }
+        } else {
+            CoroutineScope(Dispatchers.Main).launch {
+                endRide(ride)
+                startMainActivity()
+            }
+        }
     }
 }
 

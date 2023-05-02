@@ -10,7 +10,7 @@ data class Ride(
     var endLocationAddress: String? = null,
     var endLocationLat: Double? = null,
     var endLocationLon: Double? = null,
-    var price: Int? = null
+    var price: Float? = null
 ) {
     constructor() : this("")
 
