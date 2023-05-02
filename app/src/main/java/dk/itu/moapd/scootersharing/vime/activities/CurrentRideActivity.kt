@@ -80,7 +80,7 @@ class CurrentRideActivity : AppCompatActivity() {
             val imageRef = storageRef.child(scooter.latestImageUrl)
             val stream = FileInputStream(photoFile)
             imageRef.putStream(stream)
-            stopRide()
+            stopRideFunc()
         }
     }
 
