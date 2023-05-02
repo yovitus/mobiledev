@@ -33,8 +33,11 @@ import org.opencv.objdetect.QRCodeDetector
 
 class QrScannerDialogFragment : BottomSheetDialogFragment(),
     CameraBridgeViewBase.CvCameraViewListener2 {
+    private var _binding: FragmentQrScannerDialogBinding? = null
 
-    private lateinit var binding: FragmentQrScannerDialogBinding
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
 
     private var loaderCallback: BaseLoaderCallback? = null
     private lateinit var imageMat: Mat
@@ -48,7 +51,7 @@ class QrScannerDialogFragment : BottomSheetDialogFragment(),
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        binding = FragmentQrScannerDialogBinding.inflate(layoutInflater, container, false)
+        _binding = FragmentQrScannerDialogBinding.inflate(layoutInflater, container, false)
 
         CoroutineScope(Dispatchers.Main).launch {
             idsToScooters = getIdsToScooters()
@@ -83,9 +86,9 @@ class QrScannerDialogFragment : BottomSheetDialogFragment(),
         binding.cameraView.disableView()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        binding.cameraView.disableView()
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onCameraViewStarted(width: Int, height: Int) {

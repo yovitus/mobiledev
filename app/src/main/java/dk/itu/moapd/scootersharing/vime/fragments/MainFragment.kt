@@ -25,18 +25,11 @@ import kotlinx.coroutines.launch
  * An activity class with methods to manage the main activity of Getting Started application.
  */
 class MainFragment : Fragment() {
-    companion object {
-        //        private val TAG = MainFragment::class.qualifiedName
-    }
-
-    /*
-    * These are viewbindings that allows easy read
-     */
     private var _binding: FragmentMainBinding? = null
-    private val binding
-        get() = checkNotNull(_binding) {
-            "Cannot access binding because it is null. Is the view visible?"
-        }
+
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
 
     private lateinit var adapter: CustomAdapter
 
@@ -68,7 +61,6 @@ class MainFragment : Fragment() {
     ): View {
         _binding =
             FragmentMainBinding.inflate(layoutInflater, container, false)
-
         return binding.root
     }
 

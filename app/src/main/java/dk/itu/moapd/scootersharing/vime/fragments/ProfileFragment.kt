@@ -37,15 +37,11 @@ import dk.itu.moapd.scootersharing.vime.databinding.FragmentProfileBinding
  * An activity class with methods to manage the main activity of Getting Started application.
  */
 class ProfileFragment : Fragment() {
-    companion object {
-//        private val TAG = ProfileFragment::class.qualifiedName
-    }
-
     private var _binding: FragmentProfileBinding? = null
-    private val binding
-        get() = checkNotNull(_binding) {
-            "Cannot access binding because it is null. Is the view visible?"
-        }
+
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,7 +50,6 @@ class ProfileFragment : Fragment() {
     ): View {
         _binding =
             FragmentProfileBinding.inflate(inflater, container, false)
-
         return binding.root
     }
 
@@ -76,5 +71,10 @@ class ProfileFragment : Fragment() {
                 requireActivity().finish()
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

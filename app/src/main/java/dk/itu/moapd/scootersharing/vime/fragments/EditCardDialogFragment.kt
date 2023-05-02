@@ -17,7 +17,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class EditCardDialogFragment : BottomSheetDialogFragment() {
-
     private var _binding: FragmentEditCardDialogBinding? = null
 
     // This property is only valid between onCreateView and
@@ -25,10 +24,6 @@ class EditCardDialogFragment : BottomSheetDialogFragment() {
     private val binding get() = _binding!!
 
     private var userCard: Card? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

@@ -111,7 +111,6 @@ class CurrentRideActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityCurrentRideBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)

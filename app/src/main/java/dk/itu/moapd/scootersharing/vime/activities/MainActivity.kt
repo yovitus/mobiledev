@@ -21,9 +21,6 @@ class MainActivity : AppCompatActivity() {
 //        private val TAG = MainActivity::class.qualifiedName
     }
 
-    /**
-     * View binding allows easy written code to interact with views.
-     */
     private lateinit var binding: ActivityMainBinding
 
     /**
@@ -35,15 +32,17 @@ class MainActivity : AppCompatActivity() {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
+
         if (FirebaseAuth.getInstance().currentUser == null)
             startLoginActivity()
         CoroutineScope(Dispatchers.Main).launch {
             if (getCurrentRideId() != null)
                 startCurrentRideActivity()
         }
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
+
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.fragment_container) as NavHostFragment
         val navController = navHostFragment.navController
