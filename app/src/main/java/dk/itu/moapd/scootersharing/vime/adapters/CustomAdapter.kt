@@ -37,6 +37,7 @@ class CustomAdapter(
                 )
             } else
                 binding.listLocationTime.text = ride.getStartDateWithFormat("dd/MM HH:mm")
+            binding.endPrice.text = ride.price.toString()
         }
     }
 
