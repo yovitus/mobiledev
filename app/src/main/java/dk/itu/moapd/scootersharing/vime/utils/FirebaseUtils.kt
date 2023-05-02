@@ -1,5 +1,6 @@
 package dk.itu.moapd.scootersharing.vime.utils
 
+import android.app.Activity
 import android.content.Context
 import android.widget.ImageView
 import com.bumptech.glide.Glide
@@ -99,7 +100,9 @@ suspend fun endRide(ride: Ride) {
 }
 
 fun getRidesQuery(): Query {
+    // Realtime database doesn't allow queries ordering by descending
     return db.child("users").child(currentUser.uid).child("rides").orderByChild("time_end")
+        .limitToLast(10)
 }
 
 suspend fun getCurrentRideId(): String? {
@@ -150,11 +153,11 @@ suspend fun getCard(): Card? {
  */
 
 fun loadImageInto(ctx: Context, imageUrl: String, view: ImageView) {
-    storageRef.child(imageUrl).downloadUrl.addOnSuccessListener {
-        Glide.with(ctx)
-            .load(it)
-            .transition(DrawableTransitionOptions.withCrossFade())
-            .centerCrop()
-            .into(view)
-    }
+    if (ctx is Activity && !ctx.isFinishing)
+        storageRef.child(imageUrl).downloadUrl.addOnSuccessListener {
+            Glide.with(ctx).load(it)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .centerCrop()
+                .into(view)
+        }
 }

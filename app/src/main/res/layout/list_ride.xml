@@ -13,14 +13,13 @@
         android:orientation="horizontal">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_alignParentStart="true"
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/list_name_location"
+                android:id="@+id/name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -30,13 +29,13 @@
                 android:hint="@string/name" />
 
             <TextView
-                android:id="@+id/list_location_time"
+                android:id="@+id/time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginBottom="10dp"
                 android:fontFamily="@font/neon"
-                android:hint="@string/locationAndTime" />
+                android:hint="@string/time" />
 
             <TextView
                 android:id="@+id/end_price"
@@ -45,7 +44,16 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginBottom="10dp"
                 android:fontFamily="@font/neon"
-                android:hint="0.00 DKK" />
+                android:hint="@string/_0_00_dkk" />
+
+            <TextView
+                android:id="@+id/top_speed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginBottom="10dp"
+                android:fontFamily="@font/neon"
+                android:hint="@string/_0_km_h" />
 
 
         </LinearLayout>
@@ -55,18 +63,9 @@
             android:layout_width="60dp"
             android:layout_height="57dp"
             android:layout_gravity="center"
-            android:layout_marginRight="20dp"/>
+            android:layout_marginEnd="20dp"
+            android:contentDescription="@string/image_of_scooter" />
     </LinearLayout>
-
-<!--    <ImageButton-->
-<!--        android:id="@+id/list_delete_button"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="50dp"-->
-<!--        android:layout_alignParentEnd="true"-->
-<!--        android:src="@drawable/baseline_remove_24"-->
-<!--        android:layout_marginEnd="20dp"-->
-<!--        android:layout_marginBottom="20dp"-->
-<!--        android:contentDescription="@string/removes_ride" />-->
 
     <View
         android:layout_width="match_parent"

@@ -33,11 +33,6 @@
         android:text="@string/price"
         android:gravity="center"/>
 
-    <TextView
-        android:id="@+id/text_view_androidversion"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
@@ -46,9 +41,7 @@
     <FrameLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/bottomNav"
-        />
+        android:layout_height="match_parent" />
 
 
 

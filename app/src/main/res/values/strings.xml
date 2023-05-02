@@ -10,8 +10,8 @@
     <string name="location">location</string>
     <string name="timestamp">timestamp</string>
     <string name="name">name</string>
-    <string name="locationAndTime">Location - Time</string>
-    <string name="stringCombiner">%s - %s</string>
+    <string name="time">Time</string>
+    <string name="string_combiner">%s - %s</string>
     <string name="android_version_text">API Level %1$d</string>
     <string name="removes_ride">Removes ride</string>
     <string name="sign_out_button">Sign out</string>
@@ -32,5 +32,7 @@
     <string name="price_number">1.5</string>
     <string name="price">1.5 DKK pr. min</string>
     <string name="price_dkk">%s DKK</string>
-    <string name="speed_km_h">%s km/h</string>
+    <string name="speed_m_ss">%s m/s\u00B2</string>
+    <string name="_0_00_dkk">0.00 DKK</string>
+    <string name="_0_km_h">0 km/h</string>
 </resources>

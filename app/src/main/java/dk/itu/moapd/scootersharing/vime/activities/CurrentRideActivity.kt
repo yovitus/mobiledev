@@ -29,8 +29,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileInputStream
-import java.math.RoundingMode
-import java.text.DecimalFormat
+import kotlin.math.ceil
 
 class CurrentRideActivity : AppCompatActivity() {
 
@@ -43,16 +42,6 @@ class CurrentRideActivity : AppCompatActivity() {
     private lateinit var scooter: Scooter
     private lateinit var ride: Ride
 
-    private val dfTwo: DecimalFormat = DecimalFormat("#.##").apply {
-        roundingMode = RoundingMode.UP
-    }
-
-    private val dfZero: DecimalFormat = DecimalFormat("#").apply {
-        roundingMode = RoundingMode.DOWN
-    }
-
-    private var endTime: Long? = null
-
     private var locationUpdatesService: LocationUpdatesService? = null
     private var accelerationUpdatesService: LinearAccelerationUpdatesService? = null
 
@@ -60,7 +49,7 @@ class CurrentRideActivity : AppCompatActivity() {
     private var curLon: Double? = null
     private var curAddr: String? = null
 
-    private var curPrice: Float? = null
+    private var topAcceleration: Int? = null
 
     private val locationConnection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
@@ -87,11 +76,15 @@ class CurrentRideActivity : AppCompatActivity() {
             accelerationUpdatesService = binder.getService()
 
             accelerationUpdatesService!!.subscribeToAccelerationUpdates { acceleration ->
-                // Convert acceleration to km/h and string
-                val speedKmh = dfZero.format(acceleration.times(3.6))
+                val accelerationInt = acceleration.toInt()
 
-                // Update speed
-                binding.speed.text = resources.getString(R.string.speed_km_h, speedKmh.toString())
+                // Update speed text
+                binding.speed.text =
+                    resources.getString(R.string.speed_m_ss, accelerationInt.toString())
+
+                // Updates topAcceleration if topAcceleration is null or if it is lower than current
+                if (topAcceleration == null || topAcceleration!! < accelerationInt)
+                    topAcceleration = accelerationInt
             }
         }
 
@@ -119,6 +112,10 @@ class CurrentRideActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        binding = ActivityCurrentRideBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
+
         getPermissions()
 
         Intent(
@@ -140,10 +137,6 @@ class CurrentRideActivity : AppCompatActivity() {
                 photoFile
             )
 
-            binding = ActivityCurrentRideBinding.inflate(layoutInflater)
-            val view = binding.root
-            setContentView(view)
-
             binding.apply {
                 loadImageInto(this@CurrentRideActivity, scooter.imageUrl, imageView)
 
@@ -163,9 +156,8 @@ class CurrentRideActivity : AppCompatActivity() {
                 handler.post(object : Runnable {
                     override fun run() {
                         // Get time diff
-                        val startTimeDate = ride.startTime
-                        endTime = System.currentTimeMillis()
-                        val timeDiff = endTime!! - startTimeDate
+                        ride.endTime = System.currentTimeMillis()
+                        val timeDiff = ride.endTime!! - ride.startTime
 
                         // Get hours, minutes and remaining seconds, then format them
                         val seconds = (timeDiff / 1000).toInt()
@@ -179,15 +171,12 @@ class CurrentRideActivity : AppCompatActivity() {
                         duration.text = time
 
                         // Update price as well
-                        curPrice = dfTwo.format(
-                            ((endTime!! - ride.startTime).toFloat() / 1000f / 60f) * resources.getString(
-                                R.string.price_number
-                            )
-                                .toFloat()
-                        ).toFloat()
+                        val price = timeDiff / 60000.0 * (resources.getString(R.string.price_number)
+                            .toFloat())
+                        ride.price = (ceil(price * 100) / 100).toFloat()
 
                         currentPrice.text =
-                            resources.getString(R.string.price_dkk, curPrice.toString())
+                            resources.getString(R.string.price_dkk, ride.price.toString())
 
                         // Call this method again after one second
                         handler.postDelayed(this, 1000)
@@ -200,6 +189,16 @@ class CurrentRideActivity : AppCompatActivity() {
             }
         }
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        locationUpdatesService?.unsubscribeToLocationUpdates()
+        accelerationUpdatesService?.unsubscribeToAccelerationUpdates()
+        if (locationUpdatesService != null)
+            unbindService(locationConnection)
+        if (accelerationUpdatesService != null)
+            unbindService(accelerationConnection)
     }
 
     private fun startMainActivity() {
@@ -260,13 +259,11 @@ class CurrentRideActivity : AppCompatActivity() {
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
+            ride.topAcceleration = topAcceleration
             if (curAddr != null && curLat != null && curLon != null) {
                 ride.endLocationLat = curLat
                 ride.endLocationLon = curLon
                 ride.endLocationAddress = curAddr
-                ride.endTime = endTime
-
-                ride.price = curPrice
             }
             CoroutineScope(Dispatchers.Main).launch {
                 endRide(ride)

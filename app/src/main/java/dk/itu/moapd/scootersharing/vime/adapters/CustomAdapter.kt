@@ -30,19 +30,25 @@ class CustomAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun bind(ride: Ride, scooter: Scooter) {
             loadImageInto(binding.root.context, scooter.imageUrl, binding.listImage)
-            binding.listNameLocation.text = scooter.name
+            binding.name.text = scooter.name
             if (ride.endTime != null) {
-                binding.listLocationTime.text = binding.root.resources.getString(
-                    R.string.stringCombiner,
+                binding.time.text = binding.root.resources.getString(
+                    R.string.string_combiner,
                     ride.getStartDateWithFormat("dd/MM HH:mm"),
                     ride.getEndDateWithFormat("dd/MM HH:mm")
                 )
             } else
-                binding.listLocationTime.text = ride.getStartDateWithFormat("dd/MM HH:mm")
-            binding.endPrice.text = binding.root.resources.getString(
+                binding.time.text = ride.getStartDateWithFormat("dd/MM HH:mm")
+            if (ride.price != null)
+                binding.endPrice.text = binding.root.resources.getString(
                 R.string.price_dkk,
                 ride.price.toString()
             )
+            if (ride.topAcceleration != null)
+                binding.topSpeed.text = binding.root.resources.getString(
+                    R.string.speed_m_ss,
+                    ride.topAcceleration.toString()
+                )
         }
     }
 
