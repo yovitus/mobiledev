@@ -1,19 +1,18 @@
 package dk.itu.moapd.scootersharing.vime.utils
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.view.View
-import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 
-fun Context.hideKeyboard(view: View) {
-    val imm = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-    imm.hideSoftInputFromWindow(view.windowToken, 0)
-}
-
+/**
+ * Context extension function for creating and showing a dialog.
+ * @param title The title of the dialog.
+ * @param message The message the dialog should display.
+ * @param onOkClick The function to be called if the user presses 'OK'.
+ * @param onCancelClick The function to be called if the user presses 'Cancel'.
+ */
 fun Context.createDialog(
     title: String,
     message: String,
@@ -35,6 +34,11 @@ fun Context.createDialog(
     builder.create().show()
 }
 
+/**
+ * Context extension function for converting a vector drawable to a bitmap.
+ * @param drawableId The id of the drawable that should be converted.
+ * @return The drawable as a Bitmap object.
+ */
 fun Context.getBitmapFromVectorDrawable(drawableId: Int): Bitmap {
     val drawable = ContextCompat.getDrawable(this, drawableId)
     val bitmap = Bitmap.createBitmap(

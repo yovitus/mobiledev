@@ -14,9 +14,8 @@ import dk.itu.moapd.scootersharing.vime.R
 import dk.itu.moapd.scootersharing.vime.adapters.CustomAdapter
 import dk.itu.moapd.scootersharing.vime.data.Ride
 import dk.itu.moapd.scootersharing.vime.databinding.FragmentMainBinding
-import dk.itu.moapd.scootersharing.vime.utils.getCard
+import dk.itu.moapd.scootersharing.vime.singletons.FirebaseManager
 import dk.itu.moapd.scootersharing.vime.utils.getRequestUserPermissions
-import dk.itu.moapd.scootersharing.vime.utils.getRidesQuery
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -31,6 +30,8 @@ class MainFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
+    private val firebaseManager = FirebaseManager.getInstance()
+
     private lateinit var adapter: CustomAdapter
 
     private var requestCameraPermission: (() -> Unit)? = null
@@ -38,7 +39,7 @@ class MainFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val query = getRidesQuery()
+        val query = firebaseManager.getRidesQuery()
         val options = FirebaseRecyclerOptions.Builder<Ride>()
             .setQuery(query, Ride::class.java)
             .setLifecycleOwner(this)
@@ -72,7 +73,7 @@ class MainFragment : Fragment() {
 
             startRideButton.setOnClickListener {
                 CoroutineScope(Dispatchers.Main).launch {
-                    if (getCard() != null) {
+                    if (firebaseManager.getCard() != null) {
                         requestCameraPermission!!()
                     } else
                         Toast.makeText(

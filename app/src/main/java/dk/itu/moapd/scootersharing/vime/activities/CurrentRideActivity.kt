@@ -15,15 +15,14 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
 import dk.itu.moapd.scootersharing.vime.R
 import dk.itu.moapd.scootersharing.vime.data.Ride
 import dk.itu.moapd.scootersharing.vime.data.Scooter
 import dk.itu.moapd.scootersharing.vime.databinding.ActivityCurrentRideBinding
 import dk.itu.moapd.scootersharing.vime.services.LinearAccelerationUpdatesService
 import dk.itu.moapd.scootersharing.vime.services.LocationUpdatesService
-import dk.itu.moapd.scootersharing.vime.utils.*
+import dk.itu.moapd.scootersharing.vime.singletons.FirebaseManager
+import dk.itu.moapd.scootersharing.vime.utils.getRequestUserPermissions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,12 +31,9 @@ import java.io.FileInputStream
 import kotlin.math.ceil
 
 class CurrentRideActivity : AppCompatActivity() {
-
-    companion object {
-//        private val TAG = CurrentRideActivity::class.qualifiedName
-    }
-
     private lateinit var binding: ActivityCurrentRideBinding
+
+    private val firebaseManager = FirebaseManager.getInstance()
 
     private lateinit var scooter: Scooter
     private lateinit var ride: Ride
@@ -98,10 +94,8 @@ class CurrentRideActivity : AppCompatActivity() {
         ActivityResultContracts.TakePicture()
     ) { didTakePhoto: Boolean ->
         if (didTakePhoto) {
-            val storageRef = Firebase.storage(BUCKET_URL).reference
-            val imageRef = storageRef.child(scooter.latestImageUrl)
             val stream = FileInputStream(photoFile)
-            imageRef.putStream(stream)
+            firebaseManager.uploadImage(stream, scooter.latestImageUrl)
             stopRideFunc()
         }
     }
@@ -125,8 +119,8 @@ class CurrentRideActivity : AppCompatActivity() {
         }
 
         CoroutineScope(Dispatchers.Main).launch {
-            ride = getCurrentRide()!!
-            scooter = getScooter(ride.scooterId)!!
+            ride = firebaseManager.getCurrentRide()!!
+            scooter = firebaseManager.getScooter(ride.scooterId)!!
 
             val photoName = "${scooter.name}-latest.jpg"
             photoFile = File(this@CurrentRideActivity.applicationContext.filesDir, photoName)
@@ -137,7 +131,7 @@ class CurrentRideActivity : AppCompatActivity() {
             )
 
             binding.apply {
-                loadImageInto(this@CurrentRideActivity, scooter.imageUrl, imageView)
+                firebaseManager.loadImageInto(this@CurrentRideActivity, scooter.imageUrl, imageView)
 
                 // Set the custom digital clock style
                 duration.setTextAppearance(R.style.DigitalClockTextAppearance)
@@ -265,12 +259,12 @@ class CurrentRideActivity : AppCompatActivity() {
                 ride.endLocationAddress = curAddr
             }
             CoroutineScope(Dispatchers.Main).launch {
-                endRide(ride)
+                firebaseManager.endRide(ride)
                 startMainActivity()
             }
         } else {
             CoroutineScope(Dispatchers.Main).launch {
-                endRide(ride)
+                firebaseManager.endRide(ride)
                 startMainActivity()
             }
         }

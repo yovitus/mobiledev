@@ -10,8 +10,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dk.itu.moapd.scootersharing.vime.R
 import dk.itu.moapd.scootersharing.vime.data.Card
 import dk.itu.moapd.scootersharing.vime.databinding.FragmentEditCardDialogBinding
-import dk.itu.moapd.scootersharing.vime.utils.editCard
-import dk.itu.moapd.scootersharing.vime.utils.getCard
+import dk.itu.moapd.scootersharing.vime.singletons.FirebaseManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -22,6 +21,8 @@ class EditCardDialogFragment : BottomSheetDialogFragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
+    private val firebaseManager = FirebaseManager.getInstance()
 
     private var userCard: Card? = null
 
@@ -36,7 +37,7 @@ class EditCardDialogFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         CoroutineScope(Dispatchers.Main).launch {
-            userCard = getCard()
+            userCard = firebaseManager.getCard()
 
             if (userCard != null) {
                 binding.apply {
@@ -106,7 +107,7 @@ class EditCardDialogFragment : BottomSheetDialogFragment() {
                         expYearUInt.toInt(),
                         cvvUInt.toInt()
                     )
-                    editCard(card)
+                    firebaseManager.editCard(card)
 
                     Toast.makeText(context, "Card saved!", Toast.LENGTH_SHORT).show()
                     findNavController().navigate(

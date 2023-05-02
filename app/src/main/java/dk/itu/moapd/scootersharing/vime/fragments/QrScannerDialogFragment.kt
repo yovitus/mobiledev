@@ -16,9 +16,8 @@ import dk.itu.moapd.scootersharing.vime.activities.CurrentRideActivity
 import dk.itu.moapd.scootersharing.vime.data.Ride
 import dk.itu.moapd.scootersharing.vime.data.Scooter
 import dk.itu.moapd.scootersharing.vime.databinding.FragmentQrScannerDialogBinding
+import dk.itu.moapd.scootersharing.vime.singletons.FirebaseManager
 import dk.itu.moapd.scootersharing.vime.utils.createDialog
-import dk.itu.moapd.scootersharing.vime.utils.getIdsToScooters
-import dk.itu.moapd.scootersharing.vime.utils.startRide
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -39,6 +38,8 @@ class QrScannerDialogFragment : BottomSheetDialogFragment(),
     // onDestroyView.
     private val binding get() = _binding!!
 
+    private val firebaseManager = FirebaseManager.getInstance()
+
     private var loaderCallback: BaseLoaderCallback? = null
     private lateinit var imageMat: Mat
 
@@ -54,7 +55,7 @@ class QrScannerDialogFragment : BottomSheetDialogFragment(),
         _binding = FragmentQrScannerDialogBinding.inflate(layoutInflater, container, false)
 
         CoroutineScope(Dispatchers.Main).launch {
-            idsToScooters = getIdsToScooters()
+            idsToScooters = firebaseManager.getIdsToScooters()
         }
 
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
@@ -155,7 +156,7 @@ class QrScannerDialogFragment : BottomSheetDialogFragment(),
         CoroutineScope(Dispatchers.Main).launch {
             val onOkClick = {
                 val ride = Ride(scooterId)
-                startRide(ride)
+                firebaseManager.startRide(ride)
                 startCurrentRideActivity()
 
             }

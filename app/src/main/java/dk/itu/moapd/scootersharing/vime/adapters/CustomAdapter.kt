@@ -9,8 +9,7 @@ import dk.itu.moapd.scootersharing.vime.R
 import dk.itu.moapd.scootersharing.vime.data.Ride
 import dk.itu.moapd.scootersharing.vime.data.Scooter
 import dk.itu.moapd.scootersharing.vime.databinding.ListRideBinding
-import dk.itu.moapd.scootersharing.vime.utils.getScooter
-import dk.itu.moapd.scootersharing.vime.utils.loadImageInto
+import dk.itu.moapd.scootersharing.vime.singletons.FirebaseManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -20,16 +19,15 @@ class CustomAdapter(
 ) :
     FirebaseRecyclerAdapter<Ride,
             CustomAdapter.ViewHolder>(options) {
-    companion object {
-//        private val TAG = CustomAdapter::class.qualifiedName
-    }
+    private val firebaseManager = FirebaseManager.getInstance()
 
     class ViewHolder(
         private val binding: ListRideBinding
     ) :
         RecyclerView.ViewHolder(binding.root) {
+        private val firebaseManager = FirebaseManager.getInstance()
         fun bind(ride: Ride, scooter: Scooter) {
-            loadImageInto(binding.root.context, scooter.imageUrl, binding.listImage)
+            firebaseManager.loadImageInto(binding.root.context, scooter.imageUrl, binding.listImage)
             binding.name.text = scooter.name
             if (ride.endTime != null) {
                 binding.time.text = binding.root.resources.getString(
@@ -41,9 +39,9 @@ class CustomAdapter(
                 binding.time.text = ride.getStartDateWithFormat("dd/MM HH:mm")
             if (ride.price != null)
                 binding.endPrice.text = binding.root.resources.getString(
-                R.string.price_dkk,
-                ride.price.toString()
-            )
+                    R.string.price_dkk,
+                    ride.price.toString()
+                )
             if (ride.topAcceleration != null)
                 binding.topSpeed.text = binding.root.resources.getString(
                     R.string.speed_m_ss,
@@ -60,7 +58,7 @@ class CustomAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int, ride: Ride) {
         CoroutineScope(Dispatchers.Main).launch {
-            val scooter = getScooter(ride.scooterId)
+            val scooter = firebaseManager.getScooter(ride.scooterId)
             holder.apply {
                 if (scooter != null)
                     bind(ride, scooter)

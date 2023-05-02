@@ -52,7 +52,7 @@
         <Button
             android:id="@+id/stop_ride_button"
             android:layout_width="190dp"
-            android:layout_height="0dp"
+            android:layout_height="75dp"
             android:layout_gravity="center"
             android:layout_marginTop="10pt"
             android:layout_weight="0"

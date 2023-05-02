@@ -16,6 +16,7 @@ import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
+import kotlin.random.Random
 
 @RunWith(AndroidJUnit4::class)
 class MainActivityTest {
@@ -54,35 +55,53 @@ class MainActivityTest {
     }
 
     @Test
-    fun showsRideListOnRideListButtonClick() {
-        onView(withId(R.id.show_ridelist_button))
+    fun saveButtonSavesCardNumber() {
+        // Checking if new mock card number is saved
+        val lowestCardNumber = 1000000000000000L
+        val highestCardNumber = 9999999999999999L
+
+        val mockCardNumber = Random.nextLong(lowestCardNumber, highestCardNumber).toString()
+
+        val mockMonthYear = "12/24"
+        val mockCvv = "000"
+
+        onView(withId(R.id.profile))
             .perform(click())
 
-        onView(withId(R.id.recycler_view))
+        onView(withId(R.id.edit_card_button))
+            .perform(click())
+
+        onView(withId(R.id.save_button))
             .check(matches(isDisplayed()))
+
+        onView(withId(R.id.edit_text_cardnumber))
+            .perform(typeText(mockCardNumber))
+
+        onView(withId(R.id.edit_text_expiration))
+            .perform(typeText(mockMonthYear))
+
+        onView(withId(R.id.edit_text_cvv))
+            .perform(typeText(mockCvv))
+
+        onView(withId(R.id.save_button))
+            .perform(click())
+
+        onView(withId(R.id.edit_card_button).awaitView())
+            .perform(click())
+
+        onView(withId(R.id.edit_text_cardnumber))
+            .check(matches(withText(mockCardNumber)))
     }
 
     @Test
-    fun startRideAddsRideToRecyclerView() {
-        onView(withId(R.id.recycler_view))
-            .check(matches(hasChildCount(3)))
-
-        onView(withId(R.id.start_ride_button))
+    fun signOutButtonSignsOut() {
+        onView(withId(R.id.profile))
             .perform(click())
 
-        onView(withId(R.id.edit_text_name))
-            .perform(typeText("testScooter"))
-
-        onView(withId(R.id.edit_text_location))
-            .perform(typeText("testLocation"))
-
-        onView(withId(R.id.start_ride_button))
+        onView(withId(R.id.sign_out_button))
             .perform(click())
 
-        onView(withText("OK"))
-            .perform(click())
-
-        onView(withId(R.id.recycler_view))
-            .check(matches(hasChildCount(4)))
+        onView(withText("Sign in with email").awaitView())
+            .check(matches(isDisplayed()))
     }
 }

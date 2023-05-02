@@ -5,14 +5,12 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.os.IBinder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -35,7 +33,6 @@ import dk.itu.moapd.scootersharing.vime.utils.getRequestUserPermissions
 class MapsFragment : Fragment() {
 
     companion object {
-        //        private val TAG = MapsFragment::class.qualifiedName
         private const val DEFAULT_ZOOM = 15
     }
 
@@ -45,7 +42,6 @@ class MapsFragment : Fragment() {
     private val connection = object : ServiceConnection {
 
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance.
             val binder = service as LocationUpdatesService.LocalBinder
             locationUpdatesService = binder.getService()
             serviceBound = true
@@ -68,7 +64,6 @@ class MapsFragment : Fragment() {
 
     private lateinit var address: String
     private var userMarker: Marker? = null
-
 
     private val scooterMarkers: MutableMap<String, Marker> =
         emptyMap<String, Marker>().toMutableMap()

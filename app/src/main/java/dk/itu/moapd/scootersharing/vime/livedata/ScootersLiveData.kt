@@ -4,18 +4,16 @@ import androidx.lifecycle.LiveData
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import dk.itu.moapd.scootersharing.vime.data.Scooter
-import dk.itu.moapd.scootersharing.vime.utils.DATABASE_URL
-import dk.itu.moapd.scootersharing.vime.utils.getIdsToScooters
+import dk.itu.moapd.scootersharing.vime.singletons.FirebaseManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
-class ScootersLiveData() : LiveData<Map<String, Scooter>>() {
-    val db = Firebase.database(DATABASE_URL).reference
+class ScootersLiveData : LiveData<Map<String, Scooter>>() {
+    private val firebaseManager = FirebaseManager.getInstance()
+    private val db = firebaseManager.db
 
     private val listener = object : ChildEventListener {
         private fun onChildAddedOrChanged(snapshot: DataSnapshot) {
@@ -66,7 +64,7 @@ class ScootersLiveData() : LiveData<Map<String, Scooter>>() {
         super.onActive()
         db.child("scooters").addChildEventListener(listener)
         coroutineScope.launch {
-            val scooters = getIdsToScooters().filter { (_, scooter) ->
+            val scooters = firebaseManager.getIdsToScooters().filter { (_, scooter) ->
                 scooter.available
             }
             postValue(scooters)

@@ -7,8 +7,7 @@ import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dk.itu.moapd.scootersharing.vime.data.Scooter
 import dk.itu.moapd.scootersharing.vime.databinding.FragmentScooterDialogBinding
-import dk.itu.moapd.scootersharing.vime.utils.getScooter
-import dk.itu.moapd.scootersharing.vime.utils.loadImageInto
+import dk.itu.moapd.scootersharing.vime.singletons.FirebaseManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -19,6 +18,8 @@ class ScooterDialogFragment : BottomSheetDialogFragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
+    private val firebaseManager = FirebaseManager.getInstance()
 
     private lateinit var scooter: Scooter
 
@@ -32,13 +33,13 @@ class ScooterDialogFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         CoroutineScope(Dispatchers.IO).launch {
-            scooter = arguments?.getString("scooterId")?.let { getScooter(it) }!!
+            scooter = arguments?.getString("scooterId")?.let { firebaseManager.getScooter(it) }!!
 
             binding.apply {
                 scooterTitle.text = scooter.name
                 scooterAddress.text = scooter.address
                 val imageUrl = scooter.latestImageUrl // should be changed to latestImageUrl
-                loadImageInto(requireContext(), imageUrl, scooterImage)
+                firebaseManager.loadImageInto(requireContext(), imageUrl, scooterImage)
             }
         }
     }
