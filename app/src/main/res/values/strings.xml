@@ -30,5 +30,5 @@
     <string name="save">Save</string>
     <string name="exp_month_year">%s/%s</string>
     <string name="price">1.5 DKK pr. min</string>
-    <string name="end_price"></string>
+    <string name="end_price">%s DKK</string>
 </resources>
