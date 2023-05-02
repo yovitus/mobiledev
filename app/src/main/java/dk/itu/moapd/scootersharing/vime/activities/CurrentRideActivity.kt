@@ -142,6 +142,10 @@ class CurrentRideActivity : AppCompatActivity() {
 
                         // Call this method again after one second
                         handler.postDelayed(this, 1000)
+
+                        //Update speed
+
+
                     }
                 })
 

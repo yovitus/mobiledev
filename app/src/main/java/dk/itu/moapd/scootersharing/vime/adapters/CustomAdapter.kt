@@ -10,6 +10,7 @@ import dk.itu.moapd.scootersharing.vime.data.Ride
 import dk.itu.moapd.scootersharing.vime.data.Scooter
 import dk.itu.moapd.scootersharing.vime.databinding.ListRideBinding
 import dk.itu.moapd.scootersharing.vime.utils.getScooter
+import dk.itu.moapd.scootersharing.vime.utils.loadImageInto
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -28,6 +29,7 @@ class CustomAdapter(
     ) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(ride: Ride, scooter: Scooter) {
+            loadImageInto(binding.root.context, scooter.imageUrl, binding.listImage)
             binding.listNameLocation.text = scooter.name
             if (ride.endTime != null) {
                 binding.listLocationTime.text = binding.root.resources.getString(

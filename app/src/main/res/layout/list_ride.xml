@@ -1,43 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    android:gravity="center"
     android:layout_marginHorizontal="10dp">
 
     <LinearLayout
+        android:id="@+id/horizontal_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
-        android:orientation="vertical" >
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/list_name_location"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginBottom="10dp"
-            android:fontFamily="@font/neon"
-            android:hint="@string/name"/>
+            android:layout_weight="1"
+            android:layout_alignParentStart="true"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/list_location_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/neon"
-            android:layout_marginStart="20dp"
-            android:layout_marginBottom="10dp"
-            android:hint="@string/locationAndTime"/>
+            <TextView
+                android:id="@+id/list_name_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginBottom="10dp"
+                android:fontFamily="@font/neon"
+                android:hint="@string/name" />
 
-        <TextView
-            android:id="@+id/end_price"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/neon"
-            android:layout_marginStart="20dp"
-            android:layout_marginBottom="10dp"
-            android:hint="0.00 DKK"/>
+            <TextView
+                android:id="@+id/list_location_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginBottom="10dp"
+                android:fontFamily="@font/neon"
+                android:hint="@string/locationAndTime" />
 
+            <TextView
+                android:id="@+id/end_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginBottom="10dp"
+                android:fontFamily="@font/neon"
+                android:hint="0.00 DKK" />
+
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/list_image"
+            android:layout_width="60dp"
+            android:layout_height="57dp"
+            android:layout_gravity="center"
+            android:layout_marginRight="20dp"/>
     </LinearLayout>
 
 <!--    <ImageButton-->
@@ -49,5 +67,11 @@
 <!--        android:layout_marginEnd="20dp"-->
 <!--        android:layout_marginBottom="20dp"-->
 <!--        android:contentDescription="@string/removes_ride" />-->
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_below="@+id/horizontal_layout"/>
 
 </RelativeLayout>

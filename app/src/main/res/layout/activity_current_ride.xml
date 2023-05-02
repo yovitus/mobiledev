@@ -30,6 +30,24 @@
             android:text="00:00:00"
             android:textAppearance="@style/DigitalClockTextAppearance" />
 
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/speed"
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="0.0 km/h"
+            android:textAppearance="@style/Speed"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/current_price"
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="0.0 DDK"
+            android:textAppearance="@style/CurrentPrice"/>
+
         <Button
             android:id="@+id/stop_ride_button"
             android:layout_width="190dp"
