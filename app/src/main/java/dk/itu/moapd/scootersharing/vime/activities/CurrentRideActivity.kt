@@ -21,6 +21,7 @@ import dk.itu.moapd.scootersharing.vime.R
 import dk.itu.moapd.scootersharing.vime.data.Ride
 import dk.itu.moapd.scootersharing.vime.data.Scooter
 import dk.itu.moapd.scootersharing.vime.databinding.ActivityCurrentRideBinding
+import dk.itu.moapd.scootersharing.vime.services.LinearAccelerationUpdatesService
 import dk.itu.moapd.scootersharing.vime.services.LocationUpdatesService
 import dk.itu.moapd.scootersharing.vime.utils.*
 import kotlinx.coroutines.CoroutineScope
@@ -42,22 +43,31 @@ class CurrentRideActivity : AppCompatActivity() {
     private lateinit var scooter: Scooter
     private lateinit var ride: Ride
 
-    private var locationUpdatesService: LocationUpdatesService? = null
-    private var serviceBound = false
+    private val dfTwo: DecimalFormat = DecimalFormat("#.##").apply {
+        roundingMode = RoundingMode.UP
+    }
+
+    private val dfZero: DecimalFormat = DecimalFormat("#").apply {
+        roundingMode = RoundingMode.DOWN
+    }
 
     private var endTime: Long? = null
+
+    private var locationUpdatesService: LocationUpdatesService? = null
+    private var accelerationUpdatesService: LinearAccelerationUpdatesService? = null
 
     private var curLat: Double? = null
     private var curLon: Double? = null
     private var curAddr: String? = null
 
-    private val connection = object : ServiceConnection {
+    private var curPrice: Float? = null
+
+    private val locationConnection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             val binder = service as LocationUpdatesService.LocalBinder
             locationUpdatesService = binder.getService()
-            serviceBound = true
 
-            locationUpdatesService?.subscribeToLocationUpdates(
+            locationUpdatesService!!.subscribeToLocationUpdates(
                 upFunc = { loc, addr ->
                     curLat = loc.latitude
                     curLon = loc.longitude
@@ -67,9 +77,28 @@ class CurrentRideActivity : AppCompatActivity() {
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
-            serviceBound = false
             locationUpdatesService?.unsubscribeToLocationUpdates()
         }
+    }
+
+    private val accelerationConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            val binder = service as LinearAccelerationUpdatesService.LocalBinder
+            accelerationUpdatesService = binder.getService()
+
+            accelerationUpdatesService!!.subscribeToAccelerationUpdates { acceleration ->
+                // Convert acceleration to km/h and string
+                val speedKmh = dfZero.format(acceleration.times(3.6))
+
+                // Update speed
+                binding.speed.text = resources.getString(R.string.speed_km_h, speedKmh.toString())
+            }
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            accelerationUpdatesService?.unsubscribeToAccelerationUpdates()
+        }
+
     }
 
     private val takePhoto = registerForActivityResult(
@@ -91,6 +120,13 @@ class CurrentRideActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         getPermissions()
+
+        Intent(
+            this,
+            LinearAccelerationUpdatesService::class.java
+        ).also { intent ->
+            bindService(intent, accelerationConnection, Context.BIND_AUTO_CREATE)
+        }
 
         CoroutineScope(Dispatchers.Main).launch {
             ride = getCurrentRide()!!
@@ -126,10 +162,12 @@ class CurrentRideActivity : AppCompatActivity() {
                 val handler = Handler()
                 handler.post(object : Runnable {
                     override fun run() {
+                        // Get time diff
                         val startTimeDate = ride.startTime
                         endTime = System.currentTimeMillis()
                         val timeDiff = endTime!! - startTimeDate
 
+                        // Get hours, minutes and remaining seconds, then format them
                         val seconds = (timeDiff / 1000).toInt()
                         val hours = seconds / 3600
                         val minutes = (seconds % 3600) / 60
@@ -140,12 +178,19 @@ class CurrentRideActivity : AppCompatActivity() {
                         // Set the text view text to the current time
                         duration.text = time
 
+                        // Update price as well
+                        curPrice = dfTwo.format(
+                            ((endTime!! - ride.startTime).toFloat() / 1000f / 60f) * resources.getString(
+                                R.string.price_number
+                            )
+                                .toFloat()
+                        ).toFloat()
+
+                        currentPrice.text =
+                            resources.getString(R.string.price_dkk, curPrice.toString())
+
                         // Call this method again after one second
                         handler.postDelayed(this, 1000)
-
-                        //Update speed
-
-
                     }
                 })
 
@@ -183,7 +228,7 @@ class CurrentRideActivity : AppCompatActivity() {
                     this@CurrentRideActivity,
                     LocationUpdatesService::class.java
                 ).also { intent ->
-                    bindService(intent, connection, Context.BIND_AUTO_CREATE)
+                    bindService(intent, locationConnection, Context.BIND_AUTO_CREATE)
                 }
             }
         }
@@ -220,12 +265,8 @@ class CurrentRideActivity : AppCompatActivity() {
                 ride.endLocationLon = curLon
                 ride.endLocationAddress = curAddr
                 ride.endTime = endTime
-                val price =
-                    ((endTime!! - ride.startTime).toFloat() / 1000f / 60f) * resources.getString(R.string.price_number)
-                        .toFloat()
-                val df = DecimalFormat("#.##")
-                df.roundingMode = RoundingMode.UP
-                ride.price = df.format(price).toFloat()
+
+                ride.price = curPrice
             }
             CoroutineScope(Dispatchers.Main).launch {
                 endRide(ride)

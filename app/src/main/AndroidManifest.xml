@@ -49,6 +49,8 @@
         
         <service android:name=".services.LocationUpdatesService" />
 
+        <service android:name=".services.LinearAccelerationUpdatesService" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="dk.itu.moapd.scootersharing.vime.fileprovider"

@@ -5,12 +5,14 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.os.IBinder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -149,7 +151,8 @@ class MapsFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        requireActivity().unbindService(connection)
+        if (serviceBound)
+            requireActivity().unbindService(connection)
         serviceBound = false
         observer?.let { scootersLiveData?.removeObserver(it) }
     }
