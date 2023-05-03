@@ -53,6 +53,7 @@
                 <map>
                   <entry key="192.168.1.33:5555" value="120" />
                   <entry key="Duration" value="90" />
+                  <entry key="HMD Global" value="120" />
                   <entry key="HMD Global&#10; Nokia 5.4" value="120" />
                   <entry key="HZQL1849FAL41300042" value="120" />
                   <entry key="OnePlus" value="120" />

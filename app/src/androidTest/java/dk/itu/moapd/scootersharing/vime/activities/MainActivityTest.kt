@@ -82,7 +82,7 @@ class MainActivityTest {
         onView(withId(R.id.edit_card_button))
             .perform(click())
 
-        onView(withId(R.id.save_button))
+        onView(withId(R.id.save_button).awaitView())
             .check(matches(isDisplayed()))
 
         onView(withId(R.id.edit_text_cardnumber))
