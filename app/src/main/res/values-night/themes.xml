@@ -14,10 +14,6 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="DurationAppearance">
-        <item name="android:textSize">40sp</item>
-    </style>
-
     <style name="DigitalClockTextAppearance">
         <item name="android:fontFamily">@font/digital7</item>
         <item name="android:letterSpacing">0.2</item>

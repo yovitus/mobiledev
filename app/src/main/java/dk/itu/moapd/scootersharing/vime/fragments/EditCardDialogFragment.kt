@@ -79,7 +79,6 @@ class EditCardDialogFragment : BottomSheetDialogFragment() {
                             Toast.LENGTH_SHORT
                         ).show()
                         return@setOnClickListener
-
                     }
 
                     val expMonthUInt = exp[0].toUIntOrNull()

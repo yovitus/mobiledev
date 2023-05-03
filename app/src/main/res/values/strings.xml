@@ -1,25 +1,11 @@
 <resources>
     <string name="app_name">ScooterSharing</string>
     <string name="start_ride_button">Start Ride</string>
-    <string name="profile_button">Profile</string>
-    <string name="ride_list">Ride list</string>
     <string name="scooter_sharing">Scooter Sharing</string>
-    <string name="scooter_name">Scooter name</string>
-    <string name="enter_location">Enter location</string>
-    <string name="enter_new_location">Enter new location</string>
-    <string name="location">location</string>
-    <string name="timestamp">timestamp</string>
     <string name="name">name</string>
     <string name="time">Time</string>
     <string name="string_combiner">%s - %s</string>
-    <string name="android_version_text">API Level %1$d</string>
-    <string name="removes_ride">Removes ride</string>
     <string name="sign_out_button">Sign out</string>
-    <string name="latitude_text">Latitude</string>
-    <string name="longitude_text">Longitude</string>
-    <string name="time_text">Time</string>
-    <string name="address_text">Address</string>
-    <string name="content_description_location">Location</string>
     <string name="scooter_title">Scooter Title</string>
     <string name="scooter_address">Scooter Address</string>
     <string name="image_of_scooter">Image of scooter</string>
