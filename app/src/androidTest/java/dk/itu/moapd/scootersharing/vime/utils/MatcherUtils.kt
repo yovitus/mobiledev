@@ -14,7 +14,7 @@ import org.hamcrest.Matcher
  * @param delayMillis Millisecond delay between each check if it has appeared. Default is 500.
  * @param maxTries Amount of tries checking if it has appeared. Will throw exception
  * when tries exceed maxTries. Default is 5.
- * @param checkMethod The checkmethod that should be true when the Matcher<View> is returned
+ * @param checkMethod The Viewassertion that should be true when the Matcher<View> is returned
  * Defaults is 'matches(isDisplayed())'.
  * @return this for further operations on the view.
  * @throws NoMatchingViewException If no view is found within maxTries of delayMillis.
