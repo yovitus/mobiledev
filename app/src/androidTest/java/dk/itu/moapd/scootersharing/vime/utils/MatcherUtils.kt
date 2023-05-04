@@ -10,12 +10,12 @@ import org.hamcrest.Matcher
 
 
 /**
- * Wait for the specified view to appear and for the checkMethod view assertion to be true,
+ * Wait for the specified view to appear and for the view assertion to be true,
  * then returns the view.
  * @param delayMillis Millisecond delay between each check if it has appeared. Default is 500.
  * @param maxTries Amount of tries checking if it has appeared. Will throw exception
  * when tries exceed maxTries. Default is 5.
- * @param checkMethod The View assertion that should be true when the Matcher<View> is returned
+ * @param assertion The View assertion that should be true when the Matcher<View> is returned
  * Default is 'matches(isDisplayed())'.
  * @return this for further operations on the view.
  * @throws NoMatchingViewException If no view is found within maxTries of delayMillis.
@@ -23,18 +23,18 @@ import org.hamcrest.Matcher
 fun Matcher<View>.awaitView(
     delayMillis: Long = 500,
     maxTries: Int = 5,
-    checkMethod: () -> ViewAssertion = { ViewAssertions.matches(isDisplayed()) }
+    assertion: ViewAssertion = ViewAssertions.matches(isDisplayed())
 ): Matcher<View> {
-    for (tries in 2..maxTries) {
+    for (tries in 1..maxTries) {
         try {
-            onView(this).check(checkMethod())
+            onView(this).check(assertion)
             return this
         } catch (e: NoMatchingViewException) {
+            if (tries == maxTries)
+                throw e
             Thread.sleep(delayMillis)
-            continue
         }
     }
-    onView(this).check(checkMethod())
     return this
 }
 
