@@ -21,9 +21,9 @@ import org.hamcrest.Matcher
  * @throws NoMatchingViewException If no view is found within maxTries of delayMillis.
  */
 fun Matcher<View>.awaitView(
+    assertion: ViewAssertion = ViewAssertions.matches(isDisplayed()),
     delayMillis: Long = 500,
-    maxTries: Int = 5,
-    assertion: ViewAssertion = ViewAssertions.matches(isDisplayed())
+    maxTries: Int = 5
 ): Matcher<View> {
     for (tries in 1..maxTries) {
         try {

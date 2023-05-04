@@ -31,12 +31,12 @@ class MainActivityTest {
         fun setUpAll() {
             launch(LoginActivity::class.java)
 
-            onView(withText("Sign in with email").awaitView { matches(isClickable()) }).perform(click())
+            onView(withText("Sign in with email").awaitView(matches(isClickable()))).perform(click())
 
-            onView(withHint("Email").awaitView { matches(isClickable()) }).perform(typeText("john@doe.com"))
+            onView(withHint("Email").awaitView(matches(isClickable()))).perform(typeText("john@doe.com"))
             onView(withText("NEXT")).perform(click())
 
-            onView(withHint("Password").awaitView { matches(isClickable()) }).perform(typeText("123456"))
+            onView(withHint("Password").awaitView(matches(isClickable()))).perform(typeText("123456"))
             onView(withText("SIGN IN")).perform(click())
         }
     }
@@ -87,7 +87,7 @@ class MainActivityTest {
         onView(withId(R.id.save_button))
             .check(matches(isDisplayed()))
 
-        onView(withId(R.id.edit_text_cardnumber).awaitView { matches(not(withText(""))) })
+        onView(withId(R.id.edit_text_cardnumber).awaitView(matches(not(withText("")))))
             .perform(clearText(), typeText(mockCardNumber), closeSoftKeyboard())
 
         onView(withId(R.id.edit_text_expiration))
@@ -99,7 +99,7 @@ class MainActivityTest {
         onView(withId(R.id.save_button))
             .perform(click())
 
-        onView(withId(R.id.edit_card_button).awaitView { matches(isClickable()) })
+        onView(withId(R.id.edit_card_button).awaitView(matches(isClickable())))
             .perform(click())
 
         onView(withId(R.id.edit_text_cardnumber))

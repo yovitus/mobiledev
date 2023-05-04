@@ -9,6 +9,7 @@ import android.view.SurfaceView
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dk.itu.moapd.scootersharing.vime.R
@@ -16,6 +17,7 @@ import dk.itu.moapd.scootersharing.vime.activities.CurrentRideActivity
 import dk.itu.moapd.scootersharing.vime.data.Ride
 import dk.itu.moapd.scootersharing.vime.data.Scooter
 import dk.itu.moapd.scootersharing.vime.databinding.FragmentQrScannerDialogBinding
+import dk.itu.moapd.scootersharing.vime.livedata.ScootersLiveData
 import dk.itu.moapd.scootersharing.vime.singletons.FirebaseManager
 import dk.itu.moapd.scootersharing.vime.utils.createDialog
 import kotlinx.coroutines.CoroutineScope
@@ -46,6 +48,8 @@ class QrScannerDialogFragment : BottomSheetDialogFragment(),
     private var hasScanned = false
 
     private var idsToScooters: Map<String, Scooter>? = null
+    private var scootersLiveData: ScootersLiveData? = null
+    private var observer: Observer<Map<String, Scooter>>? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,9 +58,10 @@ class QrScannerDialogFragment : BottomSheetDialogFragment(),
         // Inflate the layout for this fragment
         _binding = FragmentQrScannerDialogBinding.inflate(layoutInflater, container, false)
 
-        CoroutineScope(Dispatchers.Main).launch {
-            idsToScooters = firebaseManager.getIdsToScooters()
-        }
+        scootersLiveData = ScootersLiveData()
+        observer = Observer { idsToScooters -> this.idsToScooters = idsToScooters }
+
+        scootersLiveData!!.observe(viewLifecycleOwner, observer!!)
 
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
             != PackageManager.PERMISSION_GRANTED
@@ -90,6 +95,7 @@ class QrScannerDialogFragment : BottomSheetDialogFragment(),
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        observer?.let { scootersLiveData?.removeObserver(it) }
     }
 
     override fun onCameraViewStarted(width: Int, height: Int) {
