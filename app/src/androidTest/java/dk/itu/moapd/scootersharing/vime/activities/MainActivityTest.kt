@@ -9,6 +9,7 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import dk.itu.moapd.scootersharing.vime.R
 import dk.itu.moapd.scootersharing.vime.utils.awaitView
+import org.hamcrest.Matchers.not
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
@@ -25,16 +26,17 @@ class MainActivityTest {
          * setUpAll() is for logging in to a test user. @BeforeClass @JvmStatic ensures that this
          * function is called once before all tests.
          */
-        @BeforeClass @JvmStatic
+        @BeforeClass
+        @JvmStatic
         fun setUpAll() {
             launch(LoginActivity::class.java)
 
-            onView(withText("Sign in with email").awaitView()).perform(click())
+            onView(withText("Sign in with email").awaitView { matches(isClickable()) }).perform(click())
 
-            onView(withHint("Email").awaitView()).perform(typeText("john@doe.com"))
+            onView(withHint("Email").awaitView { matches(isClickable()) }).perform(typeText("john@doe.com"))
             onView(withText("NEXT")).perform(click())
 
-            onView(withHint("Password").awaitView()).perform(typeText("123456"))
+            onView(withHint("Password").awaitView { matches(isClickable()) }).perform(typeText("123456"))
             onView(withText("SIGN IN")).perform(click())
         }
     }
@@ -82,10 +84,10 @@ class MainActivityTest {
         onView(withId(R.id.edit_card_button))
             .perform(click())
 
-        onView(withId(R.id.save_button).awaitView())
+        onView(withId(R.id.save_button))
             .check(matches(isDisplayed()))
 
-        onView(withId(R.id.edit_text_cardnumber))
+        onView(withId(R.id.edit_text_cardnumber).awaitView { matches(not(withText(""))) })
             .perform(clearText(), typeText(mockCardNumber), closeSoftKeyboard())
 
         onView(withId(R.id.edit_text_expiration))
@@ -97,7 +99,7 @@ class MainActivityTest {
         onView(withId(R.id.save_button))
             .perform(click())
 
-        onView(withId(R.id.edit_card_button).awaitView())
+        onView(withId(R.id.edit_card_button).awaitView { matches(isClickable()) })
             .perform(click())
 
         onView(withId(R.id.edit_text_cardnumber))
